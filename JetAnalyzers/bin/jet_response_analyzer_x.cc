@@ -257,7 +257,7 @@ int main(int argc,char**argv)
     
     cout<<alg<<" ... "<<endl;
 
-    TTree* tree = (TTree*)idir->Get("t");
+    TTree* tree = (TTree*)idir->Get(treename.c_str());
     if (0==tree) { cout<<"no tree found."<<endl; continue; }
   
 
