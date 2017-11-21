@@ -123,7 +123,7 @@ int main(int argc,char**argv)
   CommandLine cl;
   if (!cl.parse(argc,argv)) return 0;
 
-  string         input             = cl.getValue<string> ("input");
+  vector<string> input             = cl.getVector<string>("input");
   vector<float>  binspt            = cl.getVector<float> ("binspt",                     "");
   vector<float>  binseta           = cl.getVector<float> ("binseta",                    "");
   vector<float>  binsphi           = cl.getVector<float> ("binsphi",                    "");
@@ -240,8 +240,9 @@ int main(int argc,char**argv)
   //
   // open input/output files and loop over input directories/trees (=algorithms!)
   //
-  TFile* ifile = TFile::Open(input.c_str(),"READ");
-  if (!ifile->IsOpen()) {  cout<<"Can't open "<<input<<endl; return 0; }
+  if (input.size() == 0) { cout << "No input files specified" << endl; return 1; }
+  TFile* ifile = TFile::Open(input[0].c_str(),"READ");
+  if (!ifile->IsOpen()) {  cout<<"Can't open "<<input[0]<<endl; return 0; }
   
   TFile* ofile = new TFile(output.c_str(),"RECREATE");
   if (!ofile->IsOpen()) { cout<<"Can't create "<<output<<endl; return 0; }
@@ -257,7 +258,8 @@ int main(int argc,char**argv)
     
     cout<<alg<<" ... "<<endl;
 
-    TTree* tree = (TTree*)idir->Get(treename.c_str());
+    TChain* tree = new TChain((alg + "/" + treename).c_str());
+    for (auto & filename : input) { tree->Add(filename.c_str()); }
     if (0==tree) { cout<<"no tree found."<<endl; continue; }
   
 
