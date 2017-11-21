@@ -1511,9 +1511,7 @@ int main(int argc,char**argv)
           if(doflavor) {
             flavorDefinition.ToUpper();
             if(flavorDefinition.CompareTo("ALGO")==0)
-               pdgid = JRAEvt->refpdgid_algorithmicDef->at(iref);
-            else if(flavorDefinition.CompareTo("PHYS")==0)
-               pdgid = JRAEvt->refpdgid_physicsDef->at(iref);
+               pdgid = JRAEvt->refpdgid_old->at(iref);
             else
                pdgid = JRAEvt->refpdgid->at(iref);
           }

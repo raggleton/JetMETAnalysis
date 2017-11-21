@@ -41,7 +41,7 @@
 
 #include "JetMETCorrections/Objects/interface/JetCorrector.h"
 
-#include "SimDataFormats/JetMatching/interface/JetMatchedPartons.h"
+#include "SimDataFormats/JetMatching/interface/JetFlavourInfoMatching.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 
@@ -94,7 +94,7 @@ private:
   edm::EDGetTokenT<reco::CandidateView> srcRef_;
   edm::EDGetTokenT<reco::CandViewMatchMap> srcJetToUncorJetMap_;
   edm::EDGetTokenT<reco::CandViewMatchMap> srcRefToJetMap_;
-  edm::EDGetTokenT<reco::JetMatchedPartonsCollection> srcRefToPartonMap_;
+  edm::EDGetTokenT<reco::JetFlavourInfoMatchingCollection> srcRefToPartonMap_, srcRefToPartonMapOld_;
   edm::EDGetTokenT<vector<double> > srcRhos_;
   edm::EDGetTokenT<double> srcRho_;
   edm::EDGetTokenT<double> srcRhoHLT_;
@@ -118,7 +118,6 @@ private:
 
   double        deltaRMax_;
   double        deltaPhiMin_;
-  double        deltaRPartonMax_;
 
   bool          doBalancing_;
   bool          getFlavorFromMap_;

@@ -40,7 +40,6 @@ JetResponseAnalyzer::JetResponseAnalyzer(const edm::ParameterSet& iConfig)
   , nRefMax_       (iConfig.getParameter<unsigned int>                 ("nRefMax"))
   , deltaRMax_(0.0)
   , deltaPhiMin_(3.141)
-  , deltaRPartonMax_(0.0)
   , doBalancing_(false)
   , getFlavorFromMap_(false)
   , jetCorrector_(0)
@@ -58,8 +57,8 @@ JetResponseAnalyzer::JetResponseAnalyzer(const edm::ParameterSet& iConfig)
 					    <<" *or* deltaPhiMin (balancing)";
   
   if (doFlavor_&&iConfig.exists("srcRefToPartonMap")) {
-     srcRefToPartonMap_=consumes<reco::JetMatchedPartonsCollection>(iConfig.getParameter<edm::InputTag>("srcRefToPartonMap"));
-    deltaRPartonMax_  =iConfig.getParameter<double>       ("deltaRPartonMax");
+     srcRefToPartonMap_=consumes<reco::JetFlavourInfoMatchingCollection>(iConfig.getParameter<edm::InputTag>("srcRefToPartonMap"));
+     srcRefToPartonMapOld_=consumes<reco::JetFlavourInfoMatchingCollection>(iConfig.getParameter<edm::InputTag>("srcRefToPartonMapOld"));
     getFlavorFromMap_=true;
   }
   
@@ -127,7 +126,7 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
   edm::Handle<reco::CandidateView>               refs;
   edm::Handle<reco::CandViewMatchMap>            jetToUncorJetMap;
   edm::Handle<reco::CandViewMatchMap>            refToJetMap;
-  edm::Handle<reco::JetMatchedPartonsCollection> refToPartonMap;
+  edm::Handle<reco::JetFlavourInfoMatchingCollection> refToPartonMap, refToPartonMapOld;
   edm::Handle<vector<double> >                   rhos;
   edm::Handle<double>                            rho;
   edm::Handle<double>                            rho_hlt;
@@ -241,7 +240,10 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
   iEvent.getByToken(srcRef_,               refs);
   iEvent.getByToken(srcJetToUncorJetMap_, jetToUncorJetMap); 
   iEvent.getByToken(srcRefToJetMap_,refToJetMap);
-  if (getFlavorFromMap_) iEvent.getByToken(srcRefToPartonMap_,refToPartonMap);
+  if (getFlavorFromMap_) {
+    iEvent.getByToken(srcRefToPartonMap_,refToPartonMap);
+    iEvent.getByToken(srcRefToPartonMapOld_,refToPartonMapOld);
+  }
   if (doBalancing_&&refToJetMap->size()!=1) return;
   JRAEvt_->nref = 0;
   size_t nRef=(nRefMax_==0) ? refs->size() : std::min(nRefMax_,refs->size());
@@ -266,60 +268,37 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
      }
      
      JRAEvt_->refpdgid->push_back(0);
-     JRAEvt_->refpdgid_algorithmicDef->push_back(0);
-     JRAEvt_->refpdgid_physicsDef->push_back(0);
+     JRAEvt_->refpdgid_old->push_back(0);
      if (getFlavorFromMap_) {
-        reco::JetMatchedPartonsCollection::const_iterator itPartonMatch;
-        itPartonMatch=refToPartonMap->begin();
-        for (;itPartonMatch!=refToPartonMap->end();++itPartonMatch) {
-           reco::JetBaseRef jetRef = itPartonMatch->first;
-           const reco::MatchedPartons partonMatch = itPartonMatch->second;
-           const reco::Candidate* cand = &(*jetRef);
-           if (cand==&(*ref)) break;
-        }
-        
-        if (itPartonMatch!=refToPartonMap->end()&&
-            itPartonMatch->second.algoDefinitionParton().get()!=0&&
-            itPartonMatch->second.physicsDefinitionParton().get()!=0) {
-           
-           double refdrparton_algo=
-              reco::deltaR(ref->p4(),
-                           itPartonMatch->second.algoDefinitionParton().get()->p4());
-           double refdrparton_physics=
-              reco::deltaR(ref->p4(),
-                           itPartonMatch->second.physicsDefinitionParton().get()->p4());
-           
-           if (refdrparton_algo<deltaRPartonMax_) {
-              JRAEvt_->refpdgid_algorithmicDef->at(JRAEvt_->nref)=itPartonMatch->second.algoDefinitionParton().get()->pdgId();
-              int absid = std::abs(JRAEvt_->refpdgid_algorithmicDef->at(JRAEvt_->nref));
-              if (absid==4||absid==5) {
-                 GenJetLeptonFinder finder(*ref);
-                 finder.run();
-                 if (finder.foundLeptonAndNeutrino()) {
-                    int sign  = (JRAEvt_->refpdgid_algorithmicDef->at(JRAEvt_->nref)>0) ? +1 : -1;
-                    JRAEvt_->refpdgid_algorithmicDef->at(JRAEvt_->nref) = sign*(absid*100+std::abs(finder.leptonPdgId()));
-                 }
-              }
-           }
-           if (refdrparton_physics<deltaRPartonMax_) {
-              JRAEvt_->refpdgid_physicsDef->at(JRAEvt_->nref)=itPartonMatch->second.physicsDefinitionParton().get()->pdgId();
-              int absid = std::abs(JRAEvt_->refpdgid_physicsDef->at(JRAEvt_->nref));
-              if (absid==4||absid==5) {
-                 GenJetLeptonFinder finder(*ref);
-                 finder.run();
-                 if (finder.foundLeptonAndNeutrino()) {
-                    int sign  = (JRAEvt_->refpdgid_physicsDef->at(JRAEvt_->nref)>0) ? +1 : -1;
-                    JRAEvt_->refpdgid_physicsDef->at(JRAEvt_->nref) = sign*(absid*100+std::abs(finder.leptonPdgId()));
-                 }
-              }
+        reco::JetFlavourInfoMatchingCollection::const_iterator itPartonMatch;
+        itPartonMatch = refToPartonMap->begin();
+        for (; itPartonMatch != refToPartonMap->end(); ++itPartonMatch) {
+           reco::JetBaseRef thisJet = itPartonMatch->first;
+           const reco::Candidate* cand = &(*thisJet);
+           if (cand == &(*ref)) { // gen jets
+           // if (cand==&(*jet)) { // reco jets
+            JRAEvt_->refpdgid->at(JRAEvt_->nref) = itPartonMatch->second.getPartonFlavour();
+            break;
            }
         }
+
+        // for the old flavor defintion
+        itPartonMatch = refToPartonMapOld->begin();
+        for (; itPartonMatch != refToPartonMapOld->end(); ++itPartonMatch) {
+           reco::JetBaseRef thisJet = itPartonMatch->first;
+           const reco::Candidate* cand = &(*thisJet);
+           if (cand == &(*ref)) { // gen jets
+           // if (cand==&(*jet)) { // reco jets
+            JRAEvt_->refpdgid_old->at(JRAEvt_->nref) = itPartonMatch->second.getPartonFlavour();
+            break;
+           }
+        }
+
      }
      else {
-        JRAEvt_->refpdgid_algorithmicDef->at(JRAEvt_->nref)=0;
-        JRAEvt_->refpdgid_physicsDef->at(JRAEvt_->nref)=0;
+        JRAEvt_->refpdgid->at(JRAEvt_->nref)=0;
+        JRAEvt_->refpdgid_old->at(JRAEvt_->nref)=0;
      }
-     JRAEvt_->refpdgid->at(JRAEvt_->nref)=ref->pdgId();
 
      // Beta/Beta Star Calculation
      JRAEvt_->beta = 0.0;

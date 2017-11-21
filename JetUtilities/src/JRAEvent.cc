@@ -86,8 +86,7 @@ void JRAEvent::MakeTree(TTree* tree)
    fChain->Branch("refrank", "vector<UChar_t>", &refrank);
    if(!flags.test(0) || (flags.test(0) && flags.test(2))) {
       fChain->Branch("refpdgid", "vector<Int_t>", &refpdgid);
-      fChain->Branch("refpdgid_algorithmicDef", "vector<Int_t>", &refpdgid_algorithmicDef);
-      fChain->Branch("refpdgid_physicsDef", "vector<Int_t>", &refpdgid_physicsDef);
+      fChain->Branch("refpdgid_old", "vector<Int_t>", &refpdgid_old);
    }
    fChain->Branch("refe", "vector<Float_t>", &refe);
    fChain->Branch("refpt", "vector<Float_t>", &refpt);
@@ -186,8 +185,7 @@ void JRAEvent::Init(TTree *tree)
    fChain->SetBranchAddress("refrank", &refrank, &b_refrank);
    if(!flags.test(0) || (flags.test(0) && flags.test(2))) {
       fChain->SetBranchAddress("refpdgid", &refpdgid, &b_refpdgid);
-      fChain->SetBranchAddress("refpdgid_algorithmicDef", &refpdgid_algorithmicDef, &b_refpdgid_algorithmicDef);
-      fChain->SetBranchAddress("refpdgid_physicsDef", &refpdgid_physicsDef, &b_refpdgid_physicsDef);
+      fChain->SetBranchAddress("refpdgid_old", &refpdgid_old, &b_refpdgid_old);
    }
    fChain->SetBranchAddress("refe", &refe, &b_refe);
    fChain->SetBranchAddress("refpt", &refpt, &b_refpt);
@@ -276,8 +274,7 @@ void JRAEvent::MakeVectors()
    refrank                 = new vector<UChar_t>;
    if(!flags.test(0) || (flags.test(0) && flags.test(2))) {
       refpdgid                = new vector<int>;
-      refpdgid_algorithmicDef = new vector<int>;
-      refpdgid_physicsDef     = new vector<int>;
+      refpdgid_old = new vector<int>;
    }
    refe                    = new vector<float>;
    refpt                   = new vector<float>;
@@ -338,8 +335,7 @@ void JRAEvent::clear()
    refrank->clear();
    if(!flags.test(0) || (flags.test(0) && flags.test(2))) {
       refpdgid->clear();
-      refpdgid_algorithmicDef->clear();
-      refpdgid_physicsDef->clear();
+      refpdgid_old->clear();
    }
    refe->clear();
    refpt->clear();

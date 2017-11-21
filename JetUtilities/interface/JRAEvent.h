@@ -76,8 +76,7 @@ public :
    UChar_t          nref;
    vector<UChar_t>* refrank;
    vector<Int_t>*   refpdgid;
-   vector<Int_t>*   refpdgid_algorithmicDef;
-   vector<Int_t>*   refpdgid_physicsDef;
+   vector<Int_t>*   refpdgid_old;
    vector<Float_t>* refe;
    vector<Float_t>* refpt;
    vector<Float_t>* refeta;
@@ -136,8 +135,7 @@ public :
    TBranch        *b_nref;   //!
    TBranch        *b_refrank;   //!
    TBranch        *b_refpdgid;   //!
-   TBranch        *b_refpdgid_algorithmicDef;   //!
-   TBranch        *b_refpdgid_physicsDef;   //!
+   TBranch        *b_refpdgid_old;   //!
    TBranch        *b_refe;   //!
    TBranch        *b_refpt;   //!
    TBranch        *b_refeta;   //!
