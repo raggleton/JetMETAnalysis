@@ -152,7 +152,7 @@ int main(int argc,char**argv)
   bool           dobalance         = cl.getValue<bool>   ("dobalance",               false);
   bool           doflavor          = cl.getValue<bool>   ("doflavor",                false);
   vector<string> flavors           = cl.getVector<string>("flavors",                    "");
-  TString        flavorDefinition  = cl.getValue<TString>("flavorDefinition",       "phys");
+  TString        flavorDefinition  = cl.getValue<TString>("flavorDefinition",           "");
   bool           noabsflavors      = cl.getValue<bool>   ("noabsflavors",            false);
   float          drmax             = cl.getValue<float>  ("drmax",                     0.3);
   float          dphimin           = cl.getValue<float>  ("dphimin",                   2.7);
@@ -316,10 +316,10 @@ int main(int argc,char**argv)
             if(!doflavor) continue;
             else if(doflavor) {
                 flavorDefinition.ToUpper();
-                if(flavorDefinition.CompareTo("ALGO")==0)
-                    n = "refpdgid_algorithmicDef";
-                else if(flavorDefinition.CompareTo("PHYS")==0)
-                    n = "refpdgid_physicsDef";
+                if(flavorDefinition.CompareTo("OLD")==0)
+                    n = "refpdgid_old";
+                else
+                    n = "refpdgid";
             }
         }
         if(n=="weight") {
@@ -1510,7 +1510,7 @@ int main(int argc,char**argv)
           float pdgid(0);
           if(doflavor) {
             flavorDefinition.ToUpper();
-            if(flavorDefinition.CompareTo("ALGO")==0)
+            if(flavorDefinition.CompareTo("OLD")==0)
                pdgid = JRAEvt->refpdgid_old->at(iref);
             else
                pdgid = JRAEvt->refpdgid->at(iref);
