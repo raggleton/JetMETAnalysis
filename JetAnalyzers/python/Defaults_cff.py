@@ -31,8 +31,6 @@ JetResponseParameters = cms.PSet(
     saveCandidates  = cms.bool(False),
     # MATCHING MODE: deltaR(ref,jet)
     deltaRMax       = cms.double(0.25),
-    # deltaR(ref,parton) IF doFlavor is True
-    deltaRPartonMax = cms.double(0.25),
     # consider all matched references
     nRefMax         = cms.uint32(0),
     # is the sample an HLT sample
