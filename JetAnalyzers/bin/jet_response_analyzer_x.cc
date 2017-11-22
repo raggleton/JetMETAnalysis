@@ -152,7 +152,7 @@ int main(int argc,char**argv)
   bool           dobalance         = cl.getValue<bool>   ("dobalance",               false);
   bool           doflavor          = cl.getValue<bool>   ("doflavor",                false);
   vector<string> flavors           = cl.getVector<string>("flavors",                    "");
-  TString        flavorDefinition  = cl.getValue<TString>("flavorDefinition",           "");
+  TString        flavorDefinition  = cl.getValue<TString>("flavorDefinition",        "NEW");
   bool           noabsflavors      = cl.getValue<bool>   ("noabsflavors",            false);
   float          drmax             = cl.getValue<float>  ("drmax",                     0.3);
   float          dphimin           = cl.getValue<float>  ("dphimin",                   2.7);
@@ -320,8 +320,10 @@ int main(int argc,char**argv)
                 flavorDefinition.ToUpper();
                 if(flavorDefinition.CompareTo("OLD")==0)
                     n = "refpdgid_old";
-                else
+                else if (flavorDefinition.CompareTo("NEW")==0)
                     n = "refpdgid";
+                else
+                  throw runtime_error(flavorDefinition + " is not a valid setting, choose OLD or NEW");
             }
         }
         if(n=="weight") {
@@ -1514,7 +1516,7 @@ int main(int argc,char**argv)
             flavorDefinition.ToUpper();
             if(flavorDefinition.CompareTo("OLD")==0)
                pdgid = JRAEvt->refpdgid_old->at(iref);
-            else
+            else if (flavorDefinition.CompareTo("NEW")==0)
                pdgid = JRAEvt->refpdgid->at(iref);
           }
           float absrsp = pt-refpt;
