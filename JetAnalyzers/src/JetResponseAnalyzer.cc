@@ -267,8 +267,6 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
         continue;
      }
      
-     JRAEvt_->refpdgid->push_back(0);
-     JRAEvt_->refpdgid_old->push_back(0);
      if (getFlavorFromMap_) {
         reco::JetFlavourInfoMatchingCollection::const_iterator itPartonMatch;
         itPartonMatch = refToPartonMap->begin();
@@ -277,7 +275,7 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
            const reco::Candidate* cand = &(*thisJet);
            if (cand == &(*ref)) { // gen jets
            // if (cand==&(*jet)) { // reco jets
-            JRAEvt_->refpdgid->at(JRAEvt_->nref) = itPartonMatch->second.getPartonFlavour();
+            JRAEvt_->refpdgid->push_back(itPartonMatch->second.getPartonFlavour());
             break;
            }
         }
@@ -289,15 +287,11 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
            const reco::Candidate* cand = &(*thisJet);
            if (cand == &(*ref)) { // gen jets
            // if (cand==&(*jet)) { // reco jets
-            JRAEvt_->refpdgid_old->at(JRAEvt_->nref) = itPartonMatch->second.getPartonFlavour();
+            JRAEvt_->refpdgid_old->push_back(itPartonMatch->second.getPartonFlavour());
             break;
            }
         }
 
-     }
-     else {
-        JRAEvt_->refpdgid->at(JRAEvt_->nref)=0;
-        JRAEvt_->refpdgid_old->at(JRAEvt_->nref)=0;
      }
 
      // Beta/Beta Star Calculation

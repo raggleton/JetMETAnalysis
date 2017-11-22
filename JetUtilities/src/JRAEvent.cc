@@ -273,8 +273,8 @@ void JRAEvent::MakeVectors()
    rhos                    = new vector<float>;
    refrank                 = new vector<UChar_t>;
    if(!flags.test(0) || (flags.test(0) && flags.test(2))) {
-      refpdgid                = new vector<int>;
-      refpdgid_old = new vector<int>;
+      refpdgid             = new vector<int>;
+      refpdgid_old         = new vector<int>;
    }
    refe                    = new vector<float>;
    refpt                   = new vector<float>;
