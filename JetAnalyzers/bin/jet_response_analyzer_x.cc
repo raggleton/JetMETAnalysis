@@ -305,8 +305,6 @@ int main(int argc,char**argv)
     //
     // setup the tree for reading
     //
-    float weight(1.0);
-    float flavorWeight(1.0);
     JRAEvent* JRAEvt = new JRAEvent(tree,85);
     tree->SetBranchStatus("*",0);
     vector<string> branch_names = {"nref","weight","rho","refpdgid","refpt",
@@ -1527,6 +1525,8 @@ int main(int argc,char**argv)
           //
           // retrieve the correct weight
           //
+          float weight(1.0);
+          float flavorWeight(1.0);
           if(xsection>0.0) weight = (xsection*luminosity)/nevt;
           if(useweight) weight = JRAEvt->weight;
           if(!(xsection>0.0) && !useweight) weight = 1.0;
