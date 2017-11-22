@@ -1985,6 +1985,7 @@ vector<string> get_flavors(bool noabsflavors)
       flavor.push_back("slb_");
       flavor.push_back("q_");
       flavor.push_back("uds_");
+      flavor.push_back("unknown_");
    }
    else {
       flavor.push_back("ud_");
@@ -1999,6 +2000,7 @@ vector<string> get_flavors(bool noabsflavors)
       flavor.push_back("slc_");
       flavor.push_back("slb_");
       flavor.push_back("udscbg_");
+      flavor.push_back("unknown_");
    }
    return flavor;
 }
@@ -2029,6 +2031,8 @@ TString pdgid_to_flavor_name(int pdgid)
       return "slc_";
    else if(fabs(pdgid)==511 || fabs(pdgid)==513)
       return "slb_";
+   else if(pdgid==0)
+      return "unknown_";
    else
       return "all_";
 }
@@ -2066,6 +2070,7 @@ void fill_histo(int pdgid,float value,float weight,float x,const vector<float>& 
                abspdgid==413)        iflv=10;
       else if (abspdgid==511||
                abspdgid==513)        iflv=11;
+      else if (abspdgid==0)          iflv=13;
       else return;
       
       int ix=get_index(x,binsx);
@@ -2086,8 +2091,9 @@ void fill_histo(int pdgid,float value,float weight,float x,const vector<float>& 
                abspdgid==413)       iflv=6;
       else if (abspdgid==511||
                abspdgid==513)       iflv=7;
+      else if (abspdgid==0)         iflv=10;
       else return;
-      
+
       int ix=get_index(x,binsx);
       if (ix>=0) histos[ix][iflv]->Fill(value,weight);
       if (ix>=0 && abspdgid>0 && abspdgid<=5) histos[ix][8]->Fill(value,weight);
@@ -2131,6 +2137,7 @@ void fill_histo(int pdgid,float value,float weight,float x,float y,
                abspdgid==413)        iflv=10;
       else if (abspdgid==511||
                abspdgid==513)        iflv=11;
+      else if (abspdgid==0)          iflv=13;
       else return;
       
       int ix=get_index(x,binsx);
@@ -2152,6 +2159,7 @@ void fill_histo(int pdgid,float value,float weight,float x,float y,
                abspdgid==413)       iflv=6;
       else if (abspdgid==511||
                abspdgid==513)       iflv=7;
+      else if (abspdgid==0)         iflv=10;
       else return;
       
       int ix=get_index(x,binsx);
@@ -2197,6 +2205,7 @@ void fill_histo(int pdgid,float value,float weight,float x,float y,float z,
                abspdgid==413)        iflv=10;
       else if (abspdgid==511||
                abspdgid==513)        iflv=11;
+      else if (abspdgid==0)          iflv=13;
       else return;
 
       int ix=get_index(x,binsx);
@@ -2219,6 +2228,7 @@ void fill_histo(int pdgid,float value,float weight,float x,float y,float z,
                abspdgid==413)       iflv=6;
       else if (abspdgid==511||
                abspdgid==513)       iflv=7;
+      else if (abspdgid==0)         iflv=10;
       else return;
 
       int ix=get_index(x,binsx);
