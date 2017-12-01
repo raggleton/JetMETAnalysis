@@ -52,7 +52,7 @@ struct MatchLtComp
 {
   bool operator()(const Match_t& m1,const Match_t& m2) const
   {
-    return m1.first<m2.first;
+    return m1.first<=m2.first;
   }
 };
 
