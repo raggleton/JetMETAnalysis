@@ -94,6 +94,7 @@ int main(int argc,char**argv)
   float          puppifitmax   = cl.getValue<float>  ("puppifitmax",         -1.);
 
   bool           semifitted    = cl.getValue<bool>  ("semifitted",         false);
+  string         metric        = cl.getValue<string>("metric",          "fitMean");
   float          addUnc        = cl.getValue<float> ("addUnc",               0.0);
   vector<float>  fixCTerm      = cl.getVector<float>("fixCTerm",       "-9999.0");
   int            nfititer      = cl.getValue<int>   ("nfititer",              10);
@@ -103,6 +104,19 @@ int main(int argc,char**argv)
   if (!cl.check()) return 0;
   cl.print();
   
+  vector<string> metricOptions = {"fitMean", "rawMean", "median"};
+  bool validMetricOption = false;
+  string errString = "";
+  for (const auto & itr : metricOptions) {
+    errString += (" \""+itr+"\"");
+    if (metric == itr) {
+      validMetricOption = true;
+    }
+  }
+  if (!validMetricOption) {
+    cout<<"ERROR: metric not known, choose from" << errString << endl;return 1;
+  }
+
   //
   // The stochastic ([1]*[1]/x) and constant ([2]*[2]) terms are effective descriptions
   //  that work over a limited energy range only. Tweaked to be more like the 2010 JER
@@ -382,10 +396,29 @@ int main(int argc,char**argv)
     
     if (fractionRMS<1.) set_range_truncatedRMS(hrsp,fractionRMS);
 
-    double y  = (frsp==0 || (semifitted && x<40.0)) ? hrsp->GetMean()      : frsp->GetParameter(1);
-    double ey = (frsp==0 || (semifitted && x<40.0)) ? hrsp->GetMeanError() : frsp->GetParError(1);
-    double e  = (frsp==0 || (semifitted && x<40.0)) ? hrsp->GetRMS()       : frsp->GetParameter(2);
-    double ee = (frsp==0 || (semifitted && x<40.0)) ? hrsp->GetRMSError()  : frsp->GetParError(2);
+    double y(0), ey(0), e(0), ee(0);
+    if (metric == "fitMean") {
+      // Use fit where suitable
+      y  = (frsp==0 || (semifitted && x<40.0)) ? hrsp->GetMean()      : frsp->GetParameter(1);
+      ey = (frsp==0 || (semifitted && x<40.0)) ? hrsp->GetMeanError() : frsp->GetParError(1);
+      e  = (frsp==0 || (semifitted && x<40.0)) ? hrsp->GetRMS()       : frsp->GetParameter(2);
+      ee = (frsp==0 || (semifitted && x<40.0)) ? hrsp->GetRMSError()  : frsp->GetParError(2);
+    } else if (metric == "rawMean") {
+      // Use raw
+      y  = hrsp->GetMean();
+      ey = hrsp->GetMeanError();
+      e  = hrsp->GetRMS();
+      ee = hrsp->GetRMSError();
+    } else if (metric == "median") {
+      // Use median (what to do for resolution?)
+      double xq[1] = {0.5};
+      double yq[1];
+      hrsp->GetQuantiles(1, xq, yq);
+      y = yq[0];
+      ey = hrsp->GetMeanError();
+      e  = hrsp->GetRMS();
+      ee = hrsp->GetRMSError();
+    }
 
     // declare the addtional pars for the CB function
 
