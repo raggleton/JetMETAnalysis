@@ -20,6 +20,18 @@
 #include <TVirtualFitter.h>
 #include <TMath.h>
 #include <TSpectrum.h>
+#include <TCanvas.h>
+
+#include "RooRealVar.h"
+#include "RooArgList.h"
+#include "RooDataSet.h"
+#include "RooGaussian.h"
+#include "RooLandau.h"
+#include "RooFFTConvPdf.h"
+#include "RooPlot.h"
+#include "RooDataHist.h"
+#include "RooCategory.h"
+#include "RooConstVar.h"
 
 #include <iostream>
 #include <fstream>
@@ -54,6 +66,9 @@ int fit_dscb(TH1F*& hrsp,
 
 /// double sided crystal ball function definition
 double fnc_dscb(double*xx,double*pp);
+
+/// fit guas convoluted with a landau
+int fit_gausXlandau(TH1F*& hrsp, string fit_filename, const int verbose);
 
 /// test this...
 void guesstimate_fitrange(TH1* h,double& min,double& max,const string alg);
@@ -104,11 +119,12 @@ int main(int argc,char**argv)
   if (!cl.check()) return 0;
   cl.print();
   
-  if (fittype<0 || fittype>1) {
-    cout<<"ERROR: fittype not known, choose 0 for GAUSS, 1 for DSCB";return 0;
+  if (fittype<0 || fittype>2) {
+    cout<<"ERROR: fittype not known, choose 0 for GAUSS, 1 for DSCB, 2 for GAUS x LANDAU";return 0;
   }
   else if (0==fittype) cout<<"*** Fitting with distributions w/ GAUSS"<<endl;
-  else cout<<"*** Fitting response distributions w/ DSCB"<<endl; 
+  else if (1==fittype) cout<<"*** Fitting response distributions w/ DSCB"<<endl; 
+  else if (2==fittype) cout<<"*** Fitting response distributions w/ GAUS x LANDAU"<<endl; 
 
   //
   // construct output file name from input file name if none given
@@ -203,9 +219,11 @@ int main(int argc,char**argv)
       //}
       
       if (hrsp->Integral()>0.0) {
+        string fit_filename = "gausXlandau_fits/" + string(hrsp->GetName());
         int fitstatus(0);
         if (0==fittype) fit_gaussian(hrsp,nsigma,jtptmin,niter,verbose);
-        else fitstatus = fit_dscb(hrsp,nsigma,jtptmin,niter,alg,verbose);
+        else if (1==fittype) fitstatus = fit_dscb(hrsp,nsigma,jtptmin,niter,alg,verbose);
+        else if (2==fittype) fitstatus = fit_gausXlandau(hrsp, fit_filename, verbose);
 
         TF1* fitfnc = (TF1*) hrsp->GetListOfFunctions()->Last();
         if (0!=fitfnc && 0==fitstatus) fitfnc->ResetBit(TF1::kNotDraw);
@@ -519,6 +537,74 @@ void fit_gaussian(TH1F*& hrsp,
         <<" - FNC deleted."<<endl;
     hrsp->GetListOfFunctions()->Delete();
   }
+}
+
+int fit_dscb_rootfit(TH1F*& hrsp, string fit_filename, const int verbose) 
+{
+  if (0==hrsp) {
+    cout<<"ERROR: Empty pointer to fit_gausXlandau()"<<endl; return -1;
+  } else {
+    cout << "Fitting Gaus x Landau to " << hrsp->GetName() << endl;
+  }
+ 
+  return 1;
+}
+
+//______________________________________________________________________________
+int fit_gausXlandau(TH1F*& hrsp, string fit_filename, const int verbose)
+{
+  if (0==hrsp) {
+    cout<<"ERROR: Empty pointer to fit_gausXlandau()"<<endl; return -1;
+  } else {
+    cout << "Fitting Gaus x Landau to " << hrsp->GetName() << endl;
+  }
+  
+  double tmp_mean = hrsp->GetMean();
+  double tmp_sigma = hrsp->GetRMS();
+
+  string var_name = "response";
+  RooRealVar response(var_name.c_str(), "p_{T}^{Reco}/p_{T}^{Gen}", 0, 2);
+  response.setRange("R1", 0, 2);
+
+  RooPlot * frame = response.frame(RooFit::Title(var_name.c_str()));
+
+  // RooRealVar gauss_mean("mean", "mean", tmp_mean, 0.8, 1.2);
+  RooRealVar gauss_mean("mean", "mean", 0, -2, 2);
+  RooRealVar gauss_sigma("sigma", "sigma gauss", tmp_sigma, 0, 2.0);
+  RooGaussian gauss("gauss", "gauss", response, gauss_mean, gauss_sigma) ;
+  
+  RooRealVar landau_mean("meanl","mean landau", tmp_mean, 0.60, 1.5);
+  RooRealVar landau_sigma("sigmal", "sigma landau", tmp_sigma, 0, 2.0);
+  RooLandau landau("landau", "landau", response, landau_mean, landau_sigma);
+
+  response.setBins(10000, "cache");
+  RooFFTConvPdf lxg("lxg", "landau (X) gauss", response, landau, gauss);
+  
+  RooDataHist dh("datahistshape", "datahistshape", RooArgList(response), RooFit::Import(*hrsp));
+  dh.plotOn(frame, RooFit::DataError(RooAbsData::SumW2));
+
+  lxg.fitTo(dh, RooFit::Range("R1"), RooFit::Save(), RooFit::SumW2Error(true));
+  
+  lxg.plotOn(frame);
+  lxg.paramOn(frame, RooFit::Format("NELU", RooFit::AutoPrecision(1)), RooFit::Layout(0.55));
+  frame->SetMaximum(frame->GetMaximum()*1.2);
+  
+  // TPaveText chi2_text(0.3,0.8,0.4,0.9,"BRNDC");
+  // chi2_text.AddText("#chi^{2} fit = %s" %round(frame.chiSquare(6),2));
+  // chi2_text.SetTextSize(0.04);
+  // chi2_text.SetTextColor(2);
+  // chi2_text.SetShadowColor(0);
+  // chi2_text.SetFillColor(0);
+  // chi2_text.SetLineColor(0);
+  // frame.addObject(chi2_text);
+
+  TCanvas c("cfit", "cfit", 600, 700);
+  frame->Draw();
+  c.SaveAs((fit_filename+".pdf").c_str());
+
+  int fitstatus = 1;
+  return fitstatus;
+
 }
 
 
