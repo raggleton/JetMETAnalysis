@@ -389,6 +389,8 @@ int main(int argc,char**argv)
     
 
     TF1*   frsp    = (TF1*)hrsp->GetListOfFunctions()->Last();
+    if (frsp == 0)
+      std::cout << "No fit for " <<  hrsp->GetName() << std::endl;
     bool   isFDSCB = (0==frsp) ? false : ("fdscb"==(string)frsp->GetName());
     
     if (minentries>0 && hrsp->GetEffectiveEntries()<minentries) continue;
