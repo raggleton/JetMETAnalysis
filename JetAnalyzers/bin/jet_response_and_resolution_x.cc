@@ -237,6 +237,7 @@ int main(int argc,char**argv)
   vector<TGraphErrors*> vatwo;
   vector<TGraphErrors*> vpone;
   vector<TGraphErrors*> vptwo;
+  vector<TGraphErrors*> vchi2;
   
   //
   // open input file and loop over input directories (=algorithms)
@@ -307,6 +308,7 @@ int main(int argc,char**argv)
       TGraphErrors* gatwo(0);
       TGraphErrors* gpone(0);
       TGraphErrors* gptwo(0);
+      TGraphErrors* gchi2(0);
 
       hlrsp.begin_loop();
       while ((hrsp=hlrsp.next_object(indices))) {
@@ -321,6 +323,7 @@ int main(int argc,char**argv)
       gatwo = new TGraphErrors(0); vatwo.push_back(gatwo);
       gpone = new TGraphErrors(0); vpone.push_back(gpone);
       gptwo = new TGraphErrors(0); vptwo.push_back(gptwo);
+      gchi2 = new TGraphErrors(0); vchi2.push_back(gchi2);
 
       // this is where the magic happens...
       string prefix = hlrsp.quantity().substr(0,3);
@@ -338,6 +341,7 @@ int main(int argc,char**argv)
       string gatwo_name="AtwoVs"+xvar;
       string gpone_name="PoneVs"+xvar;
       string gptwo_name="PtwoVs"+xvar;
+      string gchi2_name=prefix+"Chi2NDoFVs"+xvar+suffix;
 
       if (hlrsp.nvariables()>1) {
         for (unsigned int i=0;i<hlrsp.nvariables()-1;i++) {
@@ -353,6 +357,7 @@ int main(int argc,char**argv)
           gatwo_name += suffix.str();
           gpone_name += suffix.str();
           gptwo_name += suffix.str();
+          gchi2_name += suffix.str();
         }
       }
       grsp->SetName(grsp_name.c_str());
@@ -362,6 +367,7 @@ int main(int argc,char**argv)
       gatwo->SetName(gatwo_name.c_str());
       gpone->SetName(gpone_name.c_str());
       gptwo->SetName(gptwo_name.c_str());
+      gchi2->SetName(gchi2_name.c_str());
     }
     
     // add new points to current response & resolution graphs
@@ -399,12 +405,14 @@ int main(int argc,char**argv)
     if (fractionRMS<1.) set_range_truncatedRMS(hrsp,fractionRMS);
 
     double y(0), ey(0), e(0), ee(0);
+    double chi2(0);
     if (metric == "fitMean") {
       // Use fit where suitable
       y  = (frsp==0 || (semifitted && x<40.0)) ? hrsp->GetMean()      : frsp->GetParameter(1);
       ey = (frsp==0 || (semifitted && x<40.0)) ? hrsp->GetMeanError() : frsp->GetParError(1);
       e  = (frsp==0 || (semifitted && x<40.0)) ? hrsp->GetRMS()       : frsp->GetParameter(2);
       ee = (frsp==0 || (semifitted && x<40.0)) ? hrsp->GetRMSError()  : frsp->GetParError(2);
+      chi2 = (frsp==0 || (semifitted && x<40.0)) ? 0 : frsp->GetChisquare()/(frsp->GetNDF());
     } else if (metric == "rawMean") {
       // Use raw
       y  = hrsp->GetMean();
@@ -479,6 +487,8 @@ int main(int argc,char**argv)
     grsp->SetPointError(n,ex,ey);
     gres->SetPoint(n,x,e);
     gres->SetPointError(n,ex,ee);
+    gchi2->SetPoint(n, x, chi2);
+    gchi2->SetPointError(n, 0, 0);
 
     if (isFDSCB) {
       n = gaone->GetN();
@@ -805,9 +815,11 @@ int main(int argc,char**argv)
       if (vpone[igraph]->GetN()>0) vpone[igraph]->Write();
     for (unsigned int igraph=0;igraph<vptwo.size();igraph++)
       if (vptwo[igraph]->GetN()>0) vptwo[igraph]->Write();
+    for (unsigned int igraph=0;igraph<vchi2.size();igraph++)
+      if (vchi2[igraph]->GetN()>0) vchi2[igraph]->Write();
     
     vrsp.clear(); vres.clear();
-    vaone.clear();vatwo.clear();vpone.clear();vptwo.clear();
+    vaone.clear();vatwo.clear();vpone.clear();vptwo.clear();vchi2.clear();
 
   }
   
