@@ -423,7 +423,7 @@ int main(int argc,char**argv)
       // Use median (what to do for resolution?)
       double xq[1] = {0.5};
       double yq[1];
-      hrsp->GetQuantiles(1, xq, yq);
+      hrsp->GetQuantiles(1, yq, xq);
       y = yq[0];
       ey = hrsp->GetMeanError();
       e  = hrsp->GetRMS();
