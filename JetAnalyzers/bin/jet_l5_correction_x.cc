@@ -318,8 +318,24 @@ void analyze_flavor(TString algo, TString flavor, TDirectoryFile* idir, CommandL
    // Report
    cout << "\tFilling flavor " << flavor << " ... ";
 
-   bool mpv = cl.getValue<bool> ("mpv", false);
+   string metric = cl.getValue<string>("metric", "fitMean");
+
    if (!cl.partialCheck()) return;
+
+   vector<string> metricOptions = {"fitMean", "rawMean", "median"};
+   bool validMetricOption = false;
+   string errString = "";
+   for (const auto & itr : metricOptions) {
+    errString += (" \""+itr+"\"");
+    if (metric == itr) {
+      validMetricOption = true;
+      break;
+    }
+   }
+   if (!validMetricOption) {
+    cout<<"ERROR: metric not known, choose from" << errString << endl;
+    throw std::runtime_error("ERROR: metric not known");
+   }
 
    //
    // load the histograms
@@ -387,24 +403,26 @@ void analyze_flavor(TString algo, TString flavor, TDirectoryFile* idir, CommandL
          double jetpt  =hjetpt->GetMean();
          double ejetpt =hjetpt->GetMeanError();
 
-         double peak;
-         double epeak;
-         if(algo.Contains("calo"))
-         {
-            peak = (frsp==0 || !mpv)?hrsp->GetMean():frsp->GetParameter(1);
-            epeak = (frsp==0 || !mpv)?hrsp->GetMeanError():frsp->GetParError(1);
+         double peak = 0;
+         double epeak = 0;
+         if (metric == "fitMean") {
+            // Use fit where suitable
+            peak = (frsp==0) ? hrsp->GetMean() : frsp->GetParameter(1);
+            epeak = (frsp==0) ? hrsp->GetMeanError() : frsp->GetParError(1);
+         } else if (metric == "rawMean") {
+            // Use raw/arithmetic mean
+            peak = hrsp->GetMean();
+            epeak = hrsp->GetMeanError();
+         } else if (metric == "median") {
+            // Use median
+            // TODO: proper error
+            double xq[1] = {0.5};
+            double yq[1];
+            hrsp->GetQuantiles(1, yq, xq);
+            peak = yq[0];
+            epeak = hrsp->GetMeanError();
+            // cout << "fit mean :" << frsp->GetParameter(1) << " raw mean: " << hrsp->GetMean() << " median: " << y << endl;
          }
-         else if(algo.Contains("pf"))
-         {
-            peak = (frsp==0 || !mpv)?hrsp->GetMean():frsp->GetParameter(1);
-            epeak = (frsp==0 || !mpv)?hrsp->GetMeanError():frsp->GetParError(1);
-         }
-         else
-         {
-            peak = (frsp==0 || !mpv)?hrsp->GetMean():frsp->GetParameter(1);
-            epeak = (frsp==0 || !mpv)?hrsp->GetMeanError():frsp->GetParError(1);
-         }
-
          double absrsp = peak;
          double eabsrsp = epeak;
          double abscor = 0.0;
