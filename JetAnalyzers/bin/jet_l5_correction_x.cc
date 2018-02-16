@@ -10,6 +10,7 @@
 #include "JetMETAnalysis/JetUtilities/interface/CommandLine.h"
 #include "JetMETAnalysis/JetUtilities/interface/ObjectLoader.h"
 #include "JetMETAnalysis/JetUtilities/interface/RootStyle.h"
+#include "JetMETAnalysis/JetUtilities/interface/PiecewiseSpline.hh"
 
 #include "TROOT.h"
 #include "TApplication.h"
@@ -36,6 +37,10 @@
 #include <cmath>
 #include <map>
 #include <stdlib.h>
+
+#include <gsl/gsl_math.h>
+#include <gsl/gsl_spline.h>
+#include <gsl/gsl_interp.h>
 
 
 using namespace std;
@@ -74,7 +79,7 @@ void interpolate_flavor(vector<TGraphErrors*>& v, vector<TGraphErrors*>& vint, v
 /// normalize the rsp and cor graphs to the "all" flavor
 void normalize_flavor(vector<TGraphErrors*>& vnum,vector<TGraphErrors*>& vden);
 
-/// perform all of the fitting for the corrections
+/// perform all of the fitting for the corrections using functions
 void perform_correction_fits(vector<TGraphErrors*>& vabsrsp_eta, vector<TGraphErrors*>& vabscor_eta,
                              TString algo);
 
@@ -82,12 +87,23 @@ void perform_correction_fits(vector<TGraphErrors*>& vabsrsp_eta, vector<TGraphEr
 /// parameters from the one with the lowest chi2 that has not failed.
 void perform_smart_fit(TGraphErrors * gabscor, TF1 * fabscor);
 
+/// perform all of the fitting for the corrections using splines
+void perform_correction_spline_fits(vector<TGraphErrors*>& vabsrsp_eta, vector<TGraphErrors*>& vabscor_eta,
+                                    TString algo);
+
+/// fit a spline to a graph, returns the spline
+PiecewiseSpline* fit_spline(TGraphErrors * graph);
+
 /// split string into vector with user defined delimiter
 vector<string> split(const string& str,const string& delim);
 
 /// print parameters to .txt file
 void print_text_file(TString filename, TString flavor, vector<TGraphErrors*> & vabscor_eta, 
                      ObjectLoader<TH1F> & hl_eta, bool print_header);
+
+/// print splines to .txt file
+void print_splines_text_file(TString filename, TString flavor, vector<TGraphErrors*> & vabscor_eta,
+                             ObjectLoader<TH1F> & hl_eta, bool print_header);
 
 /// evaluates/interpolates the error for any value in a TGraphErrors object
 /// this function assumes that the x values of the graph are sorted and that the errors are symmetric
@@ -290,9 +306,11 @@ void analyze_algo(TString algo, TFile* ifile, TFile* ofile, CommandLine & cl)
       // perform fit to the vabscor_eta and vabscor_eta_norm graphs
       //
       cout << "\tFitting flavor " << flavors[i] << " ... " << endl;
-      perform_correction_fits(graphMap[flavors[i]+"_vabsrsp_eta"], graphMap[flavors[i]+"_vabscor_eta"], algo);
+      // perform_correction_fits(graphMap[flavors[i]+"_vabsrsp_eta"], graphMap[flavors[i]+"_vabscor_eta"], algo);
+      perform_correction_spline_fits(graphMap[flavors[i]+"_vabsrsp_eta"], graphMap[flavors[i]+"_vabscor_eta"], algo);
       cout << "\tFitting normalized flavor " << flavors[i] << " ... " << endl;
-      perform_correction_fits(graphMap[flavors[i]+"_vabsrsp_eta_norm"], graphMap[flavors[i]+"_vabscor_eta_norm"],
+      // perform_correction_fits(graphMap[flavors[i]+"_vabsrsp_eta_norm"], graphMap[flavors[i]+"_vabscor_eta_norm"],
+      perform_correction_spline_fits(graphMap[flavors[i]+"_vabsrsp_eta_norm"], graphMap[flavors[i]+"_vabscor_eta_norm"],
                               algo);
 
       //
@@ -777,6 +795,95 @@ void perform_smart_fit(TGraphErrors * gabscor, TF1 * fabscor) {
           <<" has a reduced chi2="<<bestRChi2
           <<" after "<<fitIter<<" iterations"<<endl;
    }
+}
+
+//______________________________________________________________________________
+void perform_correction_spline_fits(vector<TGraphErrors*>& vabsrsp_eta, vector<TGraphErrors*>& vabscor_eta,
+                                    TString algo)
+{
+   assert(vabsrsp_eta.size()==vabscor_eta.size());
+   for(unsigned int ieta=0; ieta<vabsrsp_eta.size(); ieta++)
+   {
+      TGraphErrors* gabsrsp = vabsrsp_eta[ieta];
+      TGraphErrors* gabscor = vabscor_eta[ieta];
+      if(!gabsrsp || !gabscor) {
+         cout<<"\t***ERROR***perform_correction_spline_fits::Either gabsrsp or gabscor does not exist"<<endl
+             <<"\tSkipping this gabscor graph"<<endl;
+         continue;
+      }
+      if (gabsrsp->GetN()==0 || gabscor->GetN()==0) {
+         cout << "\t***ERROR***perform_correction_spline_fits::gabsrsp has " << gabsrsp->GetN()
+              << " points and gabscor has " << gabscor->GetN() << " points."<<endl
+              << "\tGraph name = " << vabscor_eta[ieta]->GetName() << endl;
+         cout << "\tExiting the program." << endl;
+         exit(0);
+         //continue;
+      }
+
+      //
+      // actually fit spline to graph
+      //
+      PiecewiseSpline * thisSpline = fit_spline(gabscor);
+      cout << "# sections: " << thisSpline->getNSections() << endl;
+
+      // create the TF1 for each section, add to TH1 so easily viewable
+      bool lastLine = false;
+
+      vector<int> colours = {kBlue, kRed, 7, 8, 9, kAzure+1, kOrange+7, kGreen+3, kViolet+1, kRed-7};
+      auto nColours = colours.size();
+
+      for(int isection=0; isection<thisSpline->getNSections(); isection++) {
+         if(lastLine) continue;
+
+         pair<double,double> bounds = thisSpline->getSectionBounds(isection);
+         if(isection==thisSpline->getNSections()-1) lastLine = true;
+         // if(bounds.second >= pt_limit) {
+         //    abovePtLimit = true;
+         //    lastLine = true;
+         // }
+         TF1* spline_func = thisSpline->setParameters(isection);
+         TF1* this_spline_func = (TF1*) spline_func->Clone(TString::Format("func%d", isection));
+         this_spline_func->SetLineColor(colours[isection % nColours]);
+         this_spline_func->SetRange(bounds.first, bounds.second);
+         gabscor->GetListOfFunctions()->Add(this_spline_func);
+
+      }
+
+      gabsrsp->Write();
+      gabscor->Write();
+   }
+}
+
+//______________________________________________________________________________
+PiecewiseSpline* fit_spline(TGraphErrors * graph)
+{
+   double* px = graph->GetX();
+   double* py = graph->GetY();
+   unsigned int N = graph->GetN();
+   double *px_sorted = (double*) malloc(N * sizeof(double));
+   double *py_sorted = (double*) malloc(N * sizeof(double));
+   int* index_x = (int*)malloc(N * sizeof(int));
+   TMath::Sort((int)N,px,index_x,false);
+   for(unsigned int ip=0; ip<N; ip++) {
+     px_sorted[ip] = px[index_x[ip]];
+     py_sorted[ip] = py[index_x[ip]];
+     //cout << "Point/index_x " << ip << "/" << index_x[ip] << " = (" << px[index_x[ip]] << "," << py[index_x[ip]] << ")" << endl;
+   }
+   cout << "DONE" << endl;
+
+   // Do the fitting
+   cout << "\t\tInitialize Spline ... " << flush;
+   gsl_spline *spline_akima = gsl_spline_alloc(gsl_interp_akima, graph->GetN());
+   gsl_spline_init(spline_akima, px_sorted, py_sorted, N);
+   PiecewiseSpline* pspline = new PiecewiseSpline(string("spline_")+graph->GetName(),graph,{},ROOT_spline_type::TS3,false);
+   pspline->setSpline(PiecewiseSpline::gslToROOT_spline(spline_akima,"TSpline3_akima"));
+   string spline_function = "[0]+((x-[1])*([2]+((x-[1])*([3]+((x-[1])*[4])))))";
+   TF1* pfunc = new TF1("fit",spline_function.c_str(),graph->GetX()[0],graph->GetX()[graph->GetN()-1]);
+   pspline->setPartialFunction(pfunc);
+   cout << pfunc->GetExpFormula() << endl;
+   gsl_spline_free(spline_akima);
+   cout << "DONE" << endl;
+   return pspline;
 }
 
 //______________________________________________________________________________
