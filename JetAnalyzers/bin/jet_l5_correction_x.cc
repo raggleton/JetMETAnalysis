@@ -214,7 +214,7 @@ vector<TString> get_flavors(TList* list)
    
    vector<TString> result;
    for(map<string,int>::iterator it = mymap.begin(); it != mymap.end(); it++) {
-         if(it->first.compare("slc")!=0 && it->first.compare("slb")!=0) {
+         if(it->first.compare("slc")!=0 && it->first.compare("slb")!=0 && it->first.compare("uds")!=0) {
             result.push_back(it->first);
             cout << "\t\t" << it->first << endl;
          }
