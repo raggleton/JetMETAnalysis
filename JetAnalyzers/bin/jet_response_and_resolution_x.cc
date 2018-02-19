@@ -392,27 +392,41 @@ int main(int argc,char**argv)
     else if ( (alg.find("jpt")!=string::npos)&&(x<jptmin) )     continue;
     else if ( (alg.find("puppi")!=string::npos)&&(x<puppimin) ) continue;
     else if ( (alg.find("pf")!=string::npos)&&(x<pfmin) )       continue;
-    
 
-    TF1*   frsp    = (TF1*)hrsp->GetListOfFunctions()->Last();
-    if (frsp == 0)
-      std::cout << "No fit for " <<  hrsp->GetName() << std::endl;
-    bool   isFDSCB = (0==frsp) ? false : ("fdscb"==(string)frsp->GetName());
-    
     if (minentries>0 && hrsp->GetEffectiveEntries()<minentries) continue;
-    if (forcefit && frsp==0) continue;
-    
     if (fractionRMS<1.) set_range_truncatedRMS(hrsp,fractionRMS);
 
+    bool isFDSCB(false);
     double y(0), ey(0), e(0), ee(0);
     double chi2(0);
+    // declare the addtional pars for the CB function
+    double aone(0.0),eaone(.25),atwo(0.0),eatwo(.25);
+    double pone(0.0),epone(2.5),ptwo(0.0),eptwo(2.5);
     if (metric == "fitMean") {
+      TF1* frsp = (TF1*)hrsp->GetListOfFunctions()->Last();
+      if (frsp == 0)
+        std::cout << "No fit for " <<  hrsp->GetName() << std::endl;
+      if (forcefit && frsp==0) continue;
+      isFDSCB = (0==frsp) ? false : ("fdscb"==(string)frsp->GetName());
+
       // Use fit where suitable
       y  = (frsp==0 || (semifitted && x<40.0)) ? hrsp->GetMean()      : frsp->GetParameter(1);
       ey = (frsp==0 || (semifitted && x<40.0)) ? hrsp->GetMeanError() : frsp->GetParError(1);
       e  = (frsp==0 || (semifitted && x<40.0)) ? hrsp->GetRMS()       : frsp->GetParameter(2);
       ee = (frsp==0 || (semifitted && x<40.0)) ? hrsp->GetRMSError()  : frsp->GetParError(2);
       chi2 = (frsp==0 || (semifitted && x<40.0)) ? 0 : frsp->GetChisquare()/(frsp->GetNDF());
+
+      if (isFDSCB) {
+        aone  = frsp->GetParameter(3);
+        //eaone = frsp->GetParError(3);
+        atwo  = frsp->GetParameter(5);
+        //eatwo = frsp->GetParError(5);
+
+        pone  = frsp->GetParameter(4);
+        //epone = frsp->GetParError(4);
+        ptwo  = frsp->GetParameter(6);
+        //eptwo = frsp->GetParError(6);
+      }
     } else if (metric == "rawMean") {
       // Use raw
       y  = hrsp->GetMean();
@@ -425,26 +439,10 @@ int main(int argc,char**argv)
       double yq[1];
       hrsp->GetQuantiles(1, yq, xq);
       y = yq[0];
+      // cout << "fit mean :" << frsp->GetParameter(1) << " raw mean: " << hrsp->GetMean() << " median: " << y << endl;
       ey = hrsp->GetMeanError();
       e  = hrsp->GetRMS();
       ee = hrsp->GetRMSError();
-    }
-
-    // declare the addtional pars for the CB function
-
-    double aone(0.0),eaone(.25),atwo(0.0),eatwo(.25);
-    double pone(0.0),epone(2.5),ptwo(0.0),eptwo(2.5);
-
-    if (isFDSCB) {
-      aone  = frsp->GetParameter(3);
-      //eaone = frsp->GetParError(3);
-      atwo  = frsp->GetParameter(5);
-      //eatwo = frsp->GetParError(5);
-
-      pone  = frsp->GetParameter(4);
-      //epone = frsp->GetParError(4);
-      ptwo  = frsp->GetParameter(6);
-      //eptwo = frsp->GetParError(6);
     }
     
     if (hlrsp.quantity().find("AbsRsp")!=string::npos) {
