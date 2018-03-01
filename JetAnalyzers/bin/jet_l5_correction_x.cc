@@ -827,26 +827,17 @@ void perform_correction_spline_fits(vector<TGraphErrors*>& vabsrsp_eta, vector<T
       cout << "# sections: " << thisSpline->getNSections() << endl;
 
       // create the TF1 for each section, add to TH1 so easily viewable
-      bool lastLine = false;
 
       vector<int> colours = {kBlue, kRed, 7, 8, 9, kAzure+1, kOrange+7, kGreen+3, kViolet+1, kRed-7};
       auto nColours = colours.size();
 
       for(int isection=0; isection<thisSpline->getNSections(); isection++) {
-         if(lastLine) continue;
-
          pair<double,double> bounds = thisSpline->getSectionBounds(isection);
-         if(isection==thisSpline->getNSections()-1) lastLine = true;
-         // if(bounds.second >= pt_limit) {
-         //    abovePtLimit = true;
-         //    lastLine = true;
-         // }
          TF1* spline_func = thisSpline->setParameters(isection);
          TF1* this_spline_func = (TF1*) spline_func->Clone(TString::Format("func%d", isection));
          this_spline_func->SetLineColor(colours[isection % nColours]);
          this_spline_func->SetRange(bounds.first, bounds.second);
          gabscor->GetListOfFunctions()->Add(this_spline_func);
-
       }
 
       gabsrsp->Write();
