@@ -539,16 +539,6 @@ void fit_gaussian(TH1F*& hrsp,
   }
 }
 
-int fit_dscb_rootfit(TH1F*& hrsp, string fit_filename, const int verbose) 
-{
-  if (0==hrsp) {
-    cout<<"ERROR: Empty pointer to fit_gausXlandau()"<<endl; return -1;
-  } else {
-    cout << "Fitting Gaus x Landau to " << hrsp->GetName() << endl;
-  }
- 
-  return 1;
-}
 
 //______________________________________________________________________________
 int fit_gausXlandau(TH1F*& hrsp, string fit_filename, const int verbose)
