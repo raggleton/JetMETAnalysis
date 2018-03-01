@@ -330,7 +330,7 @@ int fit_dscb(TH1F*& hrsp,
      fitrange_min = *std::max_element(vv.begin(),vv.end());
   }
   //else fitrange_min = std::max(rspMax,0.2);
-  double fitrange_max = 1.7;
+  double fitrange_max = 1.9;
   if (histname.find("EtaRsp")==0 ||
       histname.find("PhiRsp")==0) {
     fitrange_min = -0.2;
@@ -364,17 +364,17 @@ int fit_dscb(TH1F*& hrsp,
     fdscb->SetParameter(5,atwo); // a2
     fdscb->SetParameter(6,ptwo); // p2
 
-    fdscb->FixParameter(1,mean);
-    fdscb->FixParameter(2,sigma);
+    // fdscb->FixParameter(1,mean);
+    // fdscb->FixParameter(2,sigma);
 
-    if (i>0) fdscb->FixParameter(3,aone);
-    else fdscb->SetParLimits(3,1.,5.);
+    // if (i>0) fdscb->FixParameter(3,aone);
+    // else fdscb->SetParLimits(3,1.,5.);
 
-    if (i>1) fdscb->FixParameter(5,atwo);
-    else fdscb->SetParLimits(5,1.,5.);
+    // if (i>1) fdscb->FixParameter(5,atwo);
+    // else fdscb->SetParLimits(5,1.,5.);
 
-    fdscb->SetParLimits(4,0.,100.);//25.);
-    fdscb->SetParLimits(6,0.,100.);//25.);
+    fdscb->SetParLimits(4,0.,25.);//25.);
+    fdscb->SetParLimits(6,0.,25.);//25.);
 
     if(hrsp->GetEntries()==0) {
        if(verbose>0)
@@ -383,7 +383,7 @@ int fit_dscb(TH1F*& hrsp,
        return -1;
     }
     else {
-       fitstatus = hrsp->Fit(fdscb,"RQB0+");
+       fitstatus = hrsp->Fit(fdscb,"RB");
     }
     
     if (0==fitstatus) i=999;
@@ -394,6 +394,8 @@ int fit_dscb(TH1F*& hrsp,
     if (0==fdscb) return -1;
       
     norm  = fdscb->GetParameter(0);
+    mean  = fdscb->GetParameter(1);
+    sigma = fdscb->GetParameter(2);
     aone  = fdscb->GetParameter(3);
     pone  = fdscb->GetParameter(4);
     atwo  = fdscb->GetParameter(5);
@@ -402,16 +404,20 @@ int fit_dscb(TH1F*& hrsp,
   }
 
   // reset sigma and mean to gauss values...
-  fdscb->SetParameter(1,fgaus->GetParameter(1));
-  fdscb->SetParError(1,fgaus->GetParError(1));
-  fdscb->SetParameter(2,fgaus->GetParameter(2));
-  fdscb->SetParError(2,fgaus->GetParError(2));
+  // fdscb->SetParameter(1,fgaus->GetParameter(1));
+  // fdscb->SetParError(1,fgaus->GetParError(1));
+  // fdscb->SetParameter(2,fgaus->GetParameter(2));
+  // fdscb->SetParError(2,fgaus->GetParError(2));
 
 
   if (0!=fitstatus){
     cout<<"fit_fdscb() to "<<hrsp->GetName()
     	<<" failed. Fitstatus: "<<fitstatus<<endl;
     hrsp->GetFunction("fdscb")->Delete();
+  } else {
+        cout<<"fit_fdscb() to "<<hrsp->GetName()
+      <<" worked. Fitstatus: "<<fitstatus<<endl;
+
   }
 
   return fitstatus;
