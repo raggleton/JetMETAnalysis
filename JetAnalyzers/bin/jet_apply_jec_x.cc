@@ -64,7 +64,7 @@ int main(int argc,char**argv)
   CommandLine cl;
   if (!cl.parse(argc,argv)) return 0;
   
-  string         input      = cl.getValue<string>  ("input");
+  vector<string> input      = cl.getVector<string> ("input");
   string         era        = cl.getValue<string>  ("era");
   vector<int>    levels     = cl.getVector<int>    ("levels");
   string         url_string = cl.getValue<string>  ("url_string",   "");
@@ -104,10 +104,10 @@ int main(int argc,char**argv)
   TChain* ichain = new TChain();
   TFile* ifile = nullptr;
   if (url_string.empty()) {
-    ichain->Add(input.c_str());
-    ifile = TFile::Open(input.c_str(),"READ");
-    if (!ifile) { cout<<"Can't open file "<<input<<endl; return -2; }
-    if (output.empty()) output=input.substr(0,input.find(".root"))+"_jec.root";
+    for (const auto & itr : input) { ichain->Add(itr.c_str()); }
+    ifile = TFile::Open(input[0].c_str(),"READ");
+    if (!ifile) { cout<<"Can't open file "<<input[0]<<endl; return -2; }
+    if (output.empty()) output=input[0].substr(0,input[0].find(".root"))+"_jec.root";
   }
   #if(has_xrdcl)
     else {
@@ -116,11 +116,12 @@ int main(int argc,char**argv)
       XrdCl::DirListFlags::Flags flags = XrdCl::DirListFlags::None;
       XrdCl::URL url(url_string);
       XrdCl::FileSystem fs(url);
-      fs.DirList(input,flags,response);
+      // FIXME - not correct use of vector input
+      fs.DirList(input[0],flags,response);
       for(auto iresp=response->Begin(); iresp!=response->End(); iresp++) {
         if((*iresp)->GetName().find(".root")!=std::string::npos) {
-           cout << "\tAdding " << url_string << input << (*iresp)->GetName() << endl;
-           file_count = ichain->Add((url_string+input+(*iresp)->GetName()).c_str());
+           cout << "\tAdding " << url_string << input[0] << (*iresp)->GetName() << endl;
+           file_count = ichain->Add((url_string+input[0]+(*iresp)->GetName()).c_str());
         }
       }
       TChainElement* chEl = (TChainElement*)ichain->GetListOfFiles()->First();
