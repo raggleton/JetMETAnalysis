@@ -202,7 +202,11 @@ TString JetInfo::getJetType(TString s) {
 
   int itype = vfind(jet_types,NJetTypes,jtype);
   if(itype>-1) {
-    return jet_types[itype];
+    if (jet_types[itype] == "PUPPI") {
+      return "PFPuppi";
+    } else {
+      return jet_types[itype];
+    }
   }
   else {
     cout << "ERROR::getJetType Could not find the jet type that corresponds to " << jtype << "." << endl;
