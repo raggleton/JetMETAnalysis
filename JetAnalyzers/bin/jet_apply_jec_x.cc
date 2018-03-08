@@ -104,9 +104,9 @@ int main(int argc,char**argv)
   TChain* ichain = new TChain();
   TFile* ifile = nullptr;
   if (url_string.empty()) {
-    for (const auto & itr : input) { ichain->Add(itr.c_str()); }
     ifile = TFile::Open(input[0].c_str(),"READ");
     if (!ifile) { cout<<"Can't open file "<<input[0]<<endl; return -2; }
+    for (const auto & itr : input) { ichain->Add(itr.c_str()); }
     if (output.empty()) output=input[0].substr(0,input[0].find(".root"))+"_jec.root";
   }
   #if(has_xrdcl)
