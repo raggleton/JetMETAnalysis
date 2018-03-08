@@ -4,8 +4,8 @@ import FWCore.ParameterSet.Config as cms
 #! PROCESS
 #!
 # Conditions source options: GT, SQLite, DB
-conditionsSource = "GT"
-era = "Spring16_25nsV1_MC"
+conditionsSource = "SQLite"
+era = "Summer16_07Aug2017_V5_MC"
 doProducer = False
 process = cms.Process("JRA")
 multithread = False
