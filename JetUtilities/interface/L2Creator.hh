@@ -95,7 +95,7 @@ public:
     void     writeTextFileForCurrentAlgorithm_spline();
 
 private:
-    string                    input, era, l3input, histMet;
+    string                    input, era, l3input, histMet, flavor;
     TString                   output, outputDir, l2calofit, l2pffit;
     vector<string>            formats, algs;
     bool                      l2l3, delphes;

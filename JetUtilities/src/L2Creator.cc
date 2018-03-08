@@ -24,6 +24,7 @@ L2Creator::L2Creator() {
     histogramMetric = HistUtil::getHistogramMetricType(histMet);
     delphes = false;
     maxFitIter = 30;
+    flavor = "";
 }
 
 //______________________________________________________________________________
@@ -45,6 +46,7 @@ L2Creator::L2Creator(CommandLine& cl) {
     maxFitIter = cl.getValue<int>     ("maxFitIter",        30);
     histMet    = cl.getValue<string>  ("histMet",       "mu_h");
     histogramMetric = HistUtil::getHistogramMetricType(histMet);
+    flavor     = cl.getValue<string>  ("flavor",            "");
 
     if (!cl.partialCheck()) return;
     cl.print();
@@ -159,9 +161,9 @@ void L2Creator::loopOverAlgorithms(string makeCanvasVariable) {
         //
         // Load the input histograms from jra.root or jra_f.root (or other name if reset by user)
         //
-        hl_rsp.load_objects(idir,"RelRsp:JetEta:RefPt");     
-        hl_refpt.load_objects(idir,"RefPt:JetEta:RefPt");
-        hl_jetpt.load_objects(idir,"JetPt:JetEta:RefPt");
+        hl_rsp.load_objects(idir,flavor+"RelRsp:JetEta:RefPt");
+        hl_refpt.load_objects(idir,flavor+"RefPt:JetEta:RefPt");
+        hl_jetpt.load_objects(idir,flavor+"JetPt:JetEta:RefPt");
      
      
         //
@@ -224,8 +226,8 @@ void L2Creator::loopOverEtaBins() {
             vabscor_eta.push_back(new TGraphErrors());
             stringstream ss;
             ss<<hl_rsp.minimum(0,ieta)<<"to"<<hl_rsp.maximum(0,ieta);
-            vabsrsp_eta.back()->SetName(("AbsRspVsRefPt_JetEta"+ss.str()).c_str());
-            vabscor_eta.back()->SetName(("AbsCorVsJetPt_JetEta"+ss.str()).c_str());
+            vabsrsp_eta.back()->SetName((flavor+"AbsRspVsRefPt_JetEta"+ss.str()).c_str());
+            vabscor_eta.back()->SetName((flavor+"AbsCorVsJetPt_JetEta"+ss.str()).c_str());
         }
 
         //
