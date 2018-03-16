@@ -139,6 +139,7 @@ int main(int argc,char**argv)
    bool            reduceHistograms  = cl.getValue<bool>         ("reduceHistograms",   true);
    bool            useweight         = cl.getValue<bool>         ("useweight",         false);
    float           pThatReweight     = cl.getValue<float>        ("pThatReweight",     -9999);
+   float           relpthatmax       = cl.getValue<float>        ("relpthatmax",                10);
    float           xsection          = cl.getValue<float>        ("xsection",            0.0);
    float           luminosity        = cl.getValue<float>        ("luminosity",          1.0);
    int             pdgid             = cl.getValue<int>          ("pdgid",                 0);
@@ -607,6 +608,10 @@ int main(int argc,char**argv)
             float rho_hlt = (0!=chain->GetBranch("rho_hlt")) ? JRAEvt->rho_hlt : 0;
             float ptgen  = JRAEvt->refpt->at(iref);
             if (ptgen<ptgenmin) continue;
+            if (relpthatmax!= -1.0 && ((ptgen/pthat)>relpthatmax)) {
+               if(verbose) cout << "WARNING::The ptref/pthat of this event is greater than the maximum relative pthat!" << endl;
+               continue;
+            }
             if (doflavor && abs(pdgid)!=123 && abs(JRAEvt->refpdgid->at(iref))!=abs(pdgid)) continue;
             else if (doflavor && abs(pdgid)==123 && (abs(JRAEvt->refpdgid->at(iref))>2 || abs(JRAEvt->refpdgid->at(iref))==0)) continue;
             float eta    = JRAEvt->jteta->at(iref);
