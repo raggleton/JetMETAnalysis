@@ -175,7 +175,7 @@ int main(int argc,char**argv)
    bool            verbose           = cl.getValue<bool>         ("verbose",           false);
    bool            debug             = cl.getValue<bool>         ("debug",             false);
 
-   if (!cl.check()) return 0;
+   if (!cl.check()) return 100;
    cl.print();
 
    TBenchmark* m_benchmark = new TBenchmark();
@@ -196,7 +196,7 @@ int main(int argc,char**argv)
    // Check that the size of the drmax values matches that of the algs
    if(drmax.size()>0 && algs.size()!=drmax.size()) {
       cout << "ERROR::jet_correction_analyzer_x The size of the drmax vector must match the size of the algs vector" << endl;
-      return 0;
+      return 101;
    }
 
    //
@@ -233,7 +233,7 @@ int main(int argc,char**argv)
          if (!weightFile->IsOpen()) { cout<<"Can't open "<<weightfilename<<endl; }
          cout << "Getting the weight histogram all_ ... " << flush; 
          weightHist = (TH2D*)weightFile->Get((algs[a]+"/all_").c_str());
-         if(weightHist==nullptr) { cout<<"FAIL!"<<endl<<"Histogram of weights named \"all_\" was not in file "<<weightfilename<<endl; return 0; } 
+         if(weightHist==nullptr) { cout<<"FAIL!"<<endl<<"Histogram of weights named \"all_\" was not in file "<<weightfilename<<endl; return 102; }
          cout << "DONE" << endl;
       }
    
@@ -291,7 +291,7 @@ int main(int argc,char**argv)
       }
       if (file_count==0){
          cout << "\tNo files found!  Aborting.\n";
-         return 0;
+         return 103;
       }
       if (0==chain) { cout<<"no tree/chain found."<<endl; continue; }
       JRAEvent* JRAEvt = new JRAEvent(chain,85);
@@ -509,7 +509,7 @@ int main(int argc,char**argv)
          if (!RespVsRho) {
             cout << "ERROR::Could not retrieve RespVsRhoVsEtaVsPt" << endl
                  << "Ending program !!" << endl;
-            return 0;
+            return 104;
          }
          RespVsRho->SetDirectory(0);
       }
