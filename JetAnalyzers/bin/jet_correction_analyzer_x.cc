@@ -612,8 +612,8 @@ int main(int argc,char**argv)
                if(verbose) cout << "WARNING::The ptref/pthat of this event is greater than the maximum relative pthat!" << endl;
                continue;
             }
-            if (doflavor && abs(pdgid)!=123 && abs(JRAEvt->refpdgid->at(iref))!=abs(pdgid)) continue;
-            else if (doflavor && abs(pdgid)==123 && (abs(JRAEvt->refpdgid->at(iref))>2 || abs(JRAEvt->refpdgid->at(iref))==0)) continue;
+            if (doflavor && abs(pdgid)!=12 && abs(JRAEvt->refpdgid->at(iref))!=abs(pdgid)) continue;
+            else if (doflavor && abs(pdgid)==12 && (abs(JRAEvt->refpdgid->at(iref))>2 || abs(JRAEvt->refpdgid->at(iref))==0)) continue;
             float eta    = JRAEvt->jteta->at(iref);
             if (etamax>0 && TMath::Abs(eta)>etamax) continue;
             float pt     = JRAEvt->jtpt->at(iref);
@@ -947,7 +947,7 @@ string get_flavor_name(int pdgid)
    string result;
    int abspdgid = abs(pdgid);
    if      (abspdgid==1 || abspdgid==2) result = "qJ";
-   else if (abspdgid==123)              result = "qJ"; 
+   else if (abspdgid==12)               result = "udJ";
    else if (abspdgid==3)                result = "sJ";
    else if (abspdgid==4)                result = "cJ";
    else if (abspdgid==5)                result = "bJ";
