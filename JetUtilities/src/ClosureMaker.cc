@@ -461,8 +461,13 @@ void ClosureMaker::makeCanvases() {
         if(var == VARIABLES::refpt || var == VARIABLES::jtpt || var == VARIABLES::ptclpt) {
             if(TString(alg).Contains("pf",TString::kIgnoreCase) ||
          TString(alg).Contains("puppi",TString::kIgnoreCase)) {
-                frame->GetXaxis()->SetLimits(XminPF[ih],Xmax[ih]);
-                hClosure[ih]->GetXaxis()->SetLimits(XminPF[ih],Xmax[ih]);
+                int lastInd = hClosure[ih]->FindLastBinAbove(0);
+                float ptMax = vpt[lastInd+1];
+                frame->GetXaxis()->SetLimits(10, ptMax);
+                hClosure[ih]->GetXaxis()->SetLimits(10, ptMax);
+                line->SetRange(10, 6000);
+                linePlus->SetRange(10, 6000);
+                lineMinus->SetRange(10, 6000);
             }
             else {
                 frame->GetXaxis()->SetLimits(XminCalo[ih],Xmax[ih]);
@@ -523,10 +528,15 @@ void ClosureMaker::makeCanvases() {
         //
         // Draw the guide lines
         //
-        line->Draw("same");
+        // The clone is to avoid the line range being narrowed if we do a narrow plot first
+        // Yes it's hacky and needs a better solution
+        TF1 * thisLine = (TF1*)line->Clone();
+        thisLine->Draw("same");
         if(draw_guidelines) {
-            linePlus->Draw("same");
-            lineMinus->Draw("same");
+            TF1 * thisLinePlus = (TF1*)linePlus->Clone();
+            TF1 * thisLineMinus = (TF1*)lineMinus->Clone();
+            thisLinePlus->Draw("same");
+            thisLineMinus->Draw("same");
         }
 
         //
