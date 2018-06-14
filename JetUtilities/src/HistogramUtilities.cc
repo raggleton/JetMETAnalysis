@@ -121,11 +121,12 @@ namespace HistUtil {
         // We use the "standard" relationship http://davidmlane.com/hyperstat/A106993.html
         // for the error. But this only works if your distribution is ~normal,
         // and you are essentially unbinned (i.e. you use a lots of bins for nrelrsp)
-        Double_t error = 1.253 * hist->GetRMS() / TMath::Sqrt(hist->GetEntries());
+        // EffectiveEntries is used to account for weights
+        Double_t error = 1.253 * hist->GetRMS() / TMath::Sqrt(hist->GetEffectiveEntries());
         if (debug) {
             cout << "\terror: " << error << endl;
             cout << "\tRMS: " << hist->GetRMS() << endl
-                 << "\tentries: " << hist->GetEntries() << endl;
+                 << "\tentries: " << hist->GetEffectiveEntries() << endl;
         } 
         delete [] x;
         delete [] y;
