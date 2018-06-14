@@ -24,6 +24,7 @@ L2Creator::L2Creator() {
     histogramMetric = HistUtil::getHistogramMetricType(histMet);
     delphes = false;
     maxFitIter = 30;
+    fitMin = 10;
     flavor = "";
 }
 
@@ -45,6 +46,7 @@ L2Creator::L2Creator(CommandLine& cl) {
     delphes    = cl.getValue<bool>    ("delphes",        false);
     maxFitIter = cl.getValue<int>     ("maxFitIter",        30);
     histMet    = cl.getValue<string>  ("histMet",       "mu_h");
+    fitMin     = cl.getValue<double>   ("fitMin",            10);
     histogramMetric = HistUtil::getHistogramMetricType(histMet);
     flavor     = cl.getValue<string>  ("flavor",            "");
 
@@ -313,7 +315,7 @@ void L2Creator::loopOverEtaBins() {
             //xmin = max(gabscor->GetX()[0],3.0);
                 // Sort the points. Doesn't matter which ref pt produced a given jet pt as long as they are sorted.
                 gabscor->Sort();
-                xmin = max(gabscor->GetX()[0],10.0);
+                xmin = max(gabscor->GetX()[0],fitMin);
                 xmax = gabscor->GetX()[gabscor->GetN()-1];
             }
 

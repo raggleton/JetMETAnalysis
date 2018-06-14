@@ -100,6 +100,7 @@ private:
     vector<string>            formats, algs;
     bool                      l2l3, delphes;
     int                       maxFitIter;
+    double                    fitMin;
     HistUtil::HistogramMetric histogramMetric;
     TFile*                    ofile;
     TFile*                    ifile;
