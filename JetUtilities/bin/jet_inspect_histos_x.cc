@@ -242,7 +242,7 @@ int main(int argc,char** argv)
 	    TF1* f = (TF1*)h->GetListOfFunctions()->Last();
 	    if (0!=f) f->SetParameter(0,f->GetParameter(0)/h->Integral());
 	    if ( !h->GetSumw2N() ) h->Sumw2();
-	    h->Scale(1./h->Integral());
+	    if (h->Integral() > 0) h->Scale(1./h->Integral());
 	  }
 
 	  if (!xtitle.empty()) h->GetXaxis()->SetTitle(xtitle.c_str());
