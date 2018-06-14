@@ -1216,11 +1216,12 @@ void L2Creator::perform_smart_fit(TGraphErrors * gabscor, TF1 * fabscor, int max
     int fitIter = 0, bestIter = 0;
     double bestRChi2 = 0.0;
     vector<TFitResultPtr> fitResultPtrs;
+    TVirtualFitter::SetMaxIterations(5000); 
     do {
         //
         // do the fit, get the results and the parameters of the fitted function
         //
-        fitResultPtrs.push_back(gabscor->Fit(fabscor,"RQS"));
+        fitResultPtrs.push_back(gabscor->Fit(fabscor,"RES"));
         //vector<double> auxPars = fitResPtr.Get()->Parameters();
 
         //
