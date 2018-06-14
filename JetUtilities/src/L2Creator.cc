@@ -1308,13 +1308,36 @@ void L2Creator::writeTextFileForCurrentAlgorithm() {
         TF1* frelcor = (TF1*)grelcor->GetListOfFunctions()->Last();
         if(frelcor!=0) {
             if(ieta==0 || (ieta==1 && delphes))
-               fout<<"{1 JetEta 1 JetPt max(0.0001,"<<frelcor->GetTitle()<<") Correction L2Relative}"<<endl;
+               fout<<"{2 JetEta JetPt 1 JetPt max(0.0001,"<<frelcor->GetTitle()<<") Correction L2Relative}"<<endl;
                //fout<<"{1 JetEta 1 JetPt max(0.0001,"<<frelcor->GetExpFormula()<<") Correction L2Relative}"<<endl;
             double  etamin  = hl_jetpt.minimum(0,ieta);
             double  etamax  = hl_jetpt.maximum(0,ieta);
-            double  ptmin = grelcor->GetX()[0];
-            double  ptmax = grelcor->GetX()[grelcor->GetN()-1];
+            // use graph as limits of function
+            // double  ptmin = grelcor->GetX()[0];
+            // double  ptmax = grelcor->GetX()[grelcor->GetN()-1];
+            // use fit range as limits of function
+            double ptmin, ptmax;
+            frelcor->GetRange(ptmin, ptmax);
+            // For pt < the lower limit of the fit range, we want the correction
+            // at the lower limit, not the default of 1.
+            double lowLimitCorr = frelcor->Eval(ptmin);
             fout<<setw(8)<<etamin<<setw(8)<<etamax
+                <<setw(12)<<setprecision(8)<<0.001
+                <<setw(12)<<setprecision(8)<<ptmin
+                <<setw(6)<<(int)(frelcor->GetNpar()+2) //Number of parameters + 2
+                <<setw(12)<<setprecision(8)<<0.001
+                <<setw(12)<<setprecision(8)<<ptmin;
+                for(int p=0; p<frelcor->GetNpar(); p++) {
+                    if (p==0)
+                       fout<<setw(17)<<setprecision(10)<<lowLimitCorr;
+                    else
+                       fout<<setw(17)<<setprecision(10)<<0.0;
+                }
+                fout<<endl;
+            // print the function
+            fout<<setw(8)<<etamin<<setw(8)<<etamax
+                <<setw(12)<<setprecision(8)<<ptmin
+                <<setw(12)<<setprecision(8)<<ptmax
                 <<setw(6)<<(int)(frelcor->GetNpar()+2) //Number of parameters + 2
                 <<setw(12)<<setprecision(8)<<ptmin
                 <<setw(12)<<setprecision(8)<<ptmax;
