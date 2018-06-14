@@ -262,8 +262,18 @@ void L2Creator::loopOverEtaBins() {
             refpt  =HistUtil::getHistogramMetric1D(HistUtil::mu_h,hrefpt).first;
             //}
 
-            double peak = HistUtil::getHistogramMetric1D(histogramMetric,hrsp).first;
-            double epeak = HistUtil::getHistogramMetric1D(histogramMetric,hrsp).second;
+            double peak(0);
+            double epeak(0);
+            if (hrsp->GetEffectiveEntries() > 100) {
+                peak = HistUtil::getHistogramMetric1D(histogramMetric,hrsp).first;
+                epeak = HistUtil::getHistogramMetric1D(histogramMetric,hrsp).second;
+            } else {
+                // resort to mean if few entries as median is not a good estimator
+                peak = HistUtil::getHistogramMetric1D(HistUtil::mu_h,hrsp).first;
+                epeak = HistUtil::getHistogramMetric1D(HistUtil::mu_h,hrsp).second;
+            }
+
+
             //if(alg.find("calo")!=string::npos) {
             //    peak = (frsp==0 || !mpv)?hrsp->GetMean():frsp->GetParameter(1);
             //    epeak = (frsp==0 || !mpv)?hrsp->GetMeanError():frsp->GetParError(1);
