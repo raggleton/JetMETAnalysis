@@ -14,6 +14,7 @@
 #include "JetMETAnalysis/JetUtilities/interface/JRAEvent.h"
 #include "JetMETAnalysis/JetUtilities/interface/ProgressBar.hh"
 
+#include "DataFormats/Math/interface/deltaR.h"
 #include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
 #include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
 #include "PhysicsTools/Utilities/interface/LumiReWeighting.h"
@@ -46,6 +47,7 @@
 #include "TProfile2D.h"
 #include "TProfile3D.h"
 #include "TBenchmark.h"
+#include "TEventList.h"
 
 #include <iostream>
 #include <string>
@@ -104,6 +106,9 @@ double sumLOOT(vector<int>* npus, unsigned int iIT);
 /// returns the postfix associated with a specific level and algorithm
 string getPostfix(vector<string> postfix, string alg, int level);
 
+// for sorting TLorentzVectors by pt
+bool sort_by_pt(const TLorentzVector & a, const TLorentzVector & b);
+
 ////////////////////////////////////////////////////////////////////////////////
 // main
 ////////////////////////////////////////////////////////////////////////////////
@@ -143,7 +148,9 @@ int main(int argc,char**argv)
    float           xsection          = cl.getValue<float>        ("xsection",            0.0);
    float           luminosity        = cl.getValue<float>        ("luminosity",          1.0);
    int             pdgid             = cl.getValue<int>          ("pdgid",                 0);
+   vector<string>  presel            = cl.getVector<string>      ("presel",                     "");
    vector<double>  drmax             = cl.getVector<double>      ("drmax",                "");
+   double          drmin             = cl.getValue<double>       ("drmin",                 0);
    double          ptmin             = cl.getValue<double>       ("ptmin",                 0);
    double          ptgenmin          = cl.getValue<double>       ("ptgenmin",              0);
    double          ptrawmin          = cl.getValue<double>       ("ptrawmin",              0);
@@ -155,6 +162,14 @@ int main(int argc,char**argv)
    int             nbinsrelrsp       = cl.getValue<int>          ("nbinsrelrsp",         200);
    float           relrspmin         = cl.getValue<float>        ("relrspmin",           0.0);
    float           relrspmax         = cl.getValue<float>        ("relrspmax",           2.0);
+   float           alphamax          = cl.getValue<float>        ("alphamax",            0.0);
+   float           efmax             = cl.getValue<float>        ("efmax",              99.0);
+   TString         jetID             = cl.getValue<TString>      ("jetID",                "");
+   vector<int>     pfCandIds         = cl.getVector<int>         ("pfCandIds",            "");
+   float           pfCandPtMin       = cl.getValue<float>        ("pfCandPtMin",           0);
+   float           pfCandDr          = cl.getValue<float>        ("pfCandDr",            0.4);
+   bool            findZ             = cl.getValue<bool>         ("findZ",             false);
+   bool            findGamma         = cl.getValue<bool>         ("findGamma",         false);
    unsigned int    evtmax            = cl.getValue<unsigned int> ("evtmax",                0);
    bool            printnpu          = cl.getValue<bool>         ("printnpu",          false);
    int             itlow             = cl.getValue<int>          ("itlow",                 0);
@@ -197,6 +212,11 @@ int main(int argc,char**argv)
    if(drmax.size()>0 && algs.size()!=drmax.size()) {
       cout << "ERROR::jet_correction_analyzer_x The size of the drmax vector must match the size of the algs vector" << endl;
       return 101;
+   }
+
+   if ((jetID != "loose") && (jetID != "tight") && (jetID != "tightLepVeto") && (jetID != "")) {
+      cout << "ERROR::jet_correction_analyzer_x jetID should be <empty>, loose, tight or tightLepVeto" << endl;
+      return 102;
    }
 
    //
@@ -294,10 +314,14 @@ int main(int argc,char**argv)
          return 103;
       }
       if (0==chain) { cout<<"no tree/chain found."<<endl; continue; }
-      JRAEvent* JRAEvt = new JRAEvent(chain,85);
+      JRAEvent* JRAEvt = new JRAEvent(chain,213);
       chain->SetBranchStatus("*",0);
-      vector<string> branch_names = {"nref","refpt","refeta","jtpt","jteta","jtphi","jtarea",
+      vector<string> branch_names = {"nref","refpt","refeta","refphi",
+                                     "jtpt","jteta","jtphi","jtarea", "jte",
                                      "bxns","npus","tnpus","sumpt_lowpt","refdrjt",
+                                     "jtchf", "jtnhf", "jtnef", "jtcef", "jtmuf", "jthfhf", "jthfef",
+                                     "jtchmult", "jtnmult",
+                                     "pfcand_pt", "pfcand_eta", "pfcand_phi", "pfcand_id", "pfcand_e",
                                      "refpdgid","npv","rho","rho_hlt","pthat","weight"};
       for(auto n : branch_names) {
          if(!doflavor && n=="refpdgid") continue;
@@ -563,13 +587,23 @@ int main(int argc,char**argv)
       //
       // fill histograms
       //
-      unsigned int nevt = (evtmax>0) ? evtmax : (unsigned int)chain->GetEntries();
-      cout << "Jet Collection: " << algs[a] << " ...... Processing " << nevt << " of " << chain->GetEntries() << " entries:" << endl;
+      TEventList* el = new TEventList("el","el");
+      stringstream selection; selection<<"1";
+      for (unsigned icut=0;icut<presel.size();icut++) selection<<"&&("<<presel[icut]<<")";
+      if (presel.size()>0) cout<<"Selection: "<<selection.str()<<endl;
+      chain->Draw(">>el",selection.str().c_str());
+      cout<<"chain entries: "<<chain->GetEntries()<<" elist: "<<el->GetN()<<endl;
+
+      chain->GetEntry( el->GetEntry(0) );
+
+      unsigned int nevt = (evtmax>0) ? evtmax : (unsigned) el->GetN();
+      cout << "Jet Collection: " << algs[a] << " ...... Processing " << nevt << " of " << el->GetN() << " entries:" << endl;
       int min_npu=100;
       for (unsigned int ievt=0;ievt<nevt;ievt++) {
          loadbar2(ievt+1,nevt,50,"\t");
 
-         chain->GetEntry(ievt);
+         const Long64_t ientry = el->GetEntry(ievt);
+         chain->GetEntry(ientry);
 
          int iIT = itIndex(JRAEvt->bxns);
          int npu = sumEOOT(JRAEvt->npus,iIT)+JRAEvt->npus->at(iIT)+sumLOOT(JRAEvt->npus,iIT);
@@ -579,12 +613,12 @@ int main(int argc,char**argv)
          double sumpt = JRAEvt->sumpt_lowpt->at(1);
          float pthat = JRAEvt->pthat;
          float evt_fill = true;
-         if (printnpu) cout<<" ievt = "<<ievt<<"\tnpu = "<<npu<<endl;
+         if (printnpu) cout<<" ientry = "<<ientry<<"\tnpu = "<<npu<<endl;
          if (npu<min_npu) min_npu = npu;
 
          if (!pileup_cut(itlow,ithigh,earlyootlow,earlyoothigh,lateootlow,lateoothigh,
                          totalootlow,totaloothigh,totallow,totalhigh,JRAEvt->npus,JRAEvt->bxns)) {
-            cout << "WARNING::Failed the pileup cut." << endl << "Skipping this event." << endl;
+            if(verbose) cout << "WARNING::Failed the pileup cut." << endl << "Skipping this event." << endl;
             continue;
          }
          if (dphimin>0 && abs(JRAEvt->jtphi->at(0)-JRAEvt->jtphi->at(1))<dphimin) continue;
@@ -602,18 +636,89 @@ int main(int argc,char**argv)
             npvVsRhoHLT->Fill(JRAEvt->rho_hlt,JRAEvt->npv);
          }
 
-         if(nrefmax>0 && JRAEvt->nref>nrefmax) JRAEvt->nref = nrefmax;
-         for (unsigned char iref=0;iref<JRAEvt->nref;iref++) {
-            float rho = JRAEvt->rho;
-            float rho_hlt = (0!=chain->GetBranch("rho_hlt")) ? JRAEvt->rho_hlt : 0;
+         // Do some preliminary filtering of PF particles to speed up future checking
+         // TODO: split up by pid?
+         vector<int> goodPfCandInds;
+         if (pfCandIds.size() > 0 && pfCandIds[0] < 999) {
+            for (uint iPf=0; iPf<JRAEvt->pfcand_pt->size(); iPf++) {
+               if (JRAEvt->pfcand_pt->at(iPf) < pfCandPtMin) continue;
+               int id = JRAEvt->pfcand_id->at(iPf);
+               if (std::find(pfCandIds.begin(), pfCandIds.end(), id) != pfCandIds.end()) {
+                  goodPfCandInds.push_back(iPf);
+               }
+            }
+         }
+
+         // Identify Z->ee or mumu
+         TLorentzVector zDecay1, zDecay2, z;
+         if (findZ) {
+            // Without gen info, dont know if Z->ee or mumu (or neither)
+            // So gather all ele and mu, and let's see which matches
+            vector<TLorentzVector> electrons, muons;
+            for (uint iPf=0; iPf<JRAEvt->pfcand_pt->size(); iPf++) {
+               // ele
+               if (JRAEvt->pfcand_id->at(iPf) == 2 && JRAEvt->pfcand_pt->at(iPf) > 10) {
+                  TLorentzVector v;
+                  v.SetPtEtaPhiE(JRAEvt->pfcand_pt->at(iPf), JRAEvt->pfcand_eta->at(iPf), JRAEvt->pfcand_phi->at(iPf), JRAEvt->pfcand_e->at(iPf));
+                  electrons.push_back(v);
+               }
+               //mu
+               else if (JRAEvt->pfcand_id->at(iPf) == 3 && JRAEvt->pfcand_pt->at(iPf) > 10) {
+                  TLorentzVector v;
+                  v.SetPtEtaPhiE(JRAEvt->pfcand_pt->at(iPf), JRAEvt->pfcand_eta->at(iPf), JRAEvt->pfcand_phi->at(iPf), JRAEvt->pfcand_e->at(iPf));
+                  muons.push_back(v);
+               }
+            }
+            // Sort by pt, take 2 highest to be our Z candidate
+            float mEE(0), mMuMu(0);
+            if (electrons.size() >= 2) {
+               std::sort(electrons.begin(), electrons.end(), sort_by_pt);
+               mEE = (electrons[0] + electrons[1]).M();
+            }
+            if (muons.size() >= 2) {
+               std::sort(muons.begin(), muons.end(), sort_by_pt);
+               mMuMu = (muons[0] + muons[1]).M();
+            }
+            float window = 20;
+            if ((fabs(mEE - 90) < fabs(mMuMu - 90)) && (fabs(mEE-90) < window)) {
+               zDecay1 = electrons[0];
+               zDecay2 = electrons[1];
+               z = zDecay1 + zDecay2;
+            } else if ((fabs(mMuMu - 90) < fabs(mEE - 90)) && (fabs(mMuMu - 90) < window)) {
+               zDecay1 = muons[0];
+               zDecay2 = muons[1];
+               z = zDecay1 + zDecay2;
+            }
+            if (z.Pt() < 10) continue;
+         }
+
+         if (verbose && zDecay1.Pt() > 0) {
+            std::cout << zDecay1.Pt() << " : " << zDecay1.Eta() << " : " << zDecay1.Phi() << std::endl;
+            std::cout << zDecay2.Pt() << " : " << zDecay2.Eta() << " : " << zDecay2.Phi() << std::endl;
+            std::cout << z.M() << std::endl;
+         }
+
+         // Identify main photon by pT
+         TLorentzVector gamma;
+         if (findGamma) {
+            for (uint iPf=0; iPf<JRAEvt->pfcand_pt->size(); iPf++) {
+               if (JRAEvt->pfcand_id->at(iPf) != 4) continue;
+               if (JRAEvt->pfcand_pt->at(iPf) > gamma.Pt()) {
+                  gamma.SetPtEtaPhiE(JRAEvt->pfcand_pt->at(iPf), JRAEvt->pfcand_eta->at(iPf), JRAEvt->pfcand_phi->at(iPf), JRAEvt->pfcand_e->at(iPf));
+               }
+            }
+            if (gamma.Pt() < 10) continue;
+         }
+
+         // First go through and figure out which jet pairs are OK
+         vector<uint> goodJetInds;
+         for (unsigned int iref=0;iref<JRAEvt->nref;iref++) {
             float ptgen  = JRAEvt->refpt->at(iref);
             if (ptgen<ptgenmin) continue;
-            if (relpthatmax!= -1.0 && ((ptgen/pthat)>relpthatmax)) {
+            if ((relpthatmax!= -1.0) && (pthat != 0) && ((ptgen/pthat)>relpthatmax)) {
                if(verbose) cout << "WARNING::The ptref/pthat of this event is greater than the maximum relative pthat!" << endl;
                continue;
             }
-            if (doflavor && abs(pdgid)!=12 && abs(JRAEvt->refpdgid->at(iref))!=abs(pdgid)) continue;
-            else if (doflavor && abs(pdgid)==12 && (abs(JRAEvt->refpdgid->at(iref))>2 || abs(JRAEvt->refpdgid->at(iref))==0)) continue;
             float eta    = JRAEvt->jteta->at(iref);
             if (etamax>0 && TMath::Abs(eta)>etamax) continue;
             float pt     = JRAEvt->jtpt->at(iref);
@@ -621,8 +726,117 @@ int main(int argc,char**argv)
                cout << "WARNING::pt>14000 GeV (pt = " << pt << " GeV)." << endl << "Skipping this jet." << endl;
                continue;
             }
-            float dr     = JRAEvt->refdrjt->at(iref);
-            if (drmax.size()>0 && dr > drmax[a]) continue;
+            if (drmax.size()>0 && JRAEvt->refdrjt->at(iref) > drmax[a]) continue;
+            // JetID based on energy fraction
+            if ((fabs(eta) < 2.7) && ((JRAEvt->jtcef->at(iref) > efmax) || (JRAEvt->jtnef->at(iref) > efmax) || (JRAEvt->jtmuf->at(iref) > efmax))) continue;
+            float cef = JRAEvt->jtcef->at(iref);
+            float nef = JRAEvt->jtnef->at(iref);
+            float muf = JRAEvt->jtmuf->at(iref);
+            float nhf = JRAEvt->jtnhf->at(iref);
+            float chf = JRAEvt->jtchf->at(iref);
+            int nmult = JRAEvt->jtnmult->at(iref);
+            int chmult = JRAEvt->jtchmult->at(iref);
+            int numConst = nmult+chmult;
+            bool passJetID = false;
+            if (jetID == "loose") {
+               if (fabs(eta) <= 2.7) {
+                  passJetID = (nhf<0.99 && nef<0.99 && numConst>1 && ((fabs(eta)<=2.4 && chf>0 && chmult>0 && cef<0.99) || abs(eta)>2.4));
+               } else if (fabs(eta) <= 3.0) {
+                  passJetID = (nhf<0.98 && nef>0.01 && nmult>2);
+               } else {
+                  passJetID = ((nef<0.9) && (nmult>10));
+               }
+            } else if (jetID == "tight" || jetID == "tightLepVeto") {
+               if (fabs(eta) <= 2.7) {
+                  passJetID = (nhf<0.9 && nef<0.9 && numConst>1 && ((fabs(eta)<=2.4 && chf>0 && chmult>0 && cef<0.99) || abs(eta)>2.4));
+                  if (jetID == "tightLepVeto") {
+                     passJetID &= (muf < 0.8);
+                     if (fabs(eta) <= 2.4) { passJetID &= (cef<0.9); }
+                  }
+               } else if (fabs(eta) <= 3.0) {
+                  passJetID = (nhf<0.98 && nef>0.01 && nmult>2);
+               } else {
+                  passJetID = ((nef<0.9) && (nmult>10));
+               }
+            } else if (jetID == "") {
+               passJetID = true;
+            }
+            if (!passJetID) continue;
+
+            // Overlap with other particles
+            bool overlap = false;
+            for (int pfInd : goodPfCandInds) {
+               float pfEta = JRAEvt->pfcand_eta->at(pfInd);
+               float pfPhi = JRAEvt->pfcand_phi->at(pfInd);
+               float dr = reco::deltaR(pfEta, pfPhi, eta, JRAEvt->jtphi->at(iref));
+               if (dr < pfCandDr && JRAEvt->pfcand_pt->at(pfInd) > (0.5 * pt)) {
+                  overlap = true;
+                  break;
+               }
+            }
+            if (findZ || findGamma) {
+               TLorentzVector jet;
+               jet.SetPtEtaPhiE(pt, eta, JRAEvt->jtphi->at(iref), JRAEvt->jte->at(iref));
+               if (findZ) {
+                  if (jet.DeltaR(zDecay1) < pfCandDr || jet.DeltaR(zDecay2) < pfCandDr) overlap = true;
+               } else if (findGamma) {
+                  if (jet.DeltaR(gamma) < pfCandDr) overlap = true;
+               }
+            }
+            if (overlap) continue;
+            goodJetInds.push_back(iref);
+         }
+
+         if (goodJetInds.size() == 0) continue;
+
+         // Z/gamma specific cuts
+         // if (findZ) {
+         //    TLorentzVector jet;
+         //    jet.SetPtEtaPhiE(JRAEvt->jtpt->at(goodJetInds[0]), JRAEvt->jteta->at(goodJetInds[0]), JRAEvt->jtphi->at(goodJetInds[0]), JRAEvt->jte->at(goodJetInds[0]));
+         //    if (fabs(z.DeltaPhi(jet) - TMath::Pi()) < 0.34) continue;
+         // }
+
+         // if (findGamma) {
+         //    TLorentzVector jet;
+         //    jet.SetPtEtaPhiE(JRAEvt->jtpt->at(goodJetInds[0]), JRAEvt->jteta->at(goodJetInds[0]), JRAEvt->jtphi->at(goodJetInds[0]), JRAEvt->jte->at(goodJetInds[0]));
+         //    if (fabs(gamma.DeltaPhi(jet) - TMath::Pi()) < 0.34) continue;
+         // }
+
+         // alpha cut
+         bool passAlpha = (alphamax <= 0);
+         if (alphamax > 0 && goodJetInds.size() >= 2) {
+            if (findZ) {
+               passAlpha = ((JRAEvt->jtpt->at(goodJetInds[1]) / z.Pt()) < alphamax);
+            } else if (findGamma) {
+               passAlpha = ((JRAEvt->jtpt->at(goodJetInds[1]) / gamma.Pt()) < alphamax);
+            } else {
+               // Improv alpha cut
+               float ptOne = JRAEvt->refpt->at(goodJetInds[0]);
+               float ptTwo = JRAEvt->refpt->at(goodJetInds[1]);
+               float phiOne = JRAEvt->refphi->at(goodJetInds[0]);
+               float phiTwo = JRAEvt->refphi->at(goodJetInds[1]);
+               float ptZ = TMath::Sqrt(
+                  TMath::Power(ptOne, 2)
+                  + TMath::Power(ptTwo, 2)
+                  + 2*ptOne*ptTwo*TMath::Cos(phiOne-phiTwo));
+               passAlpha = ((ptTwo / ptZ) < alphamax);
+            }
+         }
+         if (!passAlpha) continue;
+
+         // Now go through and fill hists
+         uint jetCounter = 0;
+         for (unsigned int iref : goodJetInds) {
+            if (nrefmax>0 && jetCounter==nrefmax) break;
+
+            float rho = JRAEvt->rho;
+            float rho_hlt = (0!=chain->GetBranch("rho_hlt")) ? JRAEvt->rho_hlt : 0;
+            float ptgen  = JRAEvt->refpt->at(iref);
+            float eta    = JRAEvt->jteta->at(iref);
+            float abseta = fabs(eta);
+            float pt     = JRAEvt->jtpt->at(iref);
+            float plotEta = abseta;
+
             if(JetCorrector) {
                JetCorrector->setJetPt(pt);
                JetCorrector->setJetEta(eta);
@@ -652,6 +866,35 @@ int main(int argc,char**argv)
             if (scale < 0) continue;
             if (pt<ptrawmin) continue;
             if ((pt*scale)<ptmin) continue;
+
+            // Count number of jets after all selections but before flavour selection
+            // e.g. want to get the 1st jet after a potential gamma fake
+            jetCounter++;
+
+            if (doflavor && abs(pdgid)!=12 && abs(JRAEvt->refpdgid->at(iref))!=abs(pdgid)) continue;
+            else if (doflavor && abs(pdgid)==12 && (abs(JRAEvt->refpdgid->at(iref))>2 || abs(JRAEvt->refpdgid->at(iref))==0)) continue;
+
+            // Check no genjet-genjet overlaps
+            if (drmin>0) {
+               float refEta = JRAEvt->refeta->at(iref);
+               float refPhi = JRAEvt->refphi->at(iref);
+               bool overlap = false;
+               for (unsigned int jref : goodJetInds) {
+                  if (jref == iref) {
+                     continue;
+                  } else {
+                     float thisDeltaR = reco::deltaR(refEta, refPhi, JRAEvt->refeta->at(jref), JRAEvt->refphi->at(jref));
+                     // Care about cuts on other genjets?
+                     // if (thisDeltaR < drmin && JRAEvt->refpt->at(jref) > 0.3/ptgen) {
+                     if (thisDeltaR < drmin && JRAEvt->refpt->at(jref) > 10) {
+                        overlap = true;
+                        break;
+                     }
+                  }
+               }
+               if (overlap) continue;
+            }
+
             float relrsp = scale*JRAEvt->jtpt->at(iref)/JRAEvt->refpt->at(iref);
             float theta  = 2.0*atan(exp(-eta));
             double weight(1.0);
@@ -696,32 +939,32 @@ int main(int argc,char**argv)
             //}
             //if ((fabs(eta)<=5.0) && (fabs(eta)>3))
             //{
-            //   RespVsPt_Fwd->Fill(ptgen,relrsp,weight); 
+            //   RespVsPt_Fwd->Fill(ptgen,relrsp,weight);
             //}
-            RespVsEtaVsPt->Fill(ptgen,eta,relrsp,weight);
+            RespVsEtaVsPt->Fill(ptgen,plotEta,relrsp,weight);
             if(!reduceHistograms) {
                if(HigherDist->FindBin(scale*pt) < HigherDist->FindBin(ptgen)) HigherDist->Fill(scale*pt,weight);
                if(MiddleDist->FindBin(scale*pt) == MiddleDist->FindBin(ptgen)) MiddleDist->Fill(scale*pt,weight);
                if(LowerDist->FindBin(scale*pt) > LowerDist->FindBin(ptgen)) LowerDist->Fill(scale*pt,weight);
-               RespVsEtaVsPtProfile->Fill(ptgen,eta,relrsp,weight);
+               RespVsEtaVsPtProfile->Fill(ptgen,plotEta,relrsp,weight);
                RespVsPtProfile->Fill(ptgen,relrsp,weight);
-               EtaVsPt->Fill(eta, log10(pt*scale),weight);
+               EtaVsPt->Fill(plotEta, log10(pt*scale),weight);
                TPUDistribution->Fill(JRAEvt->tnpus->at(iIT),weight);
             }
 
             j = getBin(ptgen,vpt,NPtBins);
-            k = getBin(eta,veta,NETA);
+            k = getBin(plotEta,veta,NETA);
             if (j<NPtBins && j>=0 && k<NETA && k>=0)
             {
-               RelRspVsJetEta[j]->Fill(eta,relrsp,weight);
+               RelRspVsJetEta[j]->Fill(plotEta,relrsp,weight);
 
                if(!reduceHistograms) {
                   RelContributions[j]->Fill(scale*pt,weight);
 
                   if(doTProfileMDF && readRespVsPileup.IsNull())
-                  { 
+                  {
                      coord[0] = ptgen;
-                     coord[1] = eta;
+                     coord[1] = plotEta;
                      /*
                      if(!algs[a].Contains("HLT"))
                         coord[2] = rho;
@@ -732,13 +975,13 @@ int main(int argc,char**argv)
                      coord[3] = JRAEvt->npus->at(iIT);
                      coord[4] = sumLOOT(JRAEvt->npus,iIT);
                      RespVsPileup->Fill(coord,relrsp);
-                  
-                     if(!jetInfo.isHLT())
-                        RespVsRho->Fill(ptgen,eta,rho,relrsp);
-                     else
-                        RespVsRho->Fill(ptgen,eta,rho_hlt,relrsp);
 
-                     coord2[0] = eta;
+                     if(!jetInfo.isHLT())
+                        RespVsRho->Fill(ptgen,plotEta,rho,relrsp);
+                     else
+                        RespVsRho->Fill(ptgen,plotEta,rho_hlt,relrsp);
+
+                     coord2[0] = plotEta;
                      coord2[1] = sumEOOT(JRAEvt->npus,iIT);
                      coord2[2] = JRAEvt->npus->at(iIT);
                      coord2[3] = sumLOOT(JRAEvt->npus,iIT);
@@ -750,7 +993,7 @@ int main(int argc,char**argv)
                   else if(doTProfileMDF)
                   {
                      coord[0] = ptgen;
-                     coord[1] = eta;
+                     coord[1] = plotEta;
                      /*
                      if(!algs[a].Contains("HLT"))
                         coord[2] = rho;
@@ -775,7 +1018,7 @@ int main(int argc,char**argv)
                      double resp_LOOT = RespVsPileup->GetBinContent(RespVsPileup->FindBin(coord));
                      double eresp_LOOT = RespVsPileup->GetBinError(RespVsPileup->FindBin(coord));
 
-                     double resp_rho = RespVsRho->GetBinContent(RespVsRho->FindBin(ptgen,eta,1));
+                     double resp_rho = RespVsRho->GetBinContent(RespVsRho->FindBin(ptgen,plotEta,1));
 
                      //
                      // Psi = {RelRsp[p_T^GEN,EOOT,IT,LOOT]-RelRsp[p_T^GEN,EOOT,IT,LOOT]}*p_T^GEN
@@ -811,20 +1054,20 @@ int main(int argc,char**argv)
                         ErrorForNPU[0]->Fill(eootnpu,ePsi_EOOT);
                         ErrorForPtGen[0]->Fill(ptgen,ePsi_EOOT);
                         Error2ForPtGen[0]->Fill(ptgen,ePsiPrime_EOOT);
-   
-                        RhoVsOffETVsEta->Fill(eootnpu,eta,rho_hlt);
+
+                        RhoVsOffETVsEta->Fill(eootnpu,plotEta,rho_hlt);
                      }
                      if(resp_IT!=0)
                      {
-                        DPtVsNPU[1]->Fill(itnpu,Psi_IT); 
+                        DPtVsNPU[1]->Fill(itnpu,Psi_IT);
                         DPtVsPtGen[1]->Fill(ptgen,Psi_IT);
                         RespRatioVsPtGen[1]->Fill(ptgen,PsiPrime_IT);
                         ErrorForNPU[1]->Fill(itnpu,ePsi_IT);
                         ErrorForPtGen[1]->Fill(ptgen,ePsi_IT);
                         Error2ForPtGen[1]->Fill(ptgen,ePsiPrime_IT);
-   
-                        RhoVsOffITVsEta->Fill(itnpu,eta,rho_hlt);
-                     } 
+
+                        RhoVsOffITVsEta->Fill(itnpu,plotEta,rho_hlt);
+                     }
                      if(resp_LOOT!=0)
                      {
                         DPtVsNPU[2]->Fill(lootnpu,Psi_LOOT);
@@ -833,11 +1076,11 @@ int main(int argc,char**argv)
                         ErrorForNPU[2]->Fill(lootnpu,ePsi_LOOT);
                         ErrorForPtGen[2]->Fill(ptgen,ePsi_LOOT);
                         Error2ForPtGen[2]->Fill(ptgen,ePsiPrime_LOOT);
-   
-                        RhoVsOffLTVsEta->Fill(lootnpu,eta,rho_hlt);
+
+                        RhoVsOffLTVsEta->Fill(lootnpu,plotEta,rho_hlt);
                      }
-   
-                     OffVsRhoVsEta->Fill(rho_hlt,eta,off_rho);
+
+                     OffVsRhoVsEta->Fill(rho_hlt,plotEta,off_rho);
                   }//if(!readRespVsPileup.IsNull())
                }//if(!reduceHistograms)
             }//if (j<NPtBins && j>=0)
@@ -850,16 +1093,16 @@ int main(int argc,char**argv)
                      SumPtDistributions[spd]->Fill(sumpt);
                }
                RefEtaDistribution->Fill(JRAEvt->refeta->at(iref));
-               EtaDistribution->Fill(eta);
-               iEtaDistribution->Fill(eta);
+               EtaDistribution->Fill(plotEta);
+               iEtaDistribution->Fill(plotEta);
                //
                // These bins correspont to 0-4, 5-9, 10-14, 15-19, 20-24, 25-29, 30-34, 35-39, 40-44, 45-infinity
                //
                int in_npu = npu/5;
                if (in_npu > 9) in_npu = 9;
-                 
-               EtaDistributionPU[in_npu]->Fill(eta);
-               if (npu==0) EtaDistributionPU0->Fill(eta);
+
+               EtaDistributionPU[in_npu]->Fill(plotEta);
+               if (npu==0) EtaDistributionPU0->Fill(plotEta);
                ThetaDistribution ->Fill(theta);
                SolidAngleDist ->Fill(2*TMath::Pi()*cos(theta));
             }
@@ -1133,3 +1376,8 @@ string getPostfix(vector<string> postfix, string alg, int level)
   -check one pdgid at a time
   -map pdgid==1 || pdgid==2 || pdgid==3 to light quarks
 */
+
+bool sort_by_pt(const TLorentzVector & a, const TLorentzVector & b)
+{
+   return a.Pt() > b.Pt();
+}
