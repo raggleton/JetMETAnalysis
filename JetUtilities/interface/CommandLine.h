@@ -7,12 +7,16 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <type_traits>
 
+#include "TString.h"
 
+class TSTring;
 //
-// convert stringstream to element, allow std::string specialization
+// convert stringstream to element, allow std::string and TString specialization
 //
 template <class T> inline void ssToVal(std::stringstream& ss,T& e){ss>>e;}
+template <> inline void ssToVal(std::stringstream& ss,TString& e){e=TString(ss.str());} // actually respect spaces
 template <> inline void ssToVal(std::stringstream& ss,std::string& e){e=ss.str();}
 
 
@@ -75,15 +79,13 @@ inline T CommandLine::getValue(const std::string& name)
   if (it!=_options.end()) {
     it->second.second = true;
     _ordered_options.push_back(name);
-    std::stringstream ss;
-    ss<<it->second.first;
+    std::stringstream ss(it->second.first);
     ssToVal(ss,result);
     return result;
   }
   _unknowns.push_back(name);
   return result;
 }
-
 
 //______________________________________________________________________________
 template <class T>
