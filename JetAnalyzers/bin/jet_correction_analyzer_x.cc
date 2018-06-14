@@ -346,13 +346,22 @@ int main(int argc,char**argv)
       //
       TDirectoryFile* odir = (TDirectoryFile*)outf->mkdir(algs[a].c_str());
       odir->cd();
-  
+
       int j,k;
       char name[1024];
 
       TH1F *pThatDistribution(nullptr);
       vector<TH2F*> RelRspVsRefPt;
       TH2F *RelRspVsJetEta[NPtBins];
+      vector<TH2F*> JtchfVsRefPt;
+      vector<TH2F*> JtnhfVsRefPt;
+      vector<TH2F*> JtnefVsRefPt;
+      vector<TH2F*> JtcefVsRefPt;
+      vector<TH2F*> JtmufVsRefPt;
+      vector<TH2F*> JthfhfVsRefPt;
+      vector<TH2F*> JthfefVsRefPt;
+      vector<TH2F*> JtchmultVsRefPt;
+      vector<TH2F*> JtnmultVsRefPt;
       TH3F *RespVsEtaVsPt(nullptr);
       TH3F *ScaleVsEtaVsPt(nullptr);
       TProfile *RelRspVsSumPt(nullptr);
@@ -436,13 +445,49 @@ int main(int argc,char**argv)
       //
       pThatDistribution = new TH1F("pThat","pThat",(int)vpt[NPtBins]/10.0,vpt[0],vpt[NPtBins]);
       pThatDistribution->Sumw2();
-      for(int ieta=0; ieta<NETA_Coarse; ieta++) {
-         if(veta_coarse[ieta]<0) continue;
-         else {
-            TString hname = Form("RelRspVsRefPt_JetEta%sto%s",eta_boundaries_coarse[ieta],eta_boundaries_coarse[ieta+1]);
-            RelRspVsRefPt.push_back(new TH2F(hname,hname,NPtBins,vpt,nbinsrelrsp,relrspmin,relrspmax));
-            RelRspVsRefPt.back()->Sumw2();
-         }
+      for(int ieta=0; ieta<NETA; ieta++) {
+         TString hname = Form("RelRspVsRefPt_JetEta%sto%s",eta_boundaries[ieta],eta_boundaries[ieta+1]);
+         RelRspVsRefPt.push_back(new TH2F(hname,hname,NPtBins,vpt,nbinsrelrsp,relrspmin,relrspmax));
+         RelRspVsRefPt.back()->Sumw2();
+
+         int NEfBins = 100;
+         hname = Form("JtchfVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtchfVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
+         JtchfVsRefPt.back()->Sumw2();
+
+         hname = Form("JtnhfVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtnhfVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
+         JtnhfVsRefPt.back()->Sumw2();
+
+         hname = Form("JtnefVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtnefVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
+         JtnefVsRefPt.back()->Sumw2();
+
+         hname = Form("JtcefVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtcefVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
+         JtcefVsRefPt.back()->Sumw2();
+
+         hname = Form("JtmufVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtmufVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
+         JtmufVsRefPt.back()->Sumw2();
+
+         hname = Form("JthfhfVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JthfhfVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
+         JthfhfVsRefPt.back()->Sumw2();
+
+         hname = Form("JthfefVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JthfefVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
+         JthfefVsRefPt.back()->Sumw2();
+
+         int NMultBins = 120;
+         hname = Form("JtchmultVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtchmultVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NMultBins, 0, NMultBins));
+         JtchmultVsRefPt.back()->Sumw2();
+
+         hname = Form("JtnmultVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtnmultVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NMultBins, 0, NMultBins));
+         JtnmultVsRefPt.back()->Sumw2();
+
       }
       RespVsEtaVsPt = new TH3F("RespVsEtaVsPt","RespVsEtaVsPt",NPtBins,vpt,NETA,veta,nbinsrelrsp,vresp);
       RespVsEtaVsPt->Sumw2();
@@ -912,13 +957,23 @@ int main(int argc,char**argv)
 
             if(evt_fill) {pThatDistribution->Fill(pthat,weight); evt_fill=false;}
             //-4 to cut off the negative side of the detector
-            if(fabs(eta)<veta_coarse[NETA_Coarse]) {
-               if(debug && ievt>5400000) {
+            if(eta<veta[NETA] && eta > veta[0]) {
+               if(debug && ientry>5400000) {
                   cout << "fabs(eta)="<< fabs(eta) << endl;
-                  cout << "veta_coarse[NETA_Coarse]=" << veta_coarse[NETA_Coarse] << endl;
-                  cout << "getBin(fabs(eta),veta_coarse,NETA_Coarse)-4=" << getBin(fabs(eta),veta_coarse,NETA_Coarse)-(NETA_Coarse/2) << endl;
+                  cout << "veta[NETA]=" << veta[NETA] << endl;
+                  cout << "getBin(fabs(eta),veta,NETA)-4=" << getBin(fabs(eta),veta,NETA)-(NETA/2) << endl;
                }
-               RelRspVsRefPt[getBin(fabs(eta),veta_coarse,NETA_Coarse)-(NETA_Coarse/2)]->Fill(ptgen,relrsp,weight);
+               RelRspVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,relrsp,weight);
+               JtchfVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtchf->at(iref),weight);
+               JtnhfVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtnhf->at(iref),weight);
+               JtnefVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtnef->at(iref),weight);
+               JtcefVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtcef->at(iref),weight);
+               JtmufVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtmuf->at(iref),weight);
+               JthfhfVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jthfhf->at(iref),weight);
+               JthfefVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jthfef->at(iref),weight);
+               JtchmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtchmult->at(iref),weight);
+               JtnmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtnmult->at(iref),weight);
+
             }
 
             //if (fabs(eta)<=1.3)
