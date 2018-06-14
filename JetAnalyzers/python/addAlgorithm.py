@@ -614,6 +614,8 @@ def addAlgorithm(process, alg_size_type_corr, Defaults, reco, doProducer):
         # jra.srcRefToPartonMap = cms.InputTag(jetFlavourInfos.label())  # recojet
         jra.srcRefToPartonMapOld = cms.InputTag(genJetFlavourInfosOld.label())  # old partonflavour
 
+    jra.deltaRMax = cms.double(genJets.rParam.value()/2.)
+
     setattr(process,alg_size_type_corr,jra)
     sequence = cms.Sequence(sequence * jra)
 
