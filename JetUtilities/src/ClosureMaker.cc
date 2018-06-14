@@ -21,6 +21,7 @@ ClosureMaker::ClosureMaker() {
     outputFormat    = {".png",".eps",".pdf"};
     CMEnergy        = 13000;
     draw_guidelines = true;
+    title           = "Monte Carlo";
 
     //
     // Check that the input path exists
@@ -54,6 +55,7 @@ ClosureMaker::ClosureMaker(CommandLine& cl) {
     outputFilename  = cl.getValue<TString>  ("outputFilename",          "");
     outputFormat    = cl.getVector<TString> ("outputFormat", ".png:::.eps");
     CMEnergy        = cl.getValue<double>   ("CMEnergy",             13000);
+    title           = cl.getValue<TString>   ("title",             "Monte Carlo");
     histMet         = cl.getValue<TString>  ("histMet",             "mu_h");
     histogramMetric = HistUtil::getHistogramMetricType(string(histMet));
     bool help       = cl.getValue<bool>     ("help",                 false);
@@ -496,7 +498,7 @@ void ClosureMaker::makeCanvases() {
         // Format and draw the pave
         //
         pave.push_back(tdrText(0.5,0.75,0.93,1-gPad->GetTopMargin()-0.045*(1-gPad->GetTopMargin()-gPad->GetBottomMargin()),31));
-        pave.back()->AddText("QCD Monte Carlo");
+        pave.back()->AddText(title);
         pave.back()->AddText(JetInfo::get_legend_title(string(alg)).c_str());
         if(var == VARIABLES::refpt || var == VARIABLES::jtpt || var == VARIABLES::ptclpt) {
             pave.back()->AddText(detector_regions_eta[ih]);
@@ -590,7 +592,7 @@ void ClosureMaker::makeMergedCanvas() {
     //
     // Format the pave and draw
     //
-    pave.back()->AddText("QCD Monte Carlo");
+    pave.back()->AddText(title);
     pave.back()->AddText(JetInfo::get_legend_title(string(alg)).c_str());
     pave.back()->Draw("same");
 

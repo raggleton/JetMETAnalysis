@@ -90,7 +90,7 @@ public:
 private:
 	bool           	 				 objects_loaded, draw_guidelines;
     double							 CMEnergy, nsigma;
-	TString        	 				 path, filename, outputDir, outputFilename, flavor, alg, histMet;
+	TString        	 				 path, filename, outputDir, outputFilename, flavor, alg, histMet, title;
 	vector<TString>	 				 algs, outputFormat;
 	JetInfo							 *ji;
 	TFile							 *ifile, *ofile;
