@@ -38,6 +38,7 @@
 #include "TError.h"
 #include "TSpectrum.h"
 #include "TSpline.h"
+#include "TVirtualFitter.h"
 
 //https://www.gnu.org/software/gsl/manual/html_node/1D-Interpolation-Types.html#g_t1D-Interpolation-Types
 //https://github.com/ampl/gsl/tree/master/interpolation
