@@ -119,7 +119,7 @@ int main(int argc,char**argv)
    // evaluate command-line / configuration file options
    // 
    CommandLine cl;
-   if (!cl.parse(argc,argv)) return 0;
+   if (!cl.parse(argc,argv)) return 10;
 
    vector<string>  algs              = cl.getVector<string>      ("algs");
    string          path              = cl.getValue<string>       ("path");
