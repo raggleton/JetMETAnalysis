@@ -478,8 +478,11 @@ void ClosureMaker::makeCanvases() {
                 hClosure[ih]->GetXaxis()->SetLimits(minEta,maxEta);
             }
             else {
-                frame->GetXaxis()->SetLimits(-etaMax,etaMax);
-                hClosure[ih]->GetXaxis()->SetLimits(-etaMax,etaMax);
+                // round eta limits to nearest bin
+                etaMax = *(std::upper_bound(std::begin(veta), std::end(veta), etaMax));
+                float etaMin = *(std::lower_bound(std::begin(veta), std::end(veta), 0));
+                frame->GetXaxis()->SetLimits(etaMin,etaMax);
+                hClosure[ih]->GetXaxis()->SetLimits(etaMin,etaMax);
             }
         }
         frame->GetXaxis()->SetMoreLogLabels();
