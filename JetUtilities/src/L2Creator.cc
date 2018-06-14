@@ -912,6 +912,9 @@ TString L2Creator::getOfflinePFFunction() {
     else if(l2pffit.EqualTo("spline5",TString::kIgnoreCase)) {
         return "[0]+((x-[1])*([2]+((x-[1])*([3]+((x-[1])*([4]+((x-[1])*([5]+((x-[1])*[6])))))))))";
     }
+    else if(l2pffit.EqualTo("powerlaw",TString::kIgnoreCase)) {
+        return "[0]+([1]*pow(x,[2]))";
+    }
     //else if(l2pffit.EqualTo("standard+spline3",TString::kIgnoreCase)) {
     //    return "[0]+([1]/(pow(log10(x),2)+[2]))+([3]*exp(-[4]*(log10(x)-[5])*(log10(x)-[5])))";
     //}
@@ -1047,6 +1050,11 @@ void L2Creator::setOfflinePFParameters(TGraphErrors* gabscor, TF1* fabscor, doub
     fabscor->SetParameter(9,-0.0679365);
     fabscor->SetParameter(10,3.82597);
     fabscor->SetParameter(11,1.8277);
+  }
+  else if(l2pffit.EqualTo("powerlaw",TString::kIgnoreCase)) {
+    fabscor->SetParameter(0,1.0);
+    fabscor->SetParameter(1,1.0);
+    fabscor->SetParameter(2,-0.3);
   }
 }
 
