@@ -236,14 +236,14 @@ void L2Creator::loopOverEtaBins() {
         // only add points to the graphs if the current histo is not empty
         // the current setting might be a little high
         //
-        if (hrsp->GetEntries() > 4) {//hrsp->Integral()!=0) {
+        if (hrsp->GetEffectiveEntries() > 10) {//hrsp->Integral()!=0) {
 
             //TF1*  frsp    = (TF1*)hrsp->GetListOfFunctions()->Last();
             //std::cout << "hrspName = " << hrsp->GetName() << ": frsp = " << frsp << std::endl;
             TH1F* hrefpt  = hl_refpt.object(indices);
             TH1F* hjetpt  = hl_jetpt.object(indices);
 
-            assert(hrefpt->GetEntries()>0&&hjetpt->GetEntries()>0);
+            assert(hrefpt->GetEffectiveEntries()>0&&hjetpt->GetEffectiveEntries()>0);
 
             double ejetpt;
             double jetpt;
