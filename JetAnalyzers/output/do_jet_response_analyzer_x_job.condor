@@ -1,0 +1,44 @@
+RequestMemory=2G
+notification=Always
+getenv=True
+executable=run_prog.sh
+requirements=OpSysAndVer == "SL6"
+log=JRA_$(name)_$(Cluster)_$(Process).log
+transfer_executable=True
+universe=vanilla
+environment="LD_LIBRARY_PATH_STORED=/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/biglib/slc6_amd64_gcc530:/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/lib/slc6_amd64_gcc530:/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/external/slc6_amd64_gcc530/lib:/cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_8_0_28/biglib/slc6_amd64_gcc530:/cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_8_0_28/lib/slc6_amd64_gcc530:/cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_8_0_28/external/slc6_amd64_gcc530/lib:/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/llvm/3.8.0-ikhhed/lib64:/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/gcc/5.3.0/lib64:/cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/gcc/5.3.0/lib:/cvmfs/grid.cern.ch/emi-ui-3.17.1-1.el6umd4v5/lib64:/cvmfs/grid.cern.ch/emi-ui-3.17.1-1.el6umd4v5/lib:/cvmfs/grid.cern.ch/emi-ui-3.17.1-1.el6umd4v5/usr/lib64:/cvmfs/grid.cern.ch/emi-ui-3.17.1-1.el6umd4v5/usr/lib:/cvmfs/grid.cern.ch/emi-ui-3.17.1-1.el6umd4v5/usr/lib64/dcap"
+error=JRA_$(name)_$(Cluster)_$(Process).err
+output=JRA_$(name)_$(Cluster)_$(Process).out
+notify_user=robin.aggleton@desy.de
+JobBatchName=JRA
+
+arguments = jet_response_analyzer_x ../config/jra_flavour.config -input $(inputf) -output $(outputf) -algs ak4pfchs:0.2 ak4pfchsl1l2l3:0.2 ak4pfchsl1:0.2 -flavorDefinition NEW -xsection $(xsec) -luminosity 35900 -jtptmin 4 -relpthatmax 2.5 -nbinsrelrsp 100 -relrspmax 2 -useweight true
+
+#append=L1FastJet_wideBinning_rspRangeLarge_absEta2
+append=L1FastJet_rspRangeLarge_absEta
+
+pythiaindir=QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10
+herwigindir=QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10
+
+pythiaoutdir=QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k
+herwigoutdir=QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k
+
+queue name,inputf,outputf,xsec from (
+QCD_Pt_15to30, $(pythiaindir)/QCD_Pt_15to30_NoJEC_newFlav/*ak4pfchs*.root, $(pythiaoutdir)/jra_QCD_Pt_15to30_NoJEC_newFlav_ak4pfchs_$(append).root, 1837410000
+QCD_Pt_30to50, $(pythiaindir)/QCD_Pt_30to50_NoJEC_newFlav/*ak4pfchs*.root, $(pythiaoutdir)/jra_QCD_Pt_30to50_NoJEC_newFlav_ak4pfchs_$(append).root, 140932000
+QCD_Pt_50to80, $(pythiaindir)/QCD_Pt_50to80_NoJEC_newFlav/*ak4pfchs*.root, $(pythiaoutdir)/jra_QCD_Pt_50to80_NoJEC_newFlav_ak4pfchs_$(append).root, 19204300
+QCD_Pt_80to120, $(pythiaindir)/QCD_Pt_80to120_NoJEC_newFlav/*ak4pfchs*.root, $(pythiaoutdir)/jra_QCD_Pt_80to120_NoJEC_newFlav_ak4pfchs_$(append).root, 2762530
+QCD_Pt_120to170, $(pythiaindir)/QCD_Pt_120to170_NoJEC_newFlav/*ak4pfchs*.root, $(pythiaoutdir)/jra_QCD_Pt_120to170_NoJEC_newFlav_ak4pfchs_$(append).root, 471100
+QCD_Pt_170to300, $(pythiaindir)/QCD_Pt_170to300_NoJEC_newFlav/*ak4pfchs*.root, $(pythiaoutdir)/jra_QCD_Pt_170to300_NoJEC_newFlav_ak4pfchs_$(append).root, 117276
+QCD_Pt_300to470, $(pythiaindir)/QCD_Pt_300to470_NoJEC_newFlav/*ak4pfchs*.root, $(pythiaoutdir)/jra_QCD_Pt_300to470_NoJEC_newFlav_ak4pfchs_$(append).root, 7823
+QCD_Pt_470to600, $(pythiaindir)/QCD_Pt_470to600_NoJEC_newFlav/*ak4pfchs*.root, $(pythiaoutdir)/jra_QCD_Pt_470to600_NoJEC_newFlav_ak4pfchs_$(append).root, 648.2
+QCD_Pt_600to800, $(pythiaindir)/QCD_Pt_600to800_NoJEC_newFlav/*ak4pfchs*.root, $(pythiaoutdir)/jra_QCD_Pt_600to800_NoJEC_newFlav_ak4pfchs_$(append).root, 186.9
+QCD_Pt_800to1000, $(pythiaindir)/QCD_Pt_800to1000_NoJEC_newFlav/*ak4pfchs*.root, $(pythiaoutdir)/jra_QCD_Pt_800to1000_NoJEC_newFlav_ak4pfchs_$(append).root, 32.293
+QCD_Pt_1000to1400, $(pythiaindir)/QCD_Pt_1000to1400_NoJEC_newFlav/*ak4pfchs*.root, $(pythiaoutdir)/jra_QCD_Pt_1000to1400_NoJEC_newFlav_ak4pfchs_$(append).root, 9.4183
+QCD_Pt_1400to1800, $(pythiaindir)/QCD_Pt_1400to1800_NoJEC_newFlav/*ak4pfchs*.root, $(pythiaoutdir)/jra_QCD_Pt_1400to1800_NoJEC_newFlav_ak4pfchs_$(append).root, 0.84265
+QCD_Pt_1800to2400, $(pythiaindir)/QCD_Pt_1800to2400_NoJEC_newFlav/*ak4pfchs*.root, $(pythiaoutdir)/jra_QCD_Pt_1800to2400_NoJEC_newFlav_ak4pfchs_$(append).root, 0.114943
+QCD_Pt_2400to3200, $(pythiaindir)/QCD_Pt_2400to3200_NoJEC_newFlav/*ak4pfchs*.root, $(pythiaoutdir)/jra_QCD_Pt_2400to3200_NoJEC_newFlav_ak4pfchs_$(append).root, 0.0068298
+QCD_Pt_3200toInf, $(pythiaindir)/QCD_Pt_3200toInf_NoJEC_newFlav/*ak4pfchs*.root, $(pythiaoutdir)/jra_QCD_Pt_3200toInf_NoJEC_newFlav_ak4pfchs_$(append).root, 0.0001654
+QCD_Pt_15to7000, $(herwigindir)/QCD_Pt_15to7000_Herwig_NoJEC_newFlav/*ak4pfchs*.root, $(herwigoutdir)/jra_QCD_Pt_15to7000_Herwig_NoJEC_newFlav_ak4pfchs_$(append).root, 0
+)
+
