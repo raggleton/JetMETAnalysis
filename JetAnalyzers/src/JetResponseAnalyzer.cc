@@ -429,6 +429,7 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
               auto i_pfc = (i_pf);
               JRAEvent::Flavor pf_id = getFlavor( i_pfc->particleId() );
               if (pf_id == JRAEvent::X) continue;
+              if (i_pfc->pt() < 3) continue;
               JRAEvt_->pfcand_px ->push_back(i_pfc->px());
               JRAEvt_->pfcand_py ->push_back(i_pfc->py());
               JRAEvt_->pfcand_pt ->push_back(i_pfc->pt());
@@ -445,6 +446,7 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
                   auto i_pfc = (*i_pf);
                   JRAEvent::Flavor pf_id = getFlavor( i_pfc->particleId() );
                   if (pf_id == JRAEvent::X) continue;
+                  if (i_pfc->pt() < 3) continue;
                   JRAEvt_->pfcand_px ->push_back(i_pfc->px());
                   JRAEvt_->pfcand_py ->push_back(i_pfc->py());
                   JRAEvt_->pfcand_pt ->push_back(i_pfc->pt());
