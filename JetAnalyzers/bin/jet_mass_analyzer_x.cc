@@ -200,7 +200,7 @@ int main(int argc,char**argv)
 	for (unsigned char iref=0;iref<JRAEvt->nref;iref++) {
 	  if (JRAEvt->refdrjt->at(iref)>drmax_alg) continue;
 	  if (JRAEvt->jtpt->at(iref)<jtptmin) continue;
-	  int id = JRAEvt->refpdgid->at(iref);
+	  int id = JRAEvt->refpdgid_parton_physics->at(iref);
 	  vector<int>::iterator itid = find(ilegs.begin(),ilegs.end(),id);
 	  if (itid!=ilegs.end()) {
 	    TLorentzVector ref;

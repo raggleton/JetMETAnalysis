@@ -916,8 +916,8 @@ int main(int argc,char**argv)
             // e.g. want to get the 1st jet after a potential gamma fake
             jetCounter++;
 
-            if (doflavor && abs(pdgid)!=12 && abs(JRAEvt->refpdgid->at(iref))!=abs(pdgid)) continue;
-            else if (doflavor && abs(pdgid)==12 && (abs(JRAEvt->refpdgid->at(iref))>2 || abs(JRAEvt->refpdgid->at(iref))==0)) continue;
+            if (doflavor && abs(pdgid)!=12 && abs(JRAEvt->refpdgid_parton_physics->at(iref))!=abs(pdgid)) continue;
+            else if (doflavor && abs(pdgid)==12 && (abs(JRAEvt->refpdgid_parton_physics->at(iref))>2 || abs(JRAEvt->refpdgid_parton_physics->at(iref))==0)) continue;
 
             // Check no genjet-genjet overlaps
             if (drmin>0) {

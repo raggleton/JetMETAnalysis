@@ -207,7 +207,9 @@ void JetResponseAnalyzerProducer::produce(edm::Event& iEvent,
      if ((!doBalancing_&&JRAEvt_->refdrjt->at(JRAEvt_->nref)>deltaRMax_)||
          (doBalancing_&&std::abs(JRAEvt_->refdphijt->at(JRAEvt_->nref))<deltaPhiMin_)) continue;
 
-     JRAEvt_->refpdgid->push_back(0);
+     JRAEvt_->refpdgid_parton_physics->push_back(0);
+     JRAEvt_->refpdgid_parton_algo->push_back(0);
+     JRAEvt_->refpdgid_hadron->push_back(0);
      if (getFlavorFromMap_) {
         reco::JetMatchedPartonsCollection::const_iterator itPartonMatch;
         itPartonMatch=refToPartonMap->begin();
@@ -226,21 +228,21 @@ void JetResponseAnalyzerProducer::produce(edm::Event& iEvent,
                            itPartonMatch->second.algoDefinitionParton().get()->p4());
            
            if (refdrparton<deltaRPartonMax_) {
-              JRAEvt_->refpdgid->at(JRAEvt_->nref)=itPartonMatch->second.algoDefinitionParton().get()->pdgId();
-              int absid = std::abs(JRAEvt_->refpdgid->at(JRAEvt_->nref));
+              JRAEvt_->refpdgid_parton_physics->at(JRAEvt_->nref)=itPartonMatch->second.algoDefinitionParton().get()->pdgId();
+              int absid = std::abs(JRAEvt_->refpdgid_parton_physics->at(JRAEvt_->nref));
               if (absid==4||absid==5) {
                  GenJetLeptonFinder finder(*ref);
                  finder.run();
                  if (finder.foundLeptonAndNeutrino()) {
-                    int sign  = (JRAEvt_->refpdgid->at(JRAEvt_->nref)>0) ? +1 : -1;
-                    JRAEvt_->refpdgid->at(JRAEvt_->nref) = sign*(absid*100+std::abs(finder.leptonPdgId()));
+                    int sign  = (JRAEvt_->refpdgid_parton_physics->at(JRAEvt_->nref)>0) ? +1 : -1;
+                    JRAEvt_->refpdgid_parton_physics->at(JRAEvt_->nref) = sign*(absid*100+std::abs(finder.leptonPdgId()));
                  }
               }
            }
         }
      }
      else {
-        JRAEvt_->refpdgid->at(JRAEvt_->nref)=ref->pdgId();
+        JRAEvt_->refpdgid_parton_physics->at(JRAEvt_->nref)=ref->pdgId();
      }
 
      JRAEvt_->refrank ->push_back(JRAEvt_->nref);

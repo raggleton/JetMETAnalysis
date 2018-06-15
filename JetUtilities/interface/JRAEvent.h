@@ -75,8 +75,9 @@ public :
    Long64_t         evt;
    UChar_t          nref;
    vector<UChar_t>* refrank;
-   vector<Int_t>*   refpdgid;
-   vector<Int_t>*   refpdgid_old;
+   vector<Int_t>*   refpdgid_parton_physics;
+   vector<Int_t>*   refpdgid_parton_algo;
+   vector<Int_t>*   refpdgid_hadron;
    vector<Float_t>* refe;
    vector<Float_t>* refpt;
    vector<Float_t>* refeta;
@@ -136,8 +137,9 @@ public :
    TBranch        *b_evt;   //!
    TBranch        *b_nref;   //!
    TBranch        *b_refrank;   //!
-   TBranch        *b_refpdgid;   //!
-   TBranch        *b_refpdgid_old;   //!
+   TBranch        *b_refpdgid_parton_physics;   //!
+   TBranch        *b_refpdgid_parton_algo;   //!
+   TBranch        *b_refpdgid_hadron;   //!
    TBranch        *b_refe;   //!
    TBranch        *b_refpt;   //!
    TBranch        *b_refeta;   //!

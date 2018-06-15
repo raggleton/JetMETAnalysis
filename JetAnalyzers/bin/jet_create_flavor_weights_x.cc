@@ -161,7 +161,7 @@ int main(int argc,char**argv) {
             loadbar2(ievt+1,nevt,50,"\t");
             tree->GetEntry(ievt);
             for (unsigned char iref=0;iref<JRAEvt->nref;iref++) {
-               int   pdgid  = JRAEvt->refpdgid->at(iref);
+               int   pdgid  = JRAEvt->refpdgid_parton_physics->at(iref);
                float pt     = (refOrJetPt==0) ? JRAEvt->refpt->at(iref) : JRAEvt->jtpt->at(iref);
                float eta    = JRAEvt->jteta->at(iref);
                float dr     = JRAEvt->refdrjt->at(iref);

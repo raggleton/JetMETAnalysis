@@ -235,7 +235,7 @@ int main(int argc,char**argv) {
 				ialg->second.second->refy->push_back(ref->P4().Rapidity());
 				ialg->second.second->refdrjt->push_back(ref->P4().DeltaR(jet->P4()));
 				ialg->second.second->refarea->push_back(ref->Area.Pt());
-				ialg->second.second->refpdgid->push_back(0);
+				ialg->second.second->refpdgid_parton_physics->push_back(0);
 				ialg->second.second->beta            = 0.0;//gen->Beta;
 				ialg->second.second->betaStar        = 0.0;//gen->BetaStar;
 

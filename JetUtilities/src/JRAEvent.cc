@@ -85,8 +85,9 @@ void JRAEvent::MakeTree(TTree* tree)
    fChain->Branch("nref", &nref, "nref/b");
    fChain->Branch("refrank", "vector<UChar_t>", &refrank);
    if(!flags.test(0) || (flags.test(0) && flags.test(2))) {
-      fChain->Branch("refpdgid", "vector<Int_t>", &refpdgid);
-      fChain->Branch("refpdgid_old", "vector<Int_t>", &refpdgid_old);
+      fChain->Branch("refpdgid_parton_physics", "vector<Int_t>", &refpdgid_parton_physics);
+      fChain->Branch("refpdgid_parton_algo", "vector<Int_t>", &refpdgid_parton_algo);
+      fChain->Branch("refpdgid_hadron", "vector<Int_t>", &refpdgid_hadron);
    }
    fChain->Branch("refe", "vector<Float_t>", &refe);
    fChain->Branch("refpt", "vector<Float_t>", &refpt);
@@ -186,8 +187,9 @@ void JRAEvent::Init(TTree *tree)
    fChain->SetBranchAddress("nref", &nref, &b_nref);
    fChain->SetBranchAddress("refrank", &refrank, &b_refrank);
    if(!flags.test(0) || (flags.test(0) && flags.test(2))) {
-      fChain->SetBranchAddress("refpdgid", &refpdgid, &b_refpdgid);
-      fChain->SetBranchAddress("refpdgid_old", &refpdgid_old, &b_refpdgid_old);
+      fChain->SetBranchAddress("refpdgid_parton_physics", &refpdgid_parton_physics, &b_refpdgid_parton_physics);
+      fChain->SetBranchAddress("refpdgid_parton_algo", &refpdgid_parton_algo, &b_refpdgid_parton_algo);
+      fChain->SetBranchAddress("refpdgid_hadron", &refpdgid_hadron, &b_refpdgid_hadron);
    }
    fChain->SetBranchAddress("refe", &refe, &b_refe);
    fChain->SetBranchAddress("refpt", &refpt, &b_refpt);
@@ -277,8 +279,9 @@ void JRAEvent::MakeVectors()
    rhos                    = new vector<float>;
    refrank                 = new vector<UChar_t>;
    if(!flags.test(0) || (flags.test(0) && flags.test(2))) {
-      refpdgid             = new vector<int>;
-      refpdgid_old         = new vector<int>;
+      refpdgid_parton_physics   = new vector<int>;
+      refpdgid_parton_algo      = new vector<int>;
+      refpdgid_hadron      = new vector<int>;
    }
    refe                    = new vector<float>;
    refpt                   = new vector<float>;
@@ -340,8 +343,9 @@ void JRAEvent::clear()
    rhos->clear();
    refrank->clear();
    if(!flags.test(0) || (flags.test(0) && flags.test(2))) {
-      refpdgid->clear();
-      refpdgid_old->clear();
+      refpdgid_parton_physics->clear();
+      refpdgid_parton_algo->clear();
+      refpdgid_hadron->clear();
    }
    refe->clear();
    refpt->clear();

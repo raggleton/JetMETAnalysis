@@ -221,7 +221,7 @@ void jet_response_analyzer::analyze(const edm::Event& iEvent, const edm::EventSe
       float eta    = (binseta.size()&&binseta.front()>=0.)?std::abs(algHandles[ialg]->jteta->at(iref)):algHandles[ialg]->jteta->at(iref);
       float y      = (binsy.size()&&binsy.front()>=0.)?std::abs(algHandles[ialg]->jty->at(iref)):algHandles[ialg]->jty->at(iref);
       float pt     = algHandles[ialg]->jtpt->at(iref);
-      float pdgid  = algHandles[ialg]->refpdgid->at(iref);
+      float pdgid  = algHandles[ialg]->refpdgid_parton_physics->at(iref);
 
       float absrsp = algHandles[ialg]->jtpt->at(iref)-algHandles[ialg]->refpt->at(iref);
       float relrsp = algHandles[ialg]->jtpt->at(iref)/algHandles[ialg]->refpt->at(iref);
@@ -257,23 +257,23 @@ void jet_response_analyzer::analyze(const edm::Event& iEvent, const edm::EventSe
           fill_histo(algHandles[ialg]->refpt->at(iref),weight,algHandles[ialg]->refpt->at(iref),binspt,"RefPt_Barrel_","RefPt");
           fill_histo(algHandles[ialg]->jtpt ->at(iref),weight,algHandles[ialg]->refpt->at(iref),binspt,"JetPt_Barrel_","RefPt");
           if (doflavor) {
-            fill_histo(algHandles[ialg]->refpdgid->at(iref),algHandles[ialg]->refpt->at(iref),flavorWeight,
+            fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),algHandles[ialg]->refpt->at(iref),flavorWeight,
                        algHandles[ialg]->refpt->at(iref),binspt,"RefPt_Barrel_","RefPt",noabsflavors);
-            fill_histo(algHandles[ialg]->refpdgid->at(iref),algHandles[ialg]->jtpt->at(iref),flavorWeight,
+            fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),algHandles[ialg]->jtpt->at(iref),flavorWeight,
                        algHandles[ialg]->refpt->at(iref),binspt,"JetPt_Barrel_","RefPt",noabsflavors);
           }
         }
         if (dorelrsp&&dorefpt) {
           fill_histo(relrsp,weight,algHandles[ialg]->refpt->at(iref),binspt,"RelRsp_Barrel_","RefPt");
           if (doflavor) {
-            fill_histo(algHandles[ialg]->refpdgid->at(iref),relrsp,flavorWeight,algHandles[ialg]->refpt->at(iref),
+            fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),relrsp,flavorWeight,algHandles[ialg]->refpt->at(iref),
                        binspt,"RelRsp_Barrel_","RefPt",noabsflavors);
           }
         }
         if (doabsrsp&&dorefpt) {
           fill_histo(absrsp,weight,algHandles[ialg]->refpt->at(iref),binspt,"AbsRsp_Barrel_","RefPt");
           if (doflavor) {
-            fill_histo(algHandles[ialg]->refpdgid->at(iref),absrsp,flavorWeight,algHandles[ialg]->refpt->at(iref),
+            fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),absrsp,flavorWeight,algHandles[ialg]->refpt->at(iref),
                        binspt,"AbsRsp_Barrel_","RefPt",noabsflavors);
           }
         }
@@ -282,30 +282,30 @@ void jet_response_analyzer::analyze(const edm::Event& iEvent, const edm::EventSe
       if (dojetpt) {
         fill_histo(algHandles[ialg]->jtpt->at(iref),weight,algHandles[ialg]->jtpt->at(iref), binspt,"JetPt_","JetPt");
         if (doflavor)
-          fill_histo(algHandles[ialg]->refpdgid->at(iref),algHandles[ialg]->jtpt->at(iref),flavorWeight,
+          fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),algHandles[ialg]->jtpt->at(iref),flavorWeight,
                      algHandles[ialg]->jtpt->at(iref),binspt,"JetPt_","JetPt",noabsflavors);
       }
       if (dorefpt) {
         fill_histo(algHandles[ialg]->refpt->at(iref),weight,algHandles[ialg]->refpt->at(iref),binspt,"RefPt_","RefPt");
         fill_histo(algHandles[ialg]->jtpt ->at(iref),weight,algHandles[ialg]->refpt->at(iref),binspt,"JetPt_","RefPt");
         if (doflavor) {
-          fill_histo(algHandles[ialg]->refpdgid->at(iref),algHandles[ialg]->refpt->at(iref),flavorWeight,
+          fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),algHandles[ialg]->refpt->at(iref),flavorWeight,
                      algHandles[ialg]->refpt->at(iref),binspt,"RefPt_","RefPt",noabsflavors);
-          fill_histo(algHandles[ialg]->refpdgid->at(iref),algHandles[ialg]->jtpt->at(iref),flavorWeight,
+          fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),algHandles[ialg]->jtpt->at(iref),flavorWeight,
                      algHandles[ialg]->refpt->at(iref),binspt,"JetPt_","RefPt",noabsflavors);
         }
       }
 
       fill_histo(eta,weight,eta,binseta,"JetEta_","JetEta");
-      if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),eta,flavorWeight,eta,binseta,"JetEta_","JetEta",
+      if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),eta,flavorWeight,eta,binseta,"JetEta_","JetEta",
                                noabsflavors);
 
       fill_histo(algHandles[ialg]->jtphi->at(iref),weight,algHandles[ialg]->jtphi->at(iref),binsphi,"JetPhi_","JetPhi");
-      if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),algHandles[ialg]->jtphi->at(iref),flavorWeight,
+      if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),algHandles[ialg]->jtphi->at(iref),flavorWeight,
                                algHandles[ialg]->jtphi->at(iref),binsphi,"JetPhi_","JetPhi",noabsflavors);
 
       fill_histo(algHandles[ialg]->jty->at(iref),weight,algHandles[ialg]->jty->at(iref),binsy,"JetY_","JetY");
-      if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),algHandles[ialg]->jty->at(iref),flavorWeight,
+      if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),algHandles[ialg]->jty->at(iref),flavorWeight,
                                algHandles[ialg]->jty->at(iref),binsy,"JetY_","JetY",noabsflavors);
 
       if (dojetpt) {
@@ -315,10 +315,10 @@ void jet_response_analyzer::analyze(const edm::Event& iEvent, const edm::EventSe
                    "JetPt_","JetY","JetPt");
 
         if (doflavor) {
-          fill_histo(algHandles[ialg]->refpdgid->at(iref),algHandles[ialg]->jtpt->at(iref),flavorWeight,
+          fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),algHandles[ialg]->jtpt->at(iref),flavorWeight,
                      eta,algHandles[ialg]->jtpt->at(iref),binseta,binspt,"JetPt_","JetEta","JetPt",
                      noabsflavors);
-          fill_histo(algHandles[ialg]->refpdgid->at(iref),algHandles[ialg]->jtpt->at(iref),flavorWeight,
+          fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),algHandles[ialg]->jtpt->at(iref),flavorWeight,
                      y,algHandles[ialg]->jtpt->at(iref),binsy,binspt,"JetPt_","JetY","JetPt",
                      noabsflavors);
         }
@@ -334,16 +334,16 @@ void jet_response_analyzer::analyze(const edm::Event& iEvent, const edm::EventSe
         fill_histo(algHandles[ialg]->jtpt ->at(iref),weight,y,algHandles[ialg]->refpt->at(iref),binsy,binspt,
                    "JetPt_","JetY","RefPt");
         if (doflavor) {
-          fill_histo(algHandles[ialg]->refpdgid->at(iref),algHandles[ialg]->refpt->at(iref),flavorWeight,
+          fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),algHandles[ialg]->refpt->at(iref),flavorWeight,
                      eta,algHandles[ialg]->refpt->at(iref),binseta,binspt,"RefPt_","JetEta","RefPt",
                      noabsflavors);
-          fill_histo(algHandles[ialg]->refpdgid->at(iref),algHandles[ialg]->jtpt->at(iref),flavorWeight,
+          fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),algHandles[ialg]->jtpt->at(iref),flavorWeight,
                      eta,algHandles[ialg]->refpt->at(iref),binseta,binspt,"JetPt_","JetEta","RefPt",
                      noabsflavors);
-          fill_histo(algHandles[ialg]->refpdgid->at(iref),algHandles[ialg]->refpt->at(iref),flavorWeight,
+          fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),algHandles[ialg]->refpt->at(iref),flavorWeight,
                      y,algHandles[ialg]->refpt->at(iref),binsy,binspt,"RefPt_","JetY","RefPt",
                      noabsflavors);
-          fill_histo(algHandles[ialg]->refpdgid->at(iref),algHandles[ialg]->jtpt->at(iref),flavorWeight,
+          fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),algHandles[ialg]->jtpt->at(iref),flavorWeight,
                      y,algHandles[ialg]->refpt->at(iref),binsy,binspt,"JetPt_","JetY","RefPt",
                      noabsflavors);
         }
@@ -352,28 +352,28 @@ void jet_response_analyzer::analyze(const edm::Event& iEvent, const edm::EventSe
       if (dorelrsp) {
         if (dojetpt) {
           fill_histo(relrsp,weight,algHandles[ialg]->jtpt->at(iref),binspt,"RelRsp_","JetPt");
-          if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),relrsp,flavorWeight,
+          if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),relrsp,flavorWeight,
                                    algHandles[ialg]->jtpt->at(iref), binspt,"RelRsp_","JetPt",
                                    noabsflavors);
         }
         if (dorefpt) {
           fill_histo(relrsp,weight,algHandles[ialg]->refpt->at(iref),binspt,"RelRsp_","RefPt");
-          if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),relrsp,flavorWeight,
+          if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),relrsp,flavorWeight,
                                    algHandles[ialg]->refpt->at(iref),binspt,"RelRsp_","RefPt",
                                    noabsflavors);
         }
 
         fill_histo(relrsp,weight,eta,binseta,"RelRsp_","JetEta");
-        if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),relrsp,flavorWeight,
+        if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),relrsp,flavorWeight,
                                eta,binseta,"RelRsp_","JetEta",noabsflavors);
 
         fill_histo(relrsp,weight,algHandles[ialg]->jtphi->at(iref),binsphi,"RelRsp_","JetPhi");
-        if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),relrsp,flavorWeight,
+        if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),relrsp,flavorWeight,
                                  algHandles[ialg]->jtphi->at(iref),binsphi,"RelRsp_","JetPhi",
                                  noabsflavors);
 
         fill_histo(relrsp,weight,algHandles[ialg]->jty->at(iref),binsy,"RelRsp_","JetY");
-        if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),relrsp,flavorWeight,
+        if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),relrsp,flavorWeight,
                                  algHandles[ialg]->jty->at(iref),binsy,"RelRsp_","JetY",
                                  noabsflavors);
 
@@ -383,9 +383,9 @@ void jet_response_analyzer::analyze(const edm::Event& iEvent, const edm::EventSe
           fill_histo(relrsp,weight,y,algHandles[ialg]->jtpt->at(iref),binsy,binspt,
                      "RelRsp_","JetY","JetPt");
           if (doflavor) {
-            fill_histo(algHandles[ialg]->refpdgid->at(iref),relrsp,flavorWeight,eta,algHandles[ialg]->jtpt->at(iref),
+            fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),relrsp,flavorWeight,eta,algHandles[ialg]->jtpt->at(iref),
                        binseta,binspt,"RelRsp_","JetEta","JetPt",noabsflavors);
-            fill_histo(algHandles[ialg]->refpdgid->at(iref),relrsp,flavorWeight,y,algHandles[ialg]->jtpt->at(iref),
+            fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),relrsp,flavorWeight,y,algHandles[ialg]->jtpt->at(iref),
                        binsy,binspt,"RelRsp_","JetY","JetPt",noabsflavors);
           }
         }
@@ -395,9 +395,9 @@ void jet_response_analyzer::analyze(const edm::Event& iEvent, const edm::EventSe
           fill_histo(relrsp,weight,y,algHandles[ialg]->refpt->at(iref),binsy,binspt,
                      "RelRsp_","JetY","RefPt");
           if (doflavor) {
-            fill_histo(algHandles[ialg]->refpdgid->at(iref),relrsp,flavorWeight,eta,algHandles[ialg]->refpt->at(iref),
+            fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),relrsp,flavorWeight,eta,algHandles[ialg]->refpt->at(iref),
                        binseta,binspt,"RelRsp_","JetEta","RefPt",noabsflavors);
-            fill_histo(algHandles[ialg]->refpdgid->at(iref),relrsp,flavorWeight,y,algHandles[ialg]->refpt->at(iref),
+            fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),relrsp,flavorWeight,y,algHandles[ialg]->refpt->at(iref),
                        binsy,binspt,"RelRsp_","JetY","RefPt",noabsflavors);
           }
         }
@@ -406,28 +406,28 @@ void jet_response_analyzer::analyze(const edm::Event& iEvent, const edm::EventSe
       if (doabsrsp) {
         if (dojetpt) {
           fill_histo(absrsp,weight,algHandles[ialg]->jtpt->at(iref), binspt,"AbsRsp_","JetPt");
-          if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),absrsp,flavorWeight,
+          if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),absrsp,flavorWeight,
                                    algHandles[ialg]->jtpt->at(iref),binspt,"AbsRsp_","JetPt",
                                    noabsflavors);
         }
         if (dorefpt) {
           fill_histo(absrsp,weight,algHandles[ialg]->refpt->at(iref),binspt,"AbsRsp_","RefPt");
-          if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),absrsp,flavorWeight,
+          if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),absrsp,flavorWeight,
                                    algHandles[ialg]->refpt->at(iref),binspt,"AbsRsp_","RefPt",
                                    noabsflavors);
         }
 
         fill_histo(absrsp,weight,eta,binseta,"AbsRsp_","JetEta");
-        if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),absrsp,flavorWeight,
+        if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),absrsp,flavorWeight,
                                  eta,binseta,"AbsRsp_","JetEta",noabsflavors);
 
         fill_histo(absrsp,weight,algHandles[ialg]->jtphi->at(iref),binsphi,"AbsRsp_","JetPhi");
-        if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),absrsp,flavorWeight,
+        if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),absrsp,flavorWeight,
                                  algHandles[ialg]->jtphi->at(iref),binsphi,"AbsRsp_","JetPhi",
                                  noabsflavors);
 
         fill_histo(absrsp,weight,algHandles[ialg]->jty->at(iref),binsy,"AbsRsp_","JetY");
-        if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),absrsp,flavorWeight,
+        if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),absrsp,flavorWeight,
                                  algHandles[ialg]->jty->at(iref),binsy,"AbsRsp_","JetY",
                                  noabsflavors);
 
@@ -437,9 +437,9 @@ void jet_response_analyzer::analyze(const edm::Event& iEvent, const edm::EventSe
           fill_histo(absrsp,weight,y,algHandles[ialg]->jtpt->at(iref),
                      binsy,binspt,"AbsRsp_","JetY","JetPt");
           if (doflavor) {
-            fill_histo(algHandles[ialg]->refpdgid->at(iref),absrsp,flavorWeight,eta,algHandles[ialg]->jtpt->at(iref),
+            fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),absrsp,flavorWeight,eta,algHandles[ialg]->jtpt->at(iref),
                        binseta,binspt,"AbsRsp_","JetEta","JetPt",noabsflavors);
-            fill_histo(algHandles[ialg]->refpdgid->at(iref),absrsp,flavorWeight,y,algHandles[ialg]->jtpt->at(iref),
+            fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),absrsp,flavorWeight,y,algHandles[ialg]->jtpt->at(iref),
                        binsy,binspt,"AbsRsp_","JetY","JetPt",noabsflavors);
           }
         }
@@ -449,9 +449,9 @@ void jet_response_analyzer::analyze(const edm::Event& iEvent, const edm::EventSe
           fill_histo(absrsp,weight,y,algHandles[ialg]->refpt->at(iref),binsy,binspt,
                      "AbsRsp_","JetY","RefPt");
           if (doflavor) {
-            fill_histo(algHandles[ialg]->refpdgid->at(iref),absrsp,flavorWeight,eta,algHandles[ialg]->refpt->at(iref),
+            fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),absrsp,flavorWeight,eta,algHandles[ialg]->refpt->at(iref),
                        binseta,binspt,"AbsRsp_","JetEta","RefPt",noabsflavors);
-            fill_histo(algHandles[ialg]->refpdgid->at(iref),absrsp,flavorWeight,y,algHandles[ialg]->refpt->at(iref),
+            fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),absrsp,flavorWeight,y,algHandles[ialg]->refpt->at(iref),
                        binsy,binspt,"AbsRsp_","JetY","RefPt",noabsflavors);
           }
         }
@@ -460,35 +460,35 @@ void jet_response_analyzer::analyze(const edm::Event& iEvent, const edm::EventSe
       if (doetarsp) {
         if (dojetpt) {
           fill_histo(etarsp,weight,algHandles[ialg]->jtpt->at(iref), binspt,"EtaRsp_","JetPt");
-          if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),etarsp,flavorWeight,
+          if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),etarsp,flavorWeight,
                                    algHandles[ialg]->jtpt->at(iref),binspt,"EtaRsp_","JetPt",
                                    noabsflavors);
         }
         if (dorefpt) {
           fill_histo(etarsp,weight,algHandles[ialg]->refpt->at(iref),binspt,"EtaRsp_","RefPt");
-          if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),etarsp,flavorWeight,
+          if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),etarsp,flavorWeight,
                                    algHandles[ialg]->refpt->at(iref),binspt,"EtaRsp_","RefPt",
                                    noabsflavors);
         }
 
         fill_histo(etarsp,weight,eta,binseta,"EtaRsp_","JetEta");
-        if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),etarsp,flavorWeight,
+        if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),etarsp,flavorWeight,
                                  eta,binseta,"EtaRsp_","JetEta",noabsflavors);
 
         fill_histo(etarsp,weight,algHandles[ialg]->jtphi->at(iref),binsphi,"EtaRsp_","JetPhi");
-        if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),etarsp,flavorWeight,
+        if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),etarsp,flavorWeight,
                                  algHandles[ialg]->jtphi->at(iref),binsphi,"EtaRsp_","JetPhi",
                                  noabsflavors);
 
         if (dojetpt) {
           fill_histo(etarsp,weight,eta,algHandles[ialg]->jtpt->at(iref),binseta,binspt,"EtaRsp_","JetEta","JetPt");
-          if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),etarsp,flavorWeight,
+          if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),etarsp,flavorWeight,
                                    eta,algHandles[ialg]->jtpt->at(iref),binseta,binspt,"EtaRsp_","JetEta","JetPt",
                                    noabsflavors);
           }
         if (dorefpt) {
           fill_histo(etarsp,weight,eta,algHandles[ialg]->refpt->at(iref),binseta,binspt,"EtaRsp_","JetEta","RefPt");
-          if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),etarsp,flavorWeight,
+          if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),etarsp,flavorWeight,
                                    eta,algHandles[ialg]->refpt->at(iref),binseta,binspt,"EtaRsp_","JetEta","RefPt",
                                    noabsflavors);
         }
@@ -497,35 +497,35 @@ void jet_response_analyzer::analyze(const edm::Event& iEvent, const edm::EventSe
       if (dophirsp) {
         if (dojetpt) {
           fill_histo(phirsp,weight,algHandles[ialg]->jtpt->at(iref), binspt,"PhiRsp_","JetPt");
-          if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),phirsp,flavorWeight,
+          if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),phirsp,flavorWeight,
                                    algHandles[ialg]->jtpt->at(iref),binspt,"PhiRsp_","JetPt",
                                    noabsflavors);
         }
         if (dorefpt) {
           fill_histo(phirsp,weight,algHandles[ialg]->refpt->at(iref),binspt,"PhiRsp_","RefPt");
-          if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),phirsp,flavorWeight,
+          if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),phirsp,flavorWeight,
                                    algHandles[ialg]->refpt->at(iref),binspt,"PhiRsp_","RefPt",
                                    noabsflavors);
         }
 
         fill_histo(phirsp,weight,eta,binseta,"PhiRsp_","JetEta");
-        if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),phirsp,flavorWeight,
+        if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),phirsp,flavorWeight,
                                  eta,binseta,"PhiRsp_","JetEta",noabsflavors);
 
         fill_histo(phirsp,weight,algHandles[ialg]->jtphi->at(iref),binsphi,"PhiRsp_","JetPhi");
-        if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),phirsp,flavorWeight,
+        if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),phirsp,flavorWeight,
                                  algHandles[ialg]->jtphi->at(iref),binsphi,"PhiRsp_","JetPhi",
                                  noabsflavors);
 
         if (dojetpt) {
           fill_histo(phirsp,weight,eta,algHandles[ialg]->jtpt->at(iref),binseta,binspt,"PhiRsp_","JetEta","JetPt");
-          if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),phirsp,flavorWeight,
+          if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),phirsp,flavorWeight,
                                    eta,algHandles[ialg]->jtpt->at(iref),binseta,binspt,"PhiRsp_","JetEta","JetPt",
                                    noabsflavors);
         }
         if (dorefpt) {
           fill_histo(phirsp,weight,eta,algHandles[ialg]->refpt->at(iref),binseta,binspt,"PhiRsp_","JetEta","RefPt");
-          if (doflavor) fill_histo(algHandles[ialg]->refpdgid->at(iref),phirsp,flavorWeight,
+          if (doflavor) fill_histo(algHandles[ialg]->refpdgid_parton_physics->at(iref),phirsp,flavorWeight,
                                    eta,algHandles[ialg]->refpt->at(iref),binseta,binspt,"PhiRsp_","JetEta","RefPt",
                                    noabsflavors);
         }

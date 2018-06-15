@@ -171,10 +171,6 @@ MatchEventsAndJets::MatchEventsAndJets() : algo1("ak5pf"), algo2("ak5pf"), iftes
    algo2JetInfo = JetInfo(algo2);
    getMaxDeltaR();
    LumiWeightsSet_ = false;
-   recoJetIndexPU = NULL;
-   recoJetIndexNoPU = NULL;
-   jetMapTree = NULL;
-   fValue = NULL;
 }
 
 //______________________________________________________________________________
@@ -190,10 +186,6 @@ MatchEventsAndJets::MatchEventsAndJets(string algo1_, string algo2_, bool iftest
    algo2JetInfo = JetInfo(algo2);
    getMaxDeltaR();
    LumiWeightsSet_ = false;
-   recoJetIndexPU = NULL;
-   recoJetIndexNoPU = NULL;
-   jetMapTree = NULL;
-   fValue = NULL;
 }
 
 //______________________________________________________________________________
@@ -1214,9 +1206,9 @@ bool MatchEventsAndJets::FillHistograms(bool reduceHistograms) {
       idet = JetInfo::getDetIndex(tpu->jteta->at(jpu));
       detectorAbbreviation = JetInfo::get_detector_abbreviation(detector_names[idet]);
       detectorAbbreviation.ToLower();
-      vector<int> pdgid_indecies = JetInfo::getPDGIDIndecies(tpu->refpdgid->at(jpu));
+      vector<int> pdgid_indecies = JetInfo::getPDGIDIndecies(tpu->refpdgid_parton_physics->at(jpu));
 
-      diff_pdgid    = tpu->refpdgid->at(jpu) - tnopu->refpdgid->at(jnopu);
+      diff_pdgid    = tpu->refpdgid_parton_physics->at(jpu) - tnopu->refpdgid_parton_physics->at(jnopu);
       offset        = tpu->jtpt->at(jpu) - tnopu->jtpt->at(jnopu);
       offset_raw    = (tpu_jtpt_raw.size()>0) ? tpu_jtpt_raw[jpu] - tnopu->jtpt->at(jnopu) : -1.0;
       offsetOA      = offset / tpu->jtarea->at(jpu);

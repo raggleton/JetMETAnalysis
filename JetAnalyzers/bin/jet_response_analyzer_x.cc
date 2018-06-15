@@ -1519,9 +1519,9 @@ int main(int argc,char**argv)
           if(doflavor) {
             flavorDefinition.ToUpper();
             if(flavorDefinition.CompareTo("OLD")==0)
-               pdgid = JRAEvt->refpdgid_old->at(iref);
+               pdgid = JRAEvt->refpdgid_hadron->at(iref);
             else if (flavorDefinition.CompareTo("NEW")==0)
-               pdgid = JRAEvt->refpdgid->at(iref);
+               pdgid = JRAEvt->refpdgid_parton_physics->at(iref);
           }
           float absrsp = pt-refpt;
           float relrsp = pt/refpt;

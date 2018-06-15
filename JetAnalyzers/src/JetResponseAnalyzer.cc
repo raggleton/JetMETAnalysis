@@ -275,19 +275,20 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
            const reco::Candidate* cand = &(*thisJet);
            if (cand == &(*ref)) { // gen jets
            // if (cand==&(*jet)) { // reco jets
-            JRAEvt_->refpdgid->push_back(itPartonMatch->second.getPartonFlavour());
+            JRAEvt_->refpdgid_parton_physics->push_back(itPartonMatch->second.getPartonFlavour());
+            JRAEvt_->refpdgid_hadron->push_back(itPartonMatch->second.getHadronFlavour());
             break;
            }
         }
 
-        // for the old flavor defintion
+        // for the old (algo) flavor defintion
         itPartonMatch = refToPartonMapOld->begin();
         for (; itPartonMatch != refToPartonMapOld->end(); ++itPartonMatch) {
            reco::JetBaseRef thisJet = itPartonMatch->first;
            const reco::Candidate* cand = &(*thisJet);
            if (cand == &(*ref)) { // gen jets
            // if (cand==&(*jet)) { // reco jets
-            JRAEvt_->refpdgid_old->push_back(itPartonMatch->second.getPartonFlavour());
+            JRAEvt_->refpdgid_parton_algo->push_back(itPartonMatch->second.getPartonFlavour());
             break;
            }
         }
