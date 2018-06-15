@@ -94,7 +94,7 @@ private:
   edm::EDGetTokenT<reco::CandidateView> srcRef_;
   edm::EDGetTokenT<reco::CandViewMatchMap> srcJetToUncorJetMap_;
   edm::EDGetTokenT<reco::CandViewMatchMap> srcRefToJetMap_;
-  edm::EDGetTokenT<reco::JetFlavourInfoMatchingCollection> srcRefToPartonMap_, srcRefToPartonMapOld_;
+  edm::EDGetTokenT<reco::JetFlavourInfoMatchingCollection> srcRefToPartonMapPhysics_, srcRefToPartonMapAlgo_;
   edm::EDGetTokenT<vector<double> > srcRhos_;
   edm::EDGetTokenT<double> srcRho_;
   edm::EDGetTokenT<double> srcRhoHLT_;

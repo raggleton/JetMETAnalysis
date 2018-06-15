@@ -472,7 +472,7 @@ def addAlgorithm(process, alg_size_type_corr, Defaults, reco, doProducer):
         selectedHadronsAndPartonsForGenJetsFlavourInfos.particles = cms.InputTag("genParticles")
         setattr(process, 'selectedHadronsAndPartonsForGenJetsFlavourInfos', selectedHadronsAndPartonsForGenJetsFlavourInfos)
         (genLabel, genJets) = genJetsDict[alg_size_type]
-        genJetFlavourInfos = cms.EDProducer("JetFlavourClustering",
+        genJetFlavourInfosPhysics = cms.EDProducer("JetFlavourClustering",
             jets                     = cms.InputTag(genLabel),
             bHadrons                 = cms.InputTag("selectedHadronsAndPartonsForGenJetsFlavourInfos","bHadrons"),
             cHadrons                 = cms.InputTag("selectedHadronsAndPartonsForGenJetsFlavourInfos","cHadrons"),
@@ -484,8 +484,8 @@ def addAlgorithm(process, alg_size_type_corr, Defaults, reco, doProducer):
             hadronFlavourHasPriority = cms.bool(False)
         )
         # Old definition, using algorithmic partons
-        setattr(process, alg_size_type + 'genJetFlavourInfos', genJetFlavourInfos)
-        genJetFlavourInfosOld = cms.EDProducer("JetFlavourClustering",
+        setattr(process, alg_size_type + 'genJetFlavourInfosPhysics', genJetFlavourInfosPhysics)
+        genJetFlavourInfosAlgo = cms.EDProducer("JetFlavourClustering",
             jets                     = cms.InputTag(genLabel),
             bHadrons                 = cms.InputTag("selectedHadronsAndPartonsForGenJetsFlavourInfos","bHadrons"),
             cHadrons                 = cms.InputTag("selectedHadronsAndPartonsForGenJetsFlavourInfos","cHadrons"),
@@ -496,8 +496,8 @@ def addAlgorithm(process, alg_size_type_corr, Defaults, reco, doProducer):
             ghostRescaling           = cms.double(1e-18),
             hadronFlavourHasPriority = cms.bool(False)
         )
-        setattr(process, alg_size_type + 'genJetFlavourInfosOld', genJetFlavourInfosOld)
-        sequence = cms.Sequence(sequence * selectedHadronsAndPartonsForGenJetsFlavourInfos * genJetFlavourInfos * genJetFlavourInfosOld)
+        setattr(process, alg_size_type + 'genJetFlavourInfosAlgo', genJetFlavourInfosAlgo)
+        sequence = cms.Sequence(sequence * selectedHadronsAndPartonsForGenJetsFlavourInfos * genJetFlavourInfos * genJetFlavourInfosAlgo)
 
         # To get flav map for reco jets
         # from PhysicsTools.JetMCAlgos.HadronAndPartonSelector_cfi import selectedHadronsAndPartons
@@ -610,9 +610,9 @@ def addAlgorithm(process, alg_size_type_corr, Defaults, reco, doProducer):
         jra.jecLabel = corrJets.correctors[0].replace("Corrector","")
 
     if Defaults.JetResponseParameters.doFlavor.value():
-        jra.srcRefToPartonMap = cms.InputTag(genJetFlavourInfos.label())  # genjet
+        jra.srcRefToPartonMapPhysics = cms.InputTag(genJetFlavourInfos.label())  # genjet
         # jra.srcRefToPartonMap = cms.InputTag(jetFlavourInfos.label())  # recojet
-        jra.srcRefToPartonMapOld = cms.InputTag(genJetFlavourInfosOld.label())  # old partonflavour
+        jra.srcRefToPartonMapAlgo = cms.InputTag(genJetFlavourInfosAlgo.label())  # old partonflavour
 
     jra.deltaRMax = cms.double(genJets.rParam.value()/2.)
 

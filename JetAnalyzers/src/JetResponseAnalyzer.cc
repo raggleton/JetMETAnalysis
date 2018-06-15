@@ -57,8 +57,8 @@ JetResponseAnalyzer::JetResponseAnalyzer(const edm::ParameterSet& iConfig)
 					    <<" *or* deltaPhiMin (balancing)";
   
   if (doFlavor_&&iConfig.exists("srcRefToPartonMap")) {
-     srcRefToPartonMap_=consumes<reco::JetFlavourInfoMatchingCollection>(iConfig.getParameter<edm::InputTag>("srcRefToPartonMap"));
-     srcRefToPartonMapOld_=consumes<reco::JetFlavourInfoMatchingCollection>(iConfig.getParameter<edm::InputTag>("srcRefToPartonMapOld"));
+     srcRefToPartonMapPhysics_=consumes<reco::JetFlavourInfoMatchingCollection>(iConfig.getParameter<edm::InputTag>("srcRefToPartonMapPhysics"));
+     srcRefToPartonMapAlgo_=consumes<reco::JetFlavourInfoMatchingCollection>(iConfig.getParameter<edm::InputTag>("srcRefToPartonMapAlgo"));
     getFlavorFromMap_=true;
   }
   
@@ -126,7 +126,7 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
   edm::Handle<reco::CandidateView>               refs;
   edm::Handle<reco::CandViewMatchMap>            jetToUncorJetMap;
   edm::Handle<reco::CandViewMatchMap>            refToJetMap;
-  edm::Handle<reco::JetFlavourInfoMatchingCollection> refToPartonMap, refToPartonMapOld;
+  edm::Handle<reco::JetFlavourInfoMatchingCollection> refToPartonMapPhysics, refToPartonMapAlgo;
   edm::Handle<vector<double> >                   rhos;
   edm::Handle<double>                            rho;
   edm::Handle<double>                            rho_hlt;
@@ -241,8 +241,8 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
   iEvent.getByToken(srcJetToUncorJetMap_, jetToUncorJetMap); 
   iEvent.getByToken(srcRefToJetMap_,refToJetMap);
   if (getFlavorFromMap_) {
-    iEvent.getByToken(srcRefToPartonMap_,refToPartonMap);
-    iEvent.getByToken(srcRefToPartonMapOld_,refToPartonMapOld);
+    iEvent.getByToken(srcRefToPartonMapPhysics_,refToPartonMapPhysics);
+    iEvent.getByToken(srcRefToPartonMapAlgo_,refToPartonMapAlgo);
   }
   if (doBalancing_&&refToJetMap->size()!=1) return;
   JRAEvt_->nref = 0;
@@ -269,8 +269,8 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
      
      if (getFlavorFromMap_) {
         reco::JetFlavourInfoMatchingCollection::const_iterator itPartonMatch;
-        itPartonMatch = refToPartonMap->begin();
-        for (; itPartonMatch != refToPartonMap->end(); ++itPartonMatch) {
+        itPartonMatch = refToPartonMapPhysics->begin();
+        for (; itPartonMatch != refToPartonMapPhysics->end(); ++itPartonMatch) {
            reco::JetBaseRef thisJet = itPartonMatch->first;
            const reco::Candidate* cand = &(*thisJet);
            if (cand == &(*ref)) { // gen jets
@@ -282,8 +282,8 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
         }
 
         // for the old (algo) flavor defintion
-        itPartonMatch = refToPartonMapOld->begin();
-        for (; itPartonMatch != refToPartonMapOld->end(); ++itPartonMatch) {
+        itPartonMatch = refToPartonMapAlgo->begin();
+        for (; itPartonMatch != refToPartonMapAlgo->end(); ++itPartonMatch) {
            reco::JetBaseRef thisJet = itPartonMatch->first;
            const reco::Candidate* cand = &(*thisJet);
            if (cand == &(*ref)) { // gen jets
