@@ -28,7 +28,7 @@ JetResponseParameters = cms.PSet(
     doFlavor        = cms.bool(True),
     doRefPt         = cms.bool(True),
     doJetPt         = cms.bool(True),
-    saveCandidates  = cms.bool(False),
+    saveCandidates  = cms.bool(True),
     # MATCHING MODE: deltaR(ref,jet)
     deltaRMax       = cms.double(0.25),
     # consider all matched references
