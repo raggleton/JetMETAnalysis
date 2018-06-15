@@ -119,6 +119,8 @@ void JRAEvent::MakeTree(TTree* tree)
          fChain->Branch("jtmuf", "vector<Float_t>", &jtmuf);
          fChain->Branch("jthfhf", "vector<Float_t>", &jthfhf);
          fChain->Branch("jthfef", "vector<Float_t>", &jthfef);
+         fChain->Branch("jtchmult", "vector<Int_t>", &jtchmult);
+         fChain->Branch("jtnmult", "vector<Int_t>", &jtnmult);
       }
    }
    if (!flags.test(0) || (flags.test(0) && flags.test(6) && flags.test(7))) {
@@ -218,6 +220,8 @@ void JRAEvent::Init(TTree *tree)
          fChain->SetBranchAddress("jtmuf", &jtmuf, &b_jtmuf);
          fChain->SetBranchAddress("jthfhf", &jthfhf, &b_jthfhf);
          fChain->SetBranchAddress("jthfef", &jthfef, &b_jthfef);
+         fChain->SetBranchAddress("jtchmult", &jtchmult, &b_jtchmult);
+         fChain->SetBranchAddress("jtnmult", &jtnmult, &b_jtnmult);
       }
    }
    if (!flags.test(0) || (flags.test(0) && flags.test(6) && flags.test(7))) {
@@ -307,6 +311,8 @@ void JRAEvent::MakeVectors()
          jtmuf                   = new vector<float>;
          jthfhf                  = new vector<float>;
          jthfef                  = new vector<float>;
+         jtchmult                = new vector<int>;
+         jtnmult                 = new vector<int>;
       }
    }
    if (!flags.test(0) || (flags.test(0) && flags.test(6) && flags.test(7))) {
@@ -368,6 +374,8 @@ void JRAEvent::clear()
          jtmuf->clear();
          jthfhf->clear();
          jthfef->clear();
+         jtchmult->clear();
+         jtnmult->clear();
       }
    }
    if (!flags.test(0) || (flags.test(0) && flags.test(6) && flags.test(7))) {

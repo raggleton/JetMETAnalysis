@@ -100,6 +100,8 @@ public :
    vector<Float_t>* jtmuf;
    vector<Float_t>* jthfhf;
    vector<Float_t>* jthfef;
+   vector<Int_t>*   jtchmult;
+   vector<Int_t>*   jtnmult;
    vector<Float_t>* pfcand_px;
    vector<Float_t>* pfcand_py;
    vector<Float_t>* pfcand_pt;
@@ -159,6 +161,8 @@ public :
    TBranch        *b_jtmuf;   //!
    TBranch        *b_jthfhf;   //!
    TBranch        *b_jthfef;   //!
+   TBranch        *b_jtchmult;   //!
+   TBranch        *b_jtnmult;   //!
    TBranch        *b_pfcand_px;   //!
    TBranch        *b_pfcand_py;   //!
    TBranch        *b_pfcand_pt;   //!
