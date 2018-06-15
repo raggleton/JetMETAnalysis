@@ -514,14 +514,14 @@ void ClosureMaker::makeCanvases() {
         else if(var == VARIABLES::refeta || var == VARIABLES::jteta) {
             if(ih==NPtBins) {
                 if(alg.Contains("calo",TString::kIgnoreCase) || JetInfo::contains_loose(algs,TString("calo"))) {
-                    pave.back()->AddText("30 GeV < p_{T}^{ptcl} < "+TString(Pt[NPtBins])+" GeV");
+                    pave.back()->AddText("30 GeV < p_{T}^{Ref} < "+TString(Pt[NPtBins])+" GeV");
                 }
                 else {
-                    pave.back()->AddText(TString(Pt[0])+" GeV < p_{T}^{ptcl} < "+TString(Pt[NPtBins])+" GeV");
+                    pave.back()->AddText(TString(Pt[0])+" GeV < p_{T}^{Ref} < "+TString(Pt[NPtBins])+" GeV");
                 }
             }
             else
-                pave.back()->AddText(TString(Pt[ih])+" GeV < p_{T}^{ptcl} < "+TString(Pt[ih+1])+" GeV");
+                pave.back()->AddText(TString(Pt[ih])+" GeV < p_{T}^{Ref} < "+TString(Pt[ih+1])+" GeV");
         }
         pave.back()->Draw("same");
 
