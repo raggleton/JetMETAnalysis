@@ -571,8 +571,10 @@ void ClosureMaker::makeMergedCanvas() {
     frame->GetXaxis()->SetTitle(getVariableAxisTitleString(var).c_str());
     frame->GetYaxis()->SetTitle("Response");
     canvases_legends.push_back(make_pair(tdrCanvas(name,frame,14,11,true),
-                                         tdrLeg(0.58,0.16,0.9,0.4)));
+                                         tdrLeg(0.4,0.16,0.9,0.4)));
     canvases_legends.back().first->GetPad(0)->SetLogx();
+    canvases_legends.back().second->SetTextSize(0.02);
+    canvases_legends.back().second->SetNColumns(3);
     pave.push_back(tdrText(0.5,0.75,0.93,1-gPad->GetTopMargin()-0.045*(1-gPad->GetTopMargin()-gPad->GetBottomMargin()),31));
 
     //
