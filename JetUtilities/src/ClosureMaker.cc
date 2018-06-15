@@ -509,7 +509,8 @@ void ClosureMaker::makeCanvases() {
         pave.back()->AddText(title);
         pave.back()->AddText(JetInfo::get_legend_title(string(alg)).c_str());
         if(var == VARIABLES::refpt || var == VARIABLES::jtpt || var == VARIABLES::ptclpt) {
-            pave.back()->AddText(detector_regions_eta[ih]);
+            TString etaBinText = Form("%.3f < |#eta| < %.3f", veta[ih], veta[ih+1]);
+            pave.back()->AddText(etaBinText);
         }
         else if(var == VARIABLES::refeta || var == VARIABLES::jteta) {
             if(ih==NPtBins) {
@@ -587,19 +588,24 @@ void ClosureMaker::makeMergedCanvas() {
     // Format and draw the histograms
     //
     for(unsigned int ih=0; ih<hClosure.size(); ih++) {
-        if(TString(alg).Contains("pf",TString::kIgnoreCase) ||
-       TString(alg).Contains("puppi",TString::kIgnoreCase)) {
-            hClosure[ih]->GetXaxis()->SetLimits(XminPF[ih],Xmax[ih]);
-            hClosure[ih]->GetXaxis()->SetRangeUser(XminPF[ih],Xmax[ih]);
-        }
-        else {
-            hClosure[ih]->GetXaxis()->SetLimits(XminCalo[ih],Xmax[ih]);
-            hClosure[ih]->GetXaxis()->SetRangeUser(XminCalo[ih],Xmax[ih]);
-        }
+       //  if(TString(alg).Contains("pf",TString::kIgnoreCase) ||
+       // TString(alg).Contains("puppi",TString::kIgnoreCase)) {
+       //      hClosure[ih]->GetXaxis()->SetLimits(XminPF[ih],Xmax[ih]);
+       //      hClosure[ih]->GetXaxis()->SetRangeUser(XminPF[ih],Xmax[ih]);
+       //  }
+       //  else {
+       //      hClosure[ih]->GetXaxis()->SetLimits(XminCalo[ih],Xmax[ih]);
+       //      hClosure[ih]->GetXaxis()->SetRangeUser(XminCalo[ih],Xmax[ih]);
+       //  }
         hClosure[ih]->SetStats(kFALSE);
-        tdrDraw(hClosure[ih],"EP",closureShapes[ih],
-                closureColors[ih],kSolid,closureColors[ih]);
-        canvases_legends.back().second->AddEntry(hClosure[ih],detector_regions_eta[ih],"lep");
+        if (hClosure[ih]->GetEntries() == 0) continue;
+        auto style = (veta[ih+1] <= 0) ?  kOpenCircle : kFullCircle;
+        auto color = (veta[ih+1] <= 0) ? closureColors[ih] : closureColors[NETA-1-ih];
+        // auto style =  kFullCircle ;
+        // auto color = closureColors[ih];
+        tdrDraw(hClosure[ih],"EP",style,color,kSolid,color);
+        TString etaBinText = Form("%.3f - %.3f", veta[ih], veta[ih+1]);
+        canvases_legends.back().second->AddEntry(hClosure[ih],etaBinText,"lep");
     }
 
     //
