@@ -56,9 +56,9 @@ JetResponseAnalyzer::JetResponseAnalyzer(const edm::ParameterSet& iConfig)
     throw cms::Exception("MissingParameter")<<"Set *either* deltaRMax (matching)"
 					    <<" *or* deltaPhiMin (balancing)";
   
-  if (doFlavor_&&iConfig.exists("srcRefToPartonMap")) {
-     srcRefToPartonMapPhysics_=consumes<reco::JetFlavourInfoMatchingCollection>(iConfig.getParameter<edm::InputTag>("srcRefToPartonMapPhysics"));
-     srcRefToPartonMapAlgo_=consumes<reco::JetFlavourInfoMatchingCollection>(iConfig.getParameter<edm::InputTag>("srcRefToPartonMapAlgo"));
+  if (doFlavor_&&iConfig.exists("srcRefToPartonMapPhysics")&&iConfig.exists("srcRefToPartonMapAlgo")) {
+    srcRefToPartonMapPhysics_=consumes<reco::JetFlavourInfoMatchingCollection>(iConfig.getParameter<edm::InputTag>("srcRefToPartonMapPhysics"));
+    srcRefToPartonMapAlgo_=consumes<reco::JetFlavourInfoMatchingCollection>(iConfig.getParameter<edm::InputTag>("srcRefToPartonMapAlgo"));
     getFlavorFromMap_=true;
   }
   
