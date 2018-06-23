@@ -152,7 +152,7 @@ int main(int argc,char**argv)
   bool           dobalance         = cl.getValue<bool>   ("dobalance",               false);
   bool           doflavor          = cl.getValue<bool>   ("doflavor",                false);
   vector<string> flavors           = cl.getVector<string>("flavors",                    "");
-  TString        flavorDefinition  = cl.getValue<TString>("flavorDefinition",        "NEW");
+  TString        flavorDefinition  = cl.getValue<TString>("flavorDefinition",        "physics");
   bool           noabsflavors      = cl.getValue<bool>   ("noabsflavors",            false);
   float          drmax             = cl.getValue<float>  ("drmax",                     0.3);
   float          dphimin           = cl.getValue<float>  ("dphimin",                   2.7);
@@ -317,12 +317,14 @@ int main(int argc,char**argv)
             if(!doflavor) continue;
             else if(doflavor) {
                 flavorDefinition.ToUpper();
-                if(flavorDefinition.CompareTo("OLD")==0)
-                    n = "refpdgid_old";
-                else if (flavorDefinition.CompareTo("NEW")==0)
-                    n = "refpdgid";
+                if(flavorDefinition.CompareTo("physics")==0)
+                    n = "refpdgid_parton_physics";
+                else if (flavorDefinition.CompareTo("algo")==0)
+                    n = "refpdgid_parton_algo";
+                else if (flavorDefinition.CompareTo("hadron")==0)
+                    n = "refpdgid_hadron";
                 else
-                  throw runtime_error(flavorDefinition + " is not a valid setting, choose OLD or NEW");
+                  throw runtime_error(flavorDefinition + " is not a valid setting, choose physics, algo, or hadron");
             }
         }
         if(n=="weight") {
@@ -1518,10 +1520,12 @@ int main(int argc,char**argv)
           float pdgid(0);
           if(doflavor) {
             flavorDefinition.ToUpper();
-            if(flavorDefinition.CompareTo("OLD")==0)
-               pdgid = JRAEvt->refpdgid_hadron->at(iref);
-            else if (flavorDefinition.CompareTo("NEW")==0)
-               pdgid = JRAEvt->refpdgid_parton_physics->at(iref);
+            if(flavorDefinition.CompareTo("physics")==0)
+              pdgid = JRAEvt->refpdgid_parton_physics->at(iref);
+            else if (flavorDefinition.CompareTo("algo")==0)
+              pdgid = JRAEvt->refpdgid_parton_algo->at(iref);
+            else if (flavorDefinition.CompareTo("hadron")==0)
+              pdgid = JRAEvt->refpdgid_hadron->at(iref);
           }
           float absrsp = pt-refpt;
           float relrsp = pt/refpt;
