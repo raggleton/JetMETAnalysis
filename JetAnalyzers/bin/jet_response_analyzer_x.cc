@@ -317,11 +317,11 @@ int main(int argc,char**argv)
             if(!doflavor) continue;
             else if(doflavor) {
                 flavorDefinition.ToUpper();
-                if(flavorDefinition.CompareTo("physics")==0)
+                if(flavorDefinition.CompareTo("PHYSICS")==0)
                     n = "refpdgid_parton_physics";
-                else if (flavorDefinition.CompareTo("algo")==0)
+                else if (flavorDefinition.CompareTo("ALGO")==0)
                     n = "refpdgid_parton_algo";
-                else if (flavorDefinition.CompareTo("hadron")==0)
+                else if (flavorDefinition.CompareTo("HADRON")==0)
                     n = "refpdgid_hadron";
                 else
                   throw runtime_error(flavorDefinition + " is not a valid setting, choose physics, algo, or hadron");
@@ -1520,11 +1520,11 @@ int main(int argc,char**argv)
           float pdgid(0);
           if(doflavor) {
             flavorDefinition.ToUpper();
-            if(flavorDefinition.CompareTo("physics")==0)
+            if(flavorDefinition.CompareTo("PHYSICS")==0)
               pdgid = JRAEvt->refpdgid_parton_physics->at(iref);
-            else if (flavorDefinition.CompareTo("algo")==0)
+            else if (flavorDefinition.CompareTo("ALGO")==0)
               pdgid = JRAEvt->refpdgid_parton_algo->at(iref);
-            else if (flavorDefinition.CompareTo("hadron")==0)
+            else if (flavorDefinition.CompareTo("HADRON")==0)
               pdgid = JRAEvt->refpdgid_hadron->at(iref);
           }
           float absrsp = pt-refpt;
