@@ -110,6 +110,7 @@ int main(int argc,char**argv)
   vector<string> algs    = cl.getVector<string>("algs",          "");
   int            verbose = cl.getValue<int>    ("verbose",        0);
   int            fittype = cl.getValue<int>    ("fittype",        0);
+  int            rebin   = cl.getValue<int>    ("rebin",        1);
   bool           doAbsRsp= cl.getValue<bool>   ("doAbsRsp",    true);
   bool           doRelRsp= cl.getValue<bool>   ("doRelRsp",    true);
   bool           doEtaRsp= cl.getValue<bool>   ("doEtaRsp",   false);
@@ -219,6 +220,7 @@ int main(int argc,char**argv)
       //}
       
       if (hrsp->Integral()>0.0) {
+        if (rebin > 1) hrsp->Rebin(rebin);
         string fit_filename = "gausXlandau_fits/" + string(hrsp->GetName());
         int fitstatus(0);
         if (0==fittype) fit_gaussian(hrsp,nsigma,jtptmin,niter,verbose);
