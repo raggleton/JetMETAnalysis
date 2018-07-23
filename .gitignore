@@ -1,11 +1,19 @@
 *.pdf
 *.out
+*.err
+*.log
 .DS_Store
 __init__.py
 *.pyc
 *.png
 *.eps
+*.generated
 
+JetAnalyzers/plots
+
+JetAnalyzers/test/crab*
+
+JECDatabase
 
 JetAnalyzers/output/DYJets_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k/
 JetAnalyzers/output/DYJets_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k/
@@ -20,3 +28,7 @@ JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017
 JetAnalyzers/output/QCD_Pt_withL1L2L3_Summer16_07Aug2017_V1_oneBin/
 JetAnalyzers/output/QCD_Pt_withL1L2L3_Summer16_07Aug2017_V1_relPtHatCut5_jtptmin4/
 JetAnalyzers/output/QCD_Pt_withL1L2L3_Summer16_07Aug2017_V1_relPtHatCut_jtptmin4/
+JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/
+JetAnalyzers/output/QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/
+JetAnalyzers/output/QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_nbinsrelrsp_10k/
+JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_nbinsrelrsp_10k/
