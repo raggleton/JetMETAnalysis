@@ -140,6 +140,8 @@ int main(int argc,char**argv)
    bool            L1FastJet         = cl.getValue<bool>         ("L1FastJet",          true);
    vector<string>  postfix           = cl.getVector<string>      ("postfix",              "");
    bool            doflavor          = cl.getValue<bool>         ("doflavor",          false);
+   int             pdgid             = cl.getValue<int>          ("pdgid",                 0);
+   TString         flavorDefinition  = cl.getValue<TString>      ("flavorDefinition", "physics");
    bool            doTProfileMDF     = cl.getValue<bool>         ("doTProfileMDF",     false);
    bool            reduceHistograms  = cl.getValue<bool>         ("reduceHistograms",   true);
    bool            useweight         = cl.getValue<bool>         ("useweight",         false);
@@ -147,7 +149,6 @@ int main(int argc,char**argv)
    float           relpthatmax       = cl.getValue<float>        ("relpthatmax",                10);
    float           xsection          = cl.getValue<float>        ("xsection",            0.0);
    float           luminosity        = cl.getValue<float>        ("luminosity",          1.0);
-   int             pdgid             = cl.getValue<int>          ("pdgid",                 0);
    vector<string>  presel            = cl.getVector<string>      ("presel",                     "");
    vector<double>  drmax             = cl.getVector<double>      ("drmax",                "");
    double          drmin             = cl.getValue<double>       ("drmin",                 0);
@@ -322,7 +323,8 @@ int main(int argc,char**argv)
                                      "jtchf", "jtnhf", "jtnef", "jtcef", "jtmuf", "jthfhf", "jthfef",
                                      "jtchmult", "jtnmult",
                                      "pfcand_pt", "pfcand_eta", "pfcand_phi", "pfcand_id", "pfcand_e",
-                                     "refpdgid","npv","rho","rho_hlt","pthat","weight"};
+                                     "refpdgid_parton_physics", "refpdgid_parton_algo", "refpdgid_hadron",
+                                     "npv","rho","rho_hlt","pthat","weight"};
       for(auto n : branch_names) {
          if(!doflavor && n=="refpdgid") continue;
          if(n=="rho_hlt" && 0==chain->GetBranch("rho_hlt")) continue;
@@ -918,8 +920,30 @@ int main(int argc,char**argv)
             // e.g. want to get the 1st jet after a potential gamma fake
             jetCounter++;
 
-            if (doflavor && abs(pdgid)!=12 && abs(JRAEvt->refpdgid_parton_physics->at(iref))!=abs(pdgid)) continue;
-            else if (doflavor && abs(pdgid)==12 && (abs(JRAEvt->refpdgid_parton_physics->at(iref))>2 || abs(JRAEvt->refpdgid_parton_physics->at(iref))==0)) continue;
+            // Do flavour selection
+            if (doflavor){
+               uint flav = 0;
+               flavorDefinition.ToUpper();
+               if(flavorDefinition.CompareTo("PHYSICS")==0)
+                  flav = JRAEvt->refpdgid_parton_physics->at(iref);
+               else if (flavorDefinition.CompareTo("ALGO")==0)
+                  flav = JRAEvt->refpdgid_parton_algo->at(iref);
+               else if (flavorDefinition.CompareTo("HADRON")==0)
+                  flav = JRAEvt->refpdgid_hadron->at(iref);
+               else if (flavorDefinition.CompareTo("HADRONPARTON")==0)
+                  flav = abs(JRAEvt->refpdgid_hadron->at(iref)) > 0 ? abs(JRAEvt->refpdgid_hadron->at(iref)) : abs(JRAEvt->refpdgid_parton_physics->at(iref));
+               else
+                  throw std::runtime_error("Unknown flavour definition");
+
+               flav = abs(flav);
+
+               // Only use jets if match our desired pdgid
+               if (abs(pdgid)!=12) {
+                  if (abs(flav)!=abs(pdgid)) continue;
+               } else {
+                  if (flav>2 || flav==0) continue;
+               }
+            }
 
             // Check no genjet-genjet overlaps
             if (drmin>0) {
