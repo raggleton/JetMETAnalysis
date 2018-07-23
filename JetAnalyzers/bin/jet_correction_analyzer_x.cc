@@ -430,7 +430,9 @@ int main(int argc,char**argv)
          sort (levels.begin(),levels.end());
          vector<JetCorrectorParameters> vPar;
          for(unsigned int ilevel=0; ilevel<levels.size(); ilevel++) {
-            vPar.push_back(JetCorrectorParameters(string(path + era + JetInfo::get_level_tag(levels[ilevel],L1FastJet) + 
+            cout << "Looking for JEC file " << string(path + era + JetInfo::get_level_tag(levels[ilevel],L1FastJet) +
+                                                      jetInfo.getAlias() + getPostfix(postfix,algs[a],levels[ilevel]) + ".txt") << endl;
+            vPar.push_back(JetCorrectorParameters(string(path + era + JetInfo::get_level_tag(levels[ilevel],L1FastJet) +
                                                          jetInfo.getAlias() + getPostfix(postfix,algs[a],levels[ilevel]) + ".txt")));
          }
          JetCorrector = new FactorizedJetCorrector(vPar);
