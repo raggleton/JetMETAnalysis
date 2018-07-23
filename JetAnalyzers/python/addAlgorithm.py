@@ -497,26 +497,7 @@ def addAlgorithm(process, alg_size_type_corr, Defaults, reco, doProducer):
             hadronFlavourHasPriority = cms.bool(False)
         )
         setattr(process, alg_size_type + 'genJetFlavourInfosAlgo', genJetFlavourInfosAlgo)
-        sequence = cms.Sequence(sequence * selectedHadronsAndPartonsForGenJetsFlavourInfos * genJetFlavourInfos * genJetFlavourInfosAlgo)
-
-        # To get flav map for reco jets
-        # from PhysicsTools.JetMCAlgos.HadronAndPartonSelector_cfi import selectedHadronsAndPartons
-        # selectedHadronsAndPartons.particles = cms.InputTag("genParticles")
-        # setattr(process, 'selectedHadronsAndPartons', selectedHadronsAndPartons)
-        # (recLabel, recJets) = recJetsDict[alg_size_type]
-        # jetFlavourInfos = cms.EDProducer("JetFlavourClustering",
-        #     jets                     = cms.InputTag(recLabel),
-        #     bHadrons                 = cms.InputTag("selectedHadronsAndPartons","bHadrons"),
-        #     cHadrons                 = cms.InputTag("selectedHadronsAndPartons","cHadrons"),
-        #     partons                  = cms.InputTag("selectedHadronsAndPartons","physicsPartons"),
-        #     leptons                  = cms.InputTag("selectedHadronsAndPartons","leptons"),
-        #     jetAlgorithm             = recJets.jetAlgorithm,
-        #     rParam                   = recJets.rParam,
-        #     ghostRescaling           = cms.double(1e-18),
-        #     hadronFlavourHasPriority = cms.bool(False)
-        # )
-        # setattr(process, alg_size_type + 'jetFlavourInfos', jetFlavourInfos)
-        # sequence = cms.Sequence(sequence * selectedHadronsAndPartons * jetFlavourInfos)
+        sequence = cms.Sequence(sequence * selectedHadronsAndPartonsForGenJetsFlavourInfos * genJetFlavourInfosPhysics * genJetFlavourInfosAlgo)
 
     ## reference to jet matching
     jetToRef = cms.EDProducer('MatchRecToGen',
@@ -610,8 +591,7 @@ def addAlgorithm(process, alg_size_type_corr, Defaults, reco, doProducer):
         jra.jecLabel = corrJets.correctors[0].replace("Corrector","")
 
     if Defaults.JetResponseParameters.doFlavor.value():
-        jra.srcRefToPartonMapPhysics = cms.InputTag(genJetFlavourInfos.label())  # genjet
-        # jra.srcRefToPartonMap = cms.InputTag(jetFlavourInfos.label())  # recojet
+        jra.srcRefToPartonMapPhysics = cms.InputTag(genJetFlavourInfosPhysics.label())  # genjet
         jra.srcRefToPartonMapAlgo = cms.InputTag(genJetFlavourInfosAlgo.label())  # old partonflavour
 
     jra.deltaRMax = cms.double(genJets.rParam.value()/2.)
