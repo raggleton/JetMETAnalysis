@@ -5,15 +5,19 @@ import subprocess
 from glob import glob
 from collections import OrderedDict
 
+ORIGINAL_ERA_DIR = "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JECDatabase/textFiles/Summer16_07Aug2017_V10_MC"
+
 PYTHIA_ERA_DIR = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
 HERWIG_ERA_DIR = "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
 
 # QCD_PT_INPUT_DIR = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF"
-QCD_PT_INPUT_DIR = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
+# QCD_PT_INPUT_DIR = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
+QCD_PT_INPUT_DIR = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron"
 DY_INPUT_DIR = "DYJets_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
 GJETS_HT_INPUT_DIR = "GJet_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
 
-QCD_PT_OUTPUT_DIR = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
+# QCD_PT_OUTPUT_DIR = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
+QCD_PT_OUTPUT_DIR = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_nbinsrelrsp_10k"
 QCD_HT_OUTPUT_DIR = "QCD_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
 DY_HT_OUTPUT_DIR = "DYJets_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
 GJETS_HT_OUTPUT_DIR = "GJet_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
@@ -38,38 +42,38 @@ GJETS_PF_PID = DUMMY_PF_ID
 infos2 = [
 # QCD PT BINNED
 # ==============================================================================
-{
-    "name": "QCD_Pt_15to30_NoJEC_newFlav",
-    "input": "%s/QCD_Pt_15to30_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
-    "xsec": 1837410000,
-    "output_dir": QCD_PT_OUTPUT_DIR,
-    "era_dir": PYTHIA_ERA_DIR,
-    "nrefmax": QCD_NREFMAX,
-},
-{
-    "name": "QCD_Pt_30to50_NoJEC_newFlav",
-    "input": "%s/QCD_Pt_30to50_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
-    "xsec": 140932000,
-    "output_dir": QCD_PT_OUTPUT_DIR,
-    "era_dir": PYTHIA_ERA_DIR,
-    "nrefmax": QCD_NREFMAX,
-},
-{
-    "name": "QCD_Pt_50to80_NoJEC_newFlav",
-    "input": "%s/QCD_Pt_50to80_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
-    "xsec": 19204300,
-    "output_dir": QCD_PT_OUTPUT_DIR,
-    "era_dir": PYTHIA_ERA_DIR,
-    "nrefmax": QCD_NREFMAX,
-},
-{
-    "name": "QCD_Pt_80to120_NoJEC_newFlav",
-    "input": "%s/QCD_Pt_80to120_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
-    "xsec": 2762530,
-    "output_dir": QCD_PT_OUTPUT_DIR,
-    "era_dir": PYTHIA_ERA_DIR,
-    "nrefmax": QCD_NREFMAX,
-},
+# {
+#     "name": "QCD_Pt_15to30_NoJEC_newFlav",
+#     "input": "%s/QCD_Pt_15to30_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
+#     "xsec": 1837410000,
+#     "output_dir": QCD_PT_OUTPUT_DIR,
+#     "era_dir": PYTHIA_ERA_DIR,
+#     "nrefmax": QCD_NREFMAX,
+# },
+# {
+#     "name": "QCD_Pt_30to50_NoJEC_newFlav",
+#     "input": "%s/QCD_Pt_30to50_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
+#     "xsec": 140932000,
+#     "output_dir": QCD_PT_OUTPUT_DIR,
+#     "era_dir": PYTHIA_ERA_DIR,
+#     "nrefmax": QCD_NREFMAX,
+# },
+# {
+#     "name": "QCD_Pt_50to80_NoJEC_newFlav",
+#     "input": "%s/QCD_Pt_50to80_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
+#     "xsec": 19204300,
+#     "output_dir": QCD_PT_OUTPUT_DIR,
+#     "era_dir": PYTHIA_ERA_DIR,
+#     "nrefmax": QCD_NREFMAX,
+# },
+# {
+#     "name": "QCD_Pt_80to120_NoJEC_newFlav",
+#     "input": "%s/QCD_Pt_80to120_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
+#     "xsec": 2762530,
+#     "output_dir": QCD_PT_OUTPUT_DIR,
+#     "era_dir": PYTHIA_ERA_DIR,
+#     "nrefmax": QCD_NREFMAX,
+# },
 {
     "name": "QCD_Pt_120to170_NoJEC_newFlav",
     "input": "%s/QCD_Pt_120to170_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
@@ -78,86 +82,86 @@ infos2 = [
     "era_dir": PYTHIA_ERA_DIR,
     "nrefmax": QCD_NREFMAX,
 },
-{
-    "name": "QCD_Pt_170to300_NoJEC_newFlav",
-    "input": "%s/QCD_Pt_170to300_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
-    "xsec": 117276,
-    "output_dir": QCD_PT_OUTPUT_DIR,
-    "era_dir": PYTHIA_ERA_DIR,
-    "nrefmax": QCD_NREFMAX,
-},
-{
-    "name": "QCD_Pt_300to470_NoJEC_newFlav",
-    "input": "%s/QCD_Pt_300to470_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
-    "xsec": 7823,
-    "output_dir": QCD_PT_OUTPUT_DIR,
-    "era_dir": PYTHIA_ERA_DIR,
-    "nrefmax": QCD_NREFMAX,
-},
-{
-    "name": "QCD_Pt_470to600_NoJEC_newFlav",
-    "input": "%s/QCD_Pt_470to600_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
-    "xsec": 648.2,
-    "output_dir": QCD_PT_OUTPUT_DIR,
-    "era_dir": PYTHIA_ERA_DIR,
-    "nrefmax": QCD_NREFMAX,
-},
-{
-    "name": "QCD_Pt_600to800_NoJEC_newFlav",
-    "input": "%s/QCD_Pt_600to800_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
-    "xsec": 186.9,
-    "output_dir": QCD_PT_OUTPUT_DIR,
-    "era_dir": PYTHIA_ERA_DIR,
-    "nrefmax": QCD_NREFMAX,
-},
-{
-    "name": "QCD_Pt_800to1000_NoJEC_newFlav",
-    "input": "%s/QCD_Pt_800to1000_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
-    "xsec": 32.293,
-    "output_dir": QCD_PT_OUTPUT_DIR,
-    "era_dir": PYTHIA_ERA_DIR,
-    "nrefmax": QCD_NREFMAX,
-},
-{
-    "name": "QCD_Pt_1000to1400_NoJEC_newFlav",
-    "input": "%s/QCD_Pt_1000to1400_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
-    "xsec": 9.4183,
-    "output_dir": QCD_PT_OUTPUT_DIR,
-    "era_dir": PYTHIA_ERA_DIR,
-    "nrefmax": QCD_NREFMAX,
-},
-{
-    "name": "QCD_Pt_1400to1800_NoJEC_newFlav",
-    "input": "%s/QCD_Pt_1400to1800_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
-    "xsec": 0.84265,
-    "output_dir": QCD_PT_OUTPUT_DIR,
-    "era_dir": PYTHIA_ERA_DIR,
-    "nrefmax": QCD_NREFMAX,
-},
-{
-    "name": "QCD_Pt_1800to2400_NoJEC_newFlav",
-    "input": "%s/QCD_Pt_1800to2400_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
-    "xsec": 0.114943,
-    "output_dir": QCD_PT_OUTPUT_DIR,
-    "era_dir": PYTHIA_ERA_DIR,
-    "nrefmax": QCD_NREFMAX,
-},
-{
-    "name": "QCD_Pt_2400to3200_NoJEC_newFlav",
-    "input": "%s/QCD_Pt_2400to3200_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
-    "xsec": 0.0068298,
-    "output_dir": QCD_PT_OUTPUT_DIR,
-    "era_dir": PYTHIA_ERA_DIR,
-    "nrefmax": QCD_NREFMAX,
-},
-{
-    "name": "QCD_Pt_3200toInf_NoJEC_newFlav",
-    "input": "%s/QCD_Pt_3200toInf_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
-    "xsec": 0.0001654,
-    "output_dir": QCD_PT_OUTPUT_DIR,
-    "era_dir": PYTHIA_ERA_DIR,
-    "nrefmax": QCD_NREFMAX,
-},
+# {
+#     "name": "QCD_Pt_170to300_NoJEC_newFlav",
+#     "input": "%s/QCD_Pt_170to300_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
+#     "xsec": 117276,
+#     "output_dir": QCD_PT_OUTPUT_DIR,
+#     "era_dir": PYTHIA_ERA_DIR,
+#     "nrefmax": QCD_NREFMAX,
+# },
+# {
+#     "name": "QCD_Pt_300to470_NoJEC_newFlav",
+#     "input": "%s/QCD_Pt_300to470_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
+#     "xsec": 7823,
+#     "output_dir": QCD_PT_OUTPUT_DIR,
+#     "era_dir": PYTHIA_ERA_DIR,
+#     "nrefmax": QCD_NREFMAX,
+# },
+# {
+#     "name": "QCD_Pt_470to600_NoJEC_newFlav",
+#     "input": "%s/QCD_Pt_470to600_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
+#     "xsec": 648.2,
+#     "output_dir": QCD_PT_OUTPUT_DIR,
+#     "era_dir": PYTHIA_ERA_DIR,
+#     "nrefmax": QCD_NREFMAX,
+# },
+# {
+#     "name": "QCD_Pt_600to800_NoJEC_newFlav",
+#     "input": "%s/QCD_Pt_600to800_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
+#     "xsec": 186.9,
+#     "output_dir": QCD_PT_OUTPUT_DIR,
+#     "era_dir": PYTHIA_ERA_DIR,
+#     "nrefmax": QCD_NREFMAX,
+# },
+# {
+#     "name": "QCD_Pt_800to1000_NoJEC_newFlav",
+#     "input": "%s/QCD_Pt_800to1000_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
+#     "xsec": 32.293,
+#     "output_dir": QCD_PT_OUTPUT_DIR,
+#     "era_dir": PYTHIA_ERA_DIR,
+#     "nrefmax": QCD_NREFMAX,
+# },
+# {
+#     "name": "QCD_Pt_1000to1400_NoJEC_newFlav",
+#     "input": "%s/QCD_Pt_1000to1400_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
+#     "xsec": 9.4183,
+#     "output_dir": QCD_PT_OUTPUT_DIR,
+#     "era_dir": PYTHIA_ERA_DIR,
+#     "nrefmax": QCD_NREFMAX,
+# },
+# {
+#     "name": "QCD_Pt_1400to1800_NoJEC_newFlav",
+#     "input": "%s/QCD_Pt_1400to1800_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
+#     "xsec": 0.84265,
+#     "output_dir": QCD_PT_OUTPUT_DIR,
+#     "era_dir": PYTHIA_ERA_DIR,
+#     "nrefmax": QCD_NREFMAX,
+# },
+# {
+#     "name": "QCD_Pt_1800to2400_NoJEC_newFlav",
+#     "input": "%s/QCD_Pt_1800to2400_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
+#     "xsec": 0.114943,
+#     "output_dir": QCD_PT_OUTPUT_DIR,
+#     "era_dir": PYTHIA_ERA_DIR,
+#     "nrefmax": QCD_NREFMAX,
+# },
+# {
+#     "name": "QCD_Pt_2400to3200_NoJEC_newFlav",
+#     "input": "%s/QCD_Pt_2400to3200_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
+#     "xsec": 0.0068298,
+#     "output_dir": QCD_PT_OUTPUT_DIR,
+#     "era_dir": PYTHIA_ERA_DIR,
+#     "nrefmax": QCD_NREFMAX,
+# },
+# {
+#     "name": "QCD_Pt_3200toInf_NoJEC_newFlav",
+#     "input": "%s/QCD_Pt_3200toInf_NoJEC_newFlav/" % QCD_PT_INPUT_DIR,
+#     "xsec": 0.0001654,
+#     "output_dir": QCD_PT_OUTPUT_DIR,
+#     "era_dir": PYTHIA_ERA_DIR,
+#     "nrefmax": QCD_NREFMAX,
+# },
 # QCD HT BINNED
 # ==============================================================================
 # {
@@ -271,7 +275,7 @@ infos2 = [
 # infos = [
     {
         "name": "QCD_Pt_15to7000_Herwig_NoJEC_newFlav",
-        "input": "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10/QCD_Pt_15to7000_Herwig_NoJEC_newFlav/jaj_QCD_Pt_15to7000_Herwig_NoJEC_newFlav_ak4pfchs_L1FastJet.root",
+        "input": "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_15to7000_Herwig_NoJEC_newFlav/",
         "xsec": -1,
         "output_dir": "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k",
         "era_dir": HERWIG_ERA_DIR,
@@ -619,7 +623,7 @@ infos = [
         "name": "DYJetsToLL_Herwig_NoJEC_newFlav",
         "input": "DYJets_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10/DYJetsToLL_Herwig_NoJEC_newFlav",
         "xsec": -1.,
-        "output_dir": "DYJets_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k",
+        "output_dir": "DYJets_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k_dummy",
         "era_dir": HERWIG_ERA_DIR,
         "nrefmax": DY_NREFMAX,
         "alpha": alpha,
@@ -643,13 +647,55 @@ flav_dict = {
     "4": "c",
     "5": "b",
     "21": "g",
+    "0": "all",  # use default JEC
 }
 
 ef_max = 0.8
 # ef_max = 99
 
+
+def create_condor_template_dict():
+    template = {
+        "executable": "run_prog.sh",
+        "transfer_executable": "True",
+        "universe": "vanilla",
+        "output": "$(name)_$(Cluster)_$(Process).out",
+        "error": "$(name)_$(Cluster)_$(Process).err",
+        "log": "$(name)_$(Cluster)_$(Process).log",
+        "RequestMemory": "2G",
+        "requirements": 'OpSysAndVer == "SL6"',
+        "getenv": "True",
+        "environment": "\"LD_LIBRARY_PATH_STORED="+os.environ.get('LD_LIBRARY_PATH')+"\"",
+        "notification": "Error",
+        "notify_user": "robin.aggleton@desy.de",
+    }
+    return template
+
+
+def dict_to_condor_contents(input_dict):
+    contents = ['%s=%s' % (k, str(v)) for k, v in input_dict.items()]
+    return "\n".join(contents)
+
+
 def float_to_str(num):
     return ("%g" % num).replace(".", "p")
+
+
+job = dict_to_condor_contents(create_condor_template_dict())
+job += "\n"
+job += "JobBatchName=JCA\n"
+arguments = ("jet_correction_analyzer_x $(inputf) "
+    "-outputDir $(odir) -suffix $(suffix) -algs $(algos) "
+    "-era $(era) -path $(mypath) -levels 2 "  # JEC set info
+    "-doflavor $(doflav) -pdgid $(pdgid) -flavorDefinition PHYSICS "  # flav def/selection info
+    "-xsection $(xsec) -luminosity 35900 -useweight $(weight) "  # reweighting info
+    "-nrefmax $(nrefmax) -ptgenmin 10 -ptrawmin 4 -relpthatmax 3.5 -relrspmax 2 "  # cuts
+    "-alphamax $(alpha) -pfCandIds $(pfpid) -pfCandPtMin $(pfpt) -pfCandDr $(pfdr) -efmax $(efmax) "  # more cuts
+    "-findZ $(findz) -findGamma $(findgamma) "  # identify bosons and veto against them
+    "-drmin $(drmin) "  # matching param for genjet-genjet 
+    "-drmax $(drmax)"  # matching param for gen-reco
+)
+job += "\narguments = %s\n\n" % arguments
 
 era_append = "_standardMedianErr_meanWhenSmall_rspRangeLarge_fitMin15_useFitRange"
 
@@ -658,7 +704,7 @@ ef_str = float_to_str(ef_max)
 # append = "_relRspMax2_relPtHatMax3p5_ptGenMin10_jtnefLt%s_jtcefLt%s_jtmufLt%s_centralEFcuts_unscaleEF_absEta" % (ef_str, ef_str, ef_str)
 append = "_relRspMax2_relPtHatMax3p5_ptGenMin10_absEta_noDPhiCut"
 
-for sample_dict in infos:
+for sample_dict in infos2[:]:
 
     if (("herwig" in sample_dict['input'].lower() and "herwig" not in sample_dict['era_dir'].lower()) 
         or (("herwig" not in sample_dict['input'].lower() and "herwig" in sample_dict['era_dir'].lower()))):
@@ -709,14 +755,16 @@ for sample_dict in infos:
             if "pf_dr" in sample_dict:
                 sample_dict['pf_dr'] = 2*float(dr_max)
 
+
             args_dict = {
                 "name": "JCA_"+sample_dict['name']+"_"+algo_name+"_"+flav_name,
                 "odir": sample_dict['output_dir'],
-                "xsec": "%.4f" % sample_dict.get('xsec', -1),
+                "xsec": "%.8f" % sample_dict.get('xsec', -1),
                 "algos": algo_name+"l1",
                 "drmax": dr_max,
                 "weight": "true",  # ignored if xsec > 0
                 "pdgid": flav,
+                "doflav": "true" if flav != "0" else "false",
                 "era": "Summer16_07Aug2017_V10%s_%s" % (era_append, flav_name),
                 "mypath": sample_dict['era_dir'],
                 "suffix": "_".join([sample_dict['name'], this_append, flav_name]),
@@ -727,25 +775,30 @@ for sample_dict in infos:
                 "pfpt": sample_dict.get('pf_pt', 5),
                 "pfdr": sample_dict.get('pf_dr', 0.4),
                 "efmax": 99,
-                "jetID": "",
+                # "jetID": "",
                 "findZ": str(sample_dict.get('findZ', False)).lower(),
                 "findGamma": str(sample_dict.get('findGamma', False)).lower(),
             }
             args_dict = OrderedDict(args_dict)
+            
+            if flav_name == "all":
+                args_dict['mypath'] = ORIGINAL_ERA_DIR
+                args_dict['era'] = "Summer16_07Aug2017_V10_MC"
 
             if sample_dict['input'].endswith(".root"):
-                args_dict['inputfilename'] = sample_dict['input']
                 # if one ROOT file, then leave inputfilepath blank and put full path for inputfilename
-                args_dict['inputfilepath'] = '' # use OrderedDict and put this last otherwise it parses it weirdly
+                args_dict['inputf'] = "-inputFilename " + sample_dict['input']
             else:
                 # if multiple files, the program will add *.root to inputfilename if you specify inputfilepath
-                args_dict["inputfilename"] = "jaj*%s" % algo_name  # program does *.root for us
-                args_dict["inputfilepath"] = sample_dict['input']
+                args_dict["inputf"] = "-inputFilename jaj*%s" % algo_name  # program does *.root for us
+                args_dict["inputf"] += " -inputFilePath " + sample_dict['input']
+            
+            job += "\n".join(["%s=%s" % (k, v) for k,v in args_dict.items()])
+            job += "\nqueue\n\n"
 
-            cmd = "qsub -N {name} -v "
-            cmd += ",".join(["%s='{%s}'" % (k.upper(), k) for k in args_dict.keys()])
-            cmd += " do_jet_correction_analyzer_x_job.sh"
-            # print cmd
-            cmd = cmd.format(**args_dict)
-            print cmd
-            subprocess.check_call(cmd, shell=True)
+job_filename = "do_jet_correction_analyzer_x_job2.condor"
+with open(job_filename, 'w') as f:
+    f.write(job)
+
+cmd = "condor_submit %s" % job_filename
+subprocess.check_call(cmd, shell=True)
