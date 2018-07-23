@@ -323,8 +323,11 @@ int main(int argc,char**argv)
                     n = "refpdgid_parton_algo";
                 else if (flavorDefinition.CompareTo("HADRON")==0)
                     n = "refpdgid_hadron";
-                else
-                  throw runtime_error(flavorDefinition + " is not a valid setting, choose physics, algo, or hadron");
+                else if (flavorDefinition.CompareTo("HADRONPARTON")==0) {
+                    tree->SetBranchStatus("refpdgid_hadron",1);
+                    n = "refpdgid_parton_physics";
+                } else
+                  throw runtime_error(flavorDefinition + " is not a valid setting, choose physics, algo, hadron, or hadronparton");
             }
         }
         if(n=="weight") {
@@ -1526,6 +1529,8 @@ int main(int argc,char**argv)
               pdgid = JRAEvt->refpdgid_parton_algo->at(iref);
             else if (flavorDefinition.CompareTo("HADRON")==0)
               pdgid = JRAEvt->refpdgid_hadron->at(iref);
+            else if (flavorDefinition.CompareTo("HADRONPARTON")==0)
+              pdgid = JRAEvt->refpdgid_hadron->at(iref) != 0 ? JRAEvt->refpdgid_hadron->at(iref) : JRAEvt->refpdgid_parton_physics->at(iref);
           }
           float absrsp = pt-refpt;
           float relrsp = pt/refpt;
