@@ -10,15 +10,16 @@ def create_condor_template_dict():
         "executable": "run_prog.sh",
         "transfer_executable": "True",
         "universe": "vanilla",
-        "output": "$(name)_$(Cluster)_$(Process).out",
-        "error": "$(name)_$(Cluster)_$(Process).err",
-        "log": "$(name)_$(Cluster)_$(Process).log",
+        "output": "$(name)_$(Cluster).$(Process).out",
+        "error": "$(name)_$(Cluster).$(Process).err",
+        "log": "$(name)_$(Cluster).$(Process).log",
         "RequestMemory": "2G",
         "requirements": 'OpSysAndVer == "SL6"',
         "getenv": "True",
         "environment": "\"LD_LIBRARY_PATH_STORED="+os.environ.get('LD_LIBRARY_PATH')+"\"",
         "notification": "Error",
         "notify_user": "robin.aggleton@desy.de",
+        "+MyProject": "af-cms",
     }
     return template
 
@@ -78,12 +79,29 @@ infos = [
 # ("QCD_Pt_300to470_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_300to470_pythia_18_Jun_18_noJEC_storePFCand2_storePhysicsAlgoHadronFlav/*/*/"),
 # ("QCD_Pt_470to600_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_470to600_pythia_18_Jun_18_noJEC_storePFCand2_storePhysicsAlgoHadronFlav/*/*/"),
 # ("QCD_Pt_600to800_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_600to800_pythia_18_Jun_18_noJEC_storePFCand2_storePhysicsAlgoHadronFlav/*/*/"),
-("QCD_Pt_800to1000_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_800to1000_pythia_18_Jun_18_noJEC_storePFCand2_storePhysicsAlgoHadronFlav_3/*/*/"),
+# ("QCD_Pt_800to1000_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_800to1000_pythia_18_Jun_18_noJEC_storePFCand2_storePhysicsAlgoHadronFlav_3/*/*/"),
 # ("QCD_Pt_1000to1400_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_1000to1400_pythia_18_Jun_18_noJEC_storePFCand2_storePhysicsAlgoHadronFlav/*/*/"),
 # ("QCD_Pt_1400to1800_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_1400to1800_pythia_18_Jun_18_noJEC_storePFCand2_storePhysicsAlgoHadronFlav/*/*/"),
 # ("QCD_Pt_1800to2400_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_1800to2400_pythia_18_Jun_18_noJEC_storePFCand2_storePhysicsAlgoHadronFlav/*/*/"),
 # ("QCD_Pt_2400to3200_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_2400to3200_pythia_18_Jun_18_noJEC_storePFCand2_storePhysicsAlgoHadronFlav/*/*/"),
 # ("QCD_Pt_3200toInf_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_3200toInf_pythia_18_Jun_18_noJEC_storePFCand2_storePhysicsAlgoHadronFlav/*/*/"),
+
+# apply L2 ontop of L1
+("QCD_Pt_15to30_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_15to30_NoJEC_newFlav/"),
+("QCD_Pt_30to50_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_30to50_NoJEC_newFlav/"),
+("QCD_Pt_50to80_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_50to80_NoJEC_newFlav/"),
+("QCD_Pt_80to120_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_80to120_NoJEC_newFlav/"),
+("QCD_Pt_120to170_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_120to170_NoJEC_newFlav/"),
+("QCD_Pt_170to300_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_170to300_NoJEC_newFlav/"),
+("QCD_Pt_300to470_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_300to470_NoJEC_newFlav/"),
+("QCD_Pt_470to600_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_470to600_NoJEC_newFlav/"),
+("QCD_Pt_600to800_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_600to800_NoJEC_newFlav/"),
+("QCD_Pt_800to1000_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_800to1000_NoJEC_newFlav/"),
+("QCD_Pt_1000to1400_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_1000to1400_NoJEC_newFlav/"),
+("QCD_Pt_1400to1800_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_1400to1800_NoJEC_newFlav/"),
+("QCD_Pt_1800to2400_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_1800to2400_NoJEC_newFlav/"),
+("QCD_Pt_2400to3200_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_2400to3200_NoJEC_newFlav/"),
+("QCD_Pt_3200toInf_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_3200toInf_NoJEC_newFlav/"),
 
 
 # ("QCD_HT50to100_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_HT50to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_QCD_HT50to100_mg-pythia_25_May_18_newFlav_noJEC_storePFCand2/*/*/"),
@@ -138,15 +156,17 @@ infos = [
 
 
 all_algos = [
-    "ak4pfchs",
+    "ak4pfchsl1",
     # "ak4puppi",
     # "ak8pfchs",
     # "ak8puppi"
 ][:]
 
+flav = "s"
+
 # output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF"
 # output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
-output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron"
+output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2"+flav
 # output_dir = "QCD_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
 # output_dir = "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron"
 # output_dir = "DYJets_HT_NoJEC_relPtHatCut5_jtptmin4"
@@ -163,23 +183,34 @@ output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_P
 # output_dir = "DYJets_MG_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
 # output_dir = "DYJets_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
 
-jec_path = "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JECDatabase/textFiles/Summer16_07Aug2017_V10_MC"
+useAlgLevel = "true"
+if flav == "All":
+    jec_path = "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JECDatabase/textFiles/Summer16_07Aug2017_V10_MC"
+    jec_era = "Summer16_07Aug2017_V10_MC"
+    useAlgLevel = "false"
+else:
+    jec_path = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
+    jec_era = "Summer16_07Aug2017_V10_standardMedianErr_meanWhenSmall_rspRangeLarge_fitMin15_useFitRange_"+flav
 
-jec_era = "Summer16_07Aug2017_V10_MC"
-
-jec_levels = "1"
+jec_levels = "2"
 
 # keep this small as cannot handle long lists of files (9993 char limit?)
-Nfiles = 25
+Nfiles = 1
 
 job = dict_to_condor_contents(create_condor_template_dict())
-job += "\n"
+job += "\n\n"
 job += "JobBatchName=JAJ\n"
 job += "jecpath=%s\n" % jec_path
 job += "era=%s\n" % jec_era
-arguments = "jet_apply_jec_x -input $(inputf) -output $(outputf) -algs $(algos) -levels 1 -era $(era) -jecpath $(jecpath) -L1FastJet true -saveitree false"
+arguments = ("jet_apply_jec_x -input $(inputf) -output $(outputf) -algs $(algos) "
+    "-levels " + jec_levels + " -era $(era) -jecpath $(jecpath) "
+    "-L1FastJet true -saveitree false -useAlgLevel " + useAlgLevel
+)
 job += "\narguments = %s\n\n" % arguments
+job += "\nqueue\n"
 # print job
+
+job_args = [] 
 
 for name, input_dir in infos:
     # Put all files from given sample in own directory to make future steps easier
@@ -188,7 +219,8 @@ for name, input_dir in infos:
         os.makedirs(this_output_dir)
 
     # Split files to avoid running out of disk space on workers
-    pattern = os.path.join(input_dir, "JRA*.root")
+    # pattern = os.path.join(input_dir, "JRA*.root")
+    pattern = os.path.join(input_dir, "jaj*.root")
 
     for ind, group in enumerate(grouper(glob(pattern), Nfiles, "")):
 
@@ -196,17 +228,31 @@ for name, input_dir in infos:
             args_dict = {
                 "name": "JAJ_"+name+"_"+algo.split(":")[0]+"_"+str(ind), 
                 "inputf": " ".join(group).strip(),
-                "outputf": os.path.join(this_output_dir, "jaj_%s_%s_L1FastJet_%d.root" % (name, algo.split(":")[0], ind)),
+                "outputf": os.path.join(this_output_dir, "jaj_%s_%s_L1FastJetL2_%d.root" % (name, algo.split(":")[0], ind)),
                 "algos": algo,
             }
-            job += "\n".join(["%s=%s" % (k, v) for k,v in args_dict.items()])
-            job += "\nqueue\n\n"
+            # job += "\n".join(["%s=%s" % (k, v) for k,v in args_dict.items()])
+            # job += "\nqueue\n\n"
+            job_args.append(" ".join(['%s="%s"' % (k, v) for k,v in args_dict.items()]))
 
 print job
 
-job_filename = "do_jet_apply_jec_x_job.condor"
+job_filename = "do_jet_apply_jec_x_job_%s.condor" % flav
 with open(job_filename, 'w') as f:
     f.write(job)
 
-cmd = "condor_submit %s" % job_filename
+
+dag = ""
+for ind, job_args_entry in enumerate(job_args):
+    jobname = "JAJ"+str(ind)
+    dag += "JOB {0} {1}\n".format(jobname, job_filename)
+    dag += "VARS {0} {1}\n".format(jobname, job_args_entry) 
+
+dag += "RETRY ALL_NODES 3\n"
+
+dag_filename = job_filename.replace(".condor", ".dag")
+with open(dag_filename, 'w') as f:
+    f.write(dag)
+
+cmd = "condor_submit_dag -f %s" % dag_filename
 subprocess.check_call(cmd, shell=True)
