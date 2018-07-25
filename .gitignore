@@ -8,9 +8,13 @@ __init__.py
 *.png
 *.eps
 *.generated
+*.condor
+*.dag
+*.sub
+*.rescue*
+*.metrics
 
 JetAnalyzers/plots
-
 JetAnalyzers/test/crab*
 
 JECDatabase
