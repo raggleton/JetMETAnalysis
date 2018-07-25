@@ -25,7 +25,7 @@ def dict_to_condor_contents(input_dict):
     contents = ['%s=%s' % (k, str(v)) for k, v in input_dict.items()]
     return "\n".join(contents)
 
-
+flav = "s"
 infos = [
 # ("QCD_HT50to100", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_HT50to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_QCD_HT50to100_mg-pythia_20_Nov_17_newGenJetFlav/171120_142448/0000/"),
 # ("QCD_HT100to200", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_QCD_HT100to200_mg-pythia_20_Nov_17_newGenJetFlav/171120_142425/*/", 27990000.0000),
@@ -56,21 +56,21 @@ infos = [
 # ("QCD_Pt_3200toInf_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_3200toInf_pythia_28_Feb_18_newGenJetFlav_noJEC/*/*/", 0.0001654),
 
 # for after doing jet_apply_jec_x
-# ("QCD_Pt_15to30_NoJEC_newFlav", "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_15to30_NoJEC_newFlav/", 1837410000),
-# ("QCD_Pt_30to50_NoJEC_newFlav", "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_30to50_NoJEC_newFlav/", 140932000),
-# ("QCD_Pt_50to80_NoJEC_newFlav", "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_50to80_NoJEC_newFlav/", 19204300),
-# ("QCD_Pt_80to120_NoJEC_newFlav", "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_80to120_NoJEC_newFlav/", 2762530),
-# ("QCD_Pt_120to170_NoJEC_newFlav", "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_120to170_NoJEC_newFlav/", 471100),
-# ("QCD_Pt_170to300_NoJEC_newFlav", "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_170to300_NoJEC_newFlav/", 117276),
-# ("QCD_Pt_300to470_NoJEC_newFlav", "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_300to470_NoJEC_newFlav/", 7823),
-# ("QCD_Pt_470to600_NoJEC_newFlav", "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_470to600_NoJEC_newFlav/", 648.2),
-# ("QCD_Pt_600to800_NoJEC_newFlav", "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_600to800_NoJEC_newFlav/", 186.9),
-("QCD_Pt_800to1000_NoJEC_newFlav", "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_800to1000_NoJEC_newFlav/", 32.293),
-# ("QCD_Pt_1000to1400_NoJEC_newFlav", "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_1000to1400_NoJEC_newFlav/", 9.4183),
-# ("QCD_Pt_1400to1800_NoJEC_newFlav", "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_1400to1800_NoJEC_newFlav/", 0.84265),
-# ("QCD_Pt_1800to2400_NoJEC_newFlav", "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_1800to2400_NoJEC_newFlav/", 0.114943),
-# ("QCD_Pt_2400to3200_NoJEC_newFlav", "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_2400to3200_NoJEC_newFlav/", 0.0068298),
-# ("QCD_Pt_3200toInf_NoJEC_newFlav", "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JetAnalyzers/output/QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_3200toInf_NoJEC_newFlav/", 0.0001654),
+("QCD_Pt_15to30_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2%s/QCD_Pt_15to30_NoJEC_newFlav/" % (flav), 1837410000),
+("QCD_Pt_30to50_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2%s/QCD_Pt_30to50_NoJEC_newFlav/" % (flav), 140932000),
+("QCD_Pt_50to80_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2%s/QCD_Pt_50to80_NoJEC_newFlav/" % (flav), 19204300),
+("QCD_Pt_80to120_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2%s/QCD_Pt_80to120_NoJEC_newFlav/" % (flav), 2762530),
+("QCD_Pt_120to170_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2%s/QCD_Pt_120to170_NoJEC_newFlav/" % (flav), 471100),
+("QCD_Pt_170to300_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2%s/QCD_Pt_170to300_NoJEC_newFlav/" % (flav), 117276),
+("QCD_Pt_300to470_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2%s/QCD_Pt_300to470_NoJEC_newFlav/" % (flav), 7823),
+("QCD_Pt_470to600_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2%s/QCD_Pt_470to600_NoJEC_newFlav/" % (flav), 648.2),
+("QCD_Pt_600to800_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2%s/QCD_Pt_600to800_NoJEC_newFlav/" % (flav), 186.9),
+("QCD_Pt_800to1000_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2%s/QCD_Pt_800to1000_NoJEC_newFlav/" % (flav), 32.293),
+("QCD_Pt_1000to1400_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2%s/QCD_Pt_1000to1400_NoJEC_newFlav/" % (flav), 9.4183),
+("QCD_Pt_1400to1800_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2%s/QCD_Pt_1400to1800_NoJEC_newFlav/" % (flav), 0.84265),
+("QCD_Pt_1800to2400_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2%s/QCD_Pt_1800to2400_NoJEC_newFlav/" % (flav), 0.114943),
+("QCD_Pt_2400to3200_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2%s/QCD_Pt_2400to3200_NoJEC_newFlav/" % (flav), 0.0068298),
+("QCD_Pt_3200toInf_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2%s/QCD_Pt_3200toInf_NoJEC_newFlav/" % (flav), 0.0001654),
 
 # ("QCD_Pt_15to7000_Herwig_NoJEC_newFlav", "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_15to7000_Herwig_NoJEC_newFlav/", -1)
 
@@ -87,9 +87,9 @@ all_algos = [
 ][:]
 
 # output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4"
-output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_nbinsrelrsp_10k"
+output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2%s_nbinsrelrsp_10k" %(flav)
 # output_dir = "QCD_Pt_withL1L2L3_Summer16_07Aug2017_V1_relPtHatCut5_jtptmin4"
-# output_dir = "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_nbinsrelrsp_10k"
+# output_dir = "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2%s_nbinsrelrsp_10k" % (flav)
 # output_dir = "GJets_Herwig_NoJEC_relPtHatCut5_jtptmin4_nbinsrelrsp_10k"
 
 if not os.path.isdir(output_dir):
@@ -98,7 +98,13 @@ if not os.path.isdir(output_dir):
 job = dict_to_condor_contents(create_condor_template_dict())
 job += "\n"
 job += "JobBatchName=JRA\n"
-arguments = "jet_response_analyzer_x ../config/jra_flavour.config -input $(inputf) -output $(outputf) -algs $(algos) -flavorDefinition $(flavdef) -xsection $(xsec) -luminosity 35900 -jtptmin 4 -relpthatmax 5 -nbinsrelrsp 10000  -relrspmax 6 -useweight $(weight)"
+arguments = ("jet_response_analyzer_x ../config/jra_flavour.config -input $(inputf) -output $(outputf) "
+    "-algs $(algos) -flavorDefinition $(flavdef) "
+    "-xsection $(xsec) -luminosity 35900 "
+    "-jtptmin 4 -relpthatmax 5 "
+    "-nbinsrelrsp 10000 -relrspmax 6 "
+    "-useweight $(weight)"
+)
 job += "\narguments = %s\n\n" % arguments
 
 for name, input_dir, xsec in infos:
@@ -107,10 +113,11 @@ for name, input_dir, xsec in infos:
         args_dict = {
             "name": "JRA_"+name+"_"+algo_name, 
             "inputf": os.path.join(input_dir, "*%s*.root" % algo_name), 
-            "outputf": "%s/jra_%s_%s_L1FastJet_wideBinning_rspRangeLarge_absEta_hadron.root" % (output_dir, name, algo_name),
+            "outputf": "%s/jra_%s_%s_L1FastJet_wideBinning_rspRangeLarge_absEta_physicsParton.root" % (output_dir, name, algo_name),
             "xsec": "%.8f" % xsec, 
-            "algos": " ".join([algo, algo.replace(":", "l1l2l3:"), algo.replace(":", "l1:")]),
-            "flavdef": "hadron",
+            "algos": " ".join([algo, algo.replace(":", "l1l2l3:"), algo.replace(":", "l1:"), algo.replace(":", "l1l2:")]),
+            # "flavdef": "hadron",
+            "flavdef": "physics",
             "weight": "true",
         }
         job += "\n".join(["%s=%s" % (k, v) for k,v in args_dict.items()])
@@ -118,7 +125,7 @@ for name, input_dir, xsec in infos:
 
 print job
 
-job_filename = "do_jet_response_analyzer_x_job.condor"
+job_filename = "do_jet_response_analyzer_x_job_%s.condor" % (flav)
 with open(job_filename, 'w') as f:
     f.write(job)
 
