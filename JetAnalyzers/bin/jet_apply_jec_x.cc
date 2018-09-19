@@ -62,7 +62,7 @@ void setChainElementNames(TChain* c, string dirTreeName);
 int main(int argc,char**argv)
 {
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return 1;
   
   vector<string> input      = cl.getVector<string> ("input");
   string         era        = cl.getValue<string>  ("era");
@@ -78,7 +78,7 @@ int main(int argc,char**argv)
   bool           debug      = cl.getValue<bool>    ("debug",     false);
   bool           help       = cl.getValue<bool>    ("help",      false);
   
-  if(!cl.check()) return 0;
+  if(!cl.check()) return 101;
   cl.print();
   if(help) return 0;
   
@@ -96,7 +96,7 @@ int main(int argc,char**argv)
       jecpath = cmssw_release_base + "/src/CondFormats/JetMETObjects/data";
     if (stat(jecpath.c_str(),&st)!=0) {
       cout<<"ERROR: tried to set jecpath but failed, abort."<<endl;
-      return -1;
+      return 1;
     }
     else cout<<"jecpath set to "<<jecpath<<endl;
   }
@@ -105,7 +105,7 @@ int main(int argc,char**argv)
   TFile* ifile = nullptr;
   if (url_string.empty()) {
     ifile = TFile::Open(input[0].c_str(),"READ");
-    if (!ifile) { cout<<"Can't open file "<<input[0]<<endl; return -2; }
+    if (!ifile) { cout<<"Can't open file "<<input[0]<<endl; return 2; }
     for (const auto & itr : input) { ichain->Add(itr.c_str()); }
     if (output.empty()) output=input[0].substr(0,input[0].find(".root"))+"_jec.root";
   }
@@ -126,7 +126,7 @@ int main(int argc,char**argv)
       }
       TChainElement* chEl = (TChainElement*)ichain->GetListOfFiles()->First();
       ifile = TFile::Open(chEl->GetTitle(),"READ");
-      if (file_count==0){ cout<<"No files found! Aborting."<<endl; return -3; }
+      if (file_count==0){ cout<<"No files found! Aborting."<<endl; return 3; }
       if (output.empty()) {
         output = chEl->GetTitle();
         output = output.substr(output.rfind("/")+1,output.find(".root")-output.rfind("/")-1)+"_jec.root";
@@ -134,11 +134,11 @@ int main(int argc,char**argv)
     }
   #else
     cout << "Can't find the header file \"xrootd/XrdCl/XrdClFileSystem.hh\" and thus can't use xrootd." << endl;
-    return -4;
+    return 4;
   #endif
 
   TFile* ofile = TFile::Open(output.c_str(),"RECREATE");
-  if (!ofile) { cout<<"Can't open file "<<output<<endl; return 0; }
+  if (!ofile) { cout<<"Can't open file "<<output<<endl; return 5; }
   else { cout<<"Write output to "<<output<<endl; }
   
   if (algs.size()==0) {
@@ -157,7 +157,7 @@ int main(int argc,char**argv)
     setChainElementNames(ichain,alg+"/t");
     
     TDirectory* idir=(TDirectory*)ifile->Get(alg.c_str());
-    if (0==idir) { cout<<"No dir "<<alg<<" found"<<endl; return 0; }
+    if (0==idir) { cout<<"No dir "<<alg<<" found"<<endl; return 6; }
     
     bool exclude(false);
     for (unsigned int i=0;i<levels.size();i++) {
