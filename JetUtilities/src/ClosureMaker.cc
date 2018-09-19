@@ -435,17 +435,25 @@ void ClosureMaker::checkResponse() {
 pair<double,double> ClosureMaker::determineCanvasRange(double xmin, double xmax) {
   bool above105 = false, below95 = false;
   bool above115 = false, below85 = false;
+  bool above125 = false, below75 = false;
+  return make_pair(0.75,1.25);
   for(unsigned int ih=0; ih<hClosure.size(); ih++) {
     for(int ibin=hClosure[ih]->FindBin(xmin); ibin<hClosure[ih]->FindBin(xmax)+1; ibin++) {
+      // std::cout << "Bin content " << hClosure[ih]->GetBinContent(ibin) << std::endl;
+      if(hClosure[ih]->GetBinContent(ibin) == 0) continue;
       if(hClosure[ih]->GetBinContent(ibin)>1.05) above105 = true;
       if(hClosure[ih]->GetBinContent(ibin)<0.95 &&
          hClosure[ih]->GetBinContent(ibin)!=0.0) below95 = true;
       if(hClosure[ih]->GetBinContent(ibin)>1.15) above115 = true;
       if(hClosure[ih]->GetBinContent(ibin)<0.85 &&
          hClosure[ih]->GetBinContent(ibin)!=0.0) below85 = true;
+      if(hClosure[ih]->GetBinContent(ibin)>1.25) above125 = true;
+      if(hClosure[ih]->GetBinContent(ibin)<0.75 &&
+         hClosure[ih]->GetBinContent(ibin)!=0.0) below75 = true;
     }
   }
-  if(above115 || below85)      return make_pair(0.35,1.35);
+  if(above125 || below75)      return make_pair(0.65,1.35);
+  else if(above115 || below85)      return make_pair(0.75,1.25);
   else if(above105 || below95) return make_pair(0.85,1.15);
   else                         return make_pair(0.95,1.05);
 }
@@ -494,14 +502,15 @@ void ClosureMaker::makeCanvases() {
         }
         frame->GetXaxis()->SetMoreLogLabels();
         frame->GetXaxis()->SetNoExponent();
-        frame->GetYaxis()->SetRangeUser(0.95,1.05);
+        frame->GetYaxis()->SetRangeUser(0.75,1.25);
+        // frame->GetYaxis()->SetRangeUser(0.85,1.15);
         //frame->GetYaxis()->SetRangeUser(0.35,1.35);
         //frame->GetYaxis()->SetRangeUser(0.00,1.3);
         frame->GetXaxis()->SetTitle(getVariableAxisTitleString(var).c_str());
         frame->GetYaxis()->SetTitle("Response");
         canvases_legends.push_back(make_pair(tdrCanvas(name,frame,14,11,true),
-                                             tdrLeg(0.58,0.16,0.9,0.4)));
-        if((var == VARIABLES::refpt || var == VARIABLES::jtpt || var == VARIABLES::ptclpt) && ih<3)
+                                             tdrLeg(0.65,0.12,0.9,0.5)));
+        if((var == VARIABLES::refpt || var == VARIABLES::jtpt || var == VARIABLES::ptclpt))
             canvases_legends.back().first->GetPad(0)->SetLogx();
         
         //
