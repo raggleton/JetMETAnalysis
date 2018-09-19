@@ -1345,6 +1345,8 @@ void L2Creator::writeTextFileForCurrentAlgorithm() {
                    fout<<setw(17)<<setprecision(10)<<frelcor->GetParameter(p);
                 }
                 fout<<endl;
+        } else {
+            throw std::runtime_error("No fit function for ieta " + ieta);
         }
     }
     fout.close();
