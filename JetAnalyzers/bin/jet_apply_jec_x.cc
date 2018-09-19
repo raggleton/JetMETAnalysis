@@ -74,6 +74,7 @@ int main(int argc,char**argv)
   bool           L1FastJet  = cl.getValue<bool>    ("L1FastJet", false);
   vector<string> postfix    = cl.getVector<string> ("postfix",      "");
   bool           useTags    = cl.getValue<bool>    ("useTags",    true);
+  bool           useAlgLevel= cl.getValue<bool>    ("useAlgLevel",    false);
   bool           saveitree  = cl.getValue<bool>    ("saveitree",  true);
   bool           debug      = cl.getValue<bool>    ("debug",     false);
   bool           help       = cl.getValue<bool>    ("help",      false);
@@ -168,9 +169,22 @@ int main(int argc,char**argv)
       cout<<"exclude "<<alg<<endl;
       continue;
     }
-    cout<<"jet algorithm: "<<alg<<endl;
+
+    string algName = alg;
+    // strip the lxxx bit for JEC files
+    if (!useAlgLevel) {
+      auto loc = algName.find("l");
+      if (loc != string::npos) {
+        algName = algName.substr(0, loc);
+        cout << "algName: " << algName << endl;
+      } else {
+        cout << "Couldn't find l" << endl;
+      }
+    }
+
+    cout<<"jet algorithm: "<<algName<<endl;
     cout<<"correction level: "<<JetInfo::get_correction_levels(levels,L1FastJet)<<endl;
-    cout<<"correction tag: "<<JetInfo::get_correction_tags(era,alg,levels,jecpath,L1FastJet)<<endl;
+    cout<<"correction tag: "<<JetInfo::get_correction_tags(era,algName,levels,jecpath,L1FastJet)<<endl;
 
     //
     // Get the corrections from the text files
@@ -180,7 +194,7 @@ int main(int argc,char**argv)
     if(useTags)
       {
          corrector = new FactorizedJetCorrector(JetInfo::get_correction_levels(levels,L1FastJet),
-                                                JetInfo::get_correction_tags(era,alg,levels,jecpath,L1FastJet));
+                                                JetInfo::get_correction_tags(era,algName,levels,jecpath,L1FastJet));
       }
     else
       {
@@ -194,7 +208,7 @@ int main(int argc,char**argv)
             vPar.push_back(JetCorrectorParameters(string(jecpath + era + 
                                                   JetInfo::get_level_tag(levels[ilevel],L1FastJet) + 
                                                   jetInfo.getAlias() + 
-                                                  getPostfix(postfix,alg,levels[ilevel]) + ".txt")));
+                                                  getPostfix(postfix,algName,levels[ilevel]) + ".txt")));
           }
         corrector = new FactorizedJetCorrector(vPar);
       }

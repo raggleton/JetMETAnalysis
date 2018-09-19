@@ -436,15 +436,29 @@ int main(int argc,char**argv)
          cout<<"exclude "<<algs[a]<<endl;
          continue;
       }
+      string algName = algs[a];
+      if (!doflavor) {
+         auto loc = algName.find("l");
+         if (loc != string::npos) {
+            algName = algName.substr(0, loc);
+            cout << "algName: " << algName << endl;
+         } else {
+            cout << "Couldn't find l" << endl;
+         }
+         for(unsigned int ilevel=0; ilevel<levels.size(); ilevel++) {
+            cout << getPostfix(postfix,algName,levels[ilevel]) << endl;
+         }
+      }
+
       cout<<"jet algorithm: "<<algs[a]<<endl;
       cout<<"correction level: "<<JetInfo::get_correction_levels(levels,L1FastJet)<<endl;
-      cout<<"correction tag: "<<JetInfo::get_correction_tags(era,algs[a],levels,path,L1FastJet)<<endl;
+      cout<<"correction tag: "<<JetInfo::get_correction_tags(era,algName,levels,path,L1FastJet)<<endl;
 
       cout << "Setting up the FactorizedJetCorrector ... " << flush;
       FactorizedJetCorrector *JetCorrector;
       if(levels.size()>0 && useTags) {
          JetCorrector = new FactorizedJetCorrector(JetInfo::get_correction_levels(levels,L1FastJet),
-                                                   JetInfo::get_correction_tags(era,algs[a],levels,path,L1FastJet));
+                                                   JetInfo::get_correction_tags(era,algName,levels,path,L1FastJet));
       }
       else if(levels.size()>0) {
          //
@@ -454,9 +468,9 @@ int main(int argc,char**argv)
          vector<JetCorrectorParameters> vPar;
          for(unsigned int ilevel=0; ilevel<levels.size(); ilevel++) {
             cout << "Looking for JEC file " << string(path + era + JetInfo::get_level_tag(levels[ilevel],L1FastJet) +
-                                                      jetInfo.getAlias() + getPostfix(postfix,algs[a],levels[ilevel]) + ".txt") << endl;
+                                                      jetInfo.getAlias() + getPostfix(postfix,algName,levels[ilevel]) + ".txt") << endl;
             vPar.push_back(JetCorrectorParameters(string(path + era + JetInfo::get_level_tag(levels[ilevel],L1FastJet) +
-                                                         jetInfo.getAlias() + getPostfix(postfix,algs[a],levels[ilevel]) + ".txt")));
+                                                         jetInfo.getAlias() + getPostfix(postfix,algName,levels[ilevel]) + ".txt")));
          }
          JetCorrector = new FactorizedJetCorrector(vPar);
       }
