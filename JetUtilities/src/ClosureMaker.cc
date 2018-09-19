@@ -277,7 +277,9 @@ void ClosureMaker::loopOverHistograms() {
     while ((hvar=hl.next_object(indices))) {
 
         unsigned int ibin=indices[0];
-
+        if (hvar->GetEntries() == 0) {
+            cout << "Warning: " << hvar->GetName() << " has 0 entries" << endl;
+        }
         //
         // Create the output histogram
         //
