@@ -109,6 +109,14 @@ string getPostfix(vector<string> postfix, string alg, int level);
 // for sorting TLorentzVectors by pt
 bool sort_by_pt(const TLorentzVector & a, const TLorentzVector & b);
 
+
+enum class FlavDef {
+   Physics,
+   Algo,
+   Hadron,
+   HadronParton
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // main
 ////////////////////////////////////////////////////////////////////////////////
@@ -220,6 +228,20 @@ int main(int argc,char**argv)
       return 102;
    }
 
+   FlavDef flavorDef = FlavDef::Physics;
+
+   flavorDefinition.ToUpper();
+   if (flavorDefinition.CompareTo("PHYSICS")==0)
+      flavorDef = FlavDef::Physics;
+   else if (flavorDefinition.CompareTo("ALGO")==0)
+      flavorDef = FlavDef::Algo;
+   else if (flavorDefinition.CompareTo("HADRON")==0)
+      flavorDef = FlavDef::Hadron;
+   else if (flavorDefinition.CompareTo("HADRONPARTON")==0)
+      flavorDef = FlavDef::HadronParton;
+   else
+      throw std::runtime_error("Unknown flavorDefinition: must be PHYSICS, ALGO, HADRON, or HADRONPARTON");
+
    //
    // Some useful quantities
    //
@@ -326,7 +348,6 @@ int main(int argc,char**argv)
                                      "refpdgid_parton_physics", "refpdgid_parton_algo", "refpdgid_hadron",
                                      "npv","rho","rho_hlt","pthat","weight"};
       for(auto n : branch_names) {
-         if(!doflavor && n=="refpdgid") continue;
          if(n=="rho_hlt" && 0==chain->GetBranch("rho_hlt")) continue;
          if(n=="weight") {
             if (xsection>0.0) { 
@@ -922,18 +943,15 @@ int main(int argc,char**argv)
 
             // Do flavour selection
             if (doflavor){
-               uint flav = 0;
-               flavorDefinition.ToUpper();
-               if(flavorDefinition.CompareTo("PHYSICS")==0)
+               int flav = 0;
+               if (flavorDef == FlavDef::Physics)
                   flav = JRAEvt->refpdgid_parton_physics->at(iref);
-               else if (flavorDefinition.CompareTo("ALGO")==0)
+               else if (flavorDef == FlavDef::Algo)
                   flav = JRAEvt->refpdgid_parton_algo->at(iref);
-               else if (flavorDefinition.CompareTo("HADRON")==0)
+               else if (flavorDef == FlavDef::Hadron)
                   flav = JRAEvt->refpdgid_hadron->at(iref);
-               else if (flavorDefinition.CompareTo("HADRONPARTON")==0)
+               else if (flavorDef == FlavDef::HadronParton)
                   flav = abs(JRAEvt->refpdgid_hadron->at(iref)) > 0 ? abs(JRAEvt->refpdgid_hadron->at(iref)) : abs(JRAEvt->refpdgid_parton_physics->at(iref));
-               else
-                  throw std::runtime_error("Unknown flavour definition");
 
                flav = abs(flav);
 
