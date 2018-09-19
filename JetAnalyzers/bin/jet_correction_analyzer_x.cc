@@ -807,7 +807,7 @@ int main(int argc,char**argv)
             if (etamax>0 && TMath::Abs(eta)>etamax) continue;
             float pt     = JRAEvt->jtpt->at(iref);
             if (pt > 14000) {
-               cout << "WARNING::pt>14000 GeV (pt = " << pt << " GeV)." << endl << "Skipping this jet." << endl;
+               cout << "WARNING::pt>14000 GeV (pt = " << pt << " GeV, eta = "<< eta << ")." << endl << "Skipping this jet." << endl;
                continue;
             }
             if (drmax.size()>0 && JRAEvt->refdrjt->at(iref) > drmax[a]) continue;
