@@ -413,6 +413,8 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
            JRAEvt_->jtmuf ->push_back(pfJetRef->muonEnergyFraction()         *JRAEvt_->jtjec->at(JRAEvt_->nref));
            JRAEvt_->jthfhf->push_back(pfJetRef->HFHadronEnergyFraction()     *JRAEvt_->jtjec->at(JRAEvt_->nref));
            JRAEvt_->jthfef->push_back(pfJetRef->HFEMEnergyFraction()         *JRAEvt_->jtjec->at(JRAEvt_->nref));
+           JRAEvt_->jtchmult->push_back(pfJetRef->chargedMultiplicity());
+           JRAEvt_->jtnmult->push_back(pfJetRef->neutralMultiplicity());
         } 
      }
      
