@@ -10,8 +10,8 @@ doProducer = False
 process = cms.Process("JRA")
 multithread = False
 if doProducer:
-	process = cms.Process("JRAP")
-	multithread = True
+        process = cms.Process("JRAP")
+        multithread = True
 
 
 #!
@@ -31,14 +31,14 @@ jcr = cms.VPSet()
 
 for k, v in algsizetype.iteritems():
     for s in v:
-	for j in jettype:
+        for j in jettype:
             for c in corrs:
-	        algorithms.append(str(k+str(s)+j+c))
-	        if conditionsSource != "GT":
+                algorithms.append(str(k+str(s)+j+c))
+                if conditionsSource != "GT":
                     upperAlg = str(k.upper()+str(s)+j.upper().replace("CHS","chs")).replace("PUPPI","PFPuppi")
-		    jcr.append(cms.PSet(record = cms.string("JetCorrectionsRecord"),
-					tag = cms.string("JetCorrectorParametersCollection_"+era+"_"+upperAlg),
-					label= cms.untracked.string(upperAlg)))
+                    jcr.append(cms.PSet(record = cms.string("JetCorrectionsRecord"),
+                                        tag = cms.string("JetCorrectorParametersCollection_"+era+"_"+upperAlg),
+                                        label= cms.untracked.string(upperAlg)))
 
 # If need be you can append additional jet collections using the style below
 #algorithms.append('ak5calo')
@@ -141,9 +141,9 @@ if printOC:
 #!
 if doProducer:
     process.out = cms.OutputModule("PoolOutputModule",
-				   fileName = cms.untracked.string('JRAP.root'),
-				   outputCommands = outCom
-				   )
+                                   fileName = cms.untracked.string('JRAP.root'),
+                                   outputCommands = outCom
+                                   )
     process.e = cms.EndPath(process.out)
 
 
