@@ -156,13 +156,14 @@ infos = [
 
 
 all_algos = [
-    "ak4pfchsl1",
+    "ak4pfchs",
+    # "ak4pfchsl1",
     # "ak4puppi",
     # "ak8pfchs",
     # "ak8puppi"
 ][:]
 
-flav = "s"
+flav = "All"
 
 # output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF"
 # output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
@@ -185,17 +186,18 @@ output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_P
 
 useAlgLevel = "true"
 if flav == "All":
-    jec_path = "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JECDatabase/textFiles/Summer16_07Aug2017_V10_MC"
-    jec_era = "Summer16_07Aug2017_V10_MC"
+    jec_era = "Summer16_07Aug2017_V11_L1fix_MC"
+    jec_path = "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JECDatabase/textFiles/"+jec_era
     useAlgLevel = "false"
+    output_dir += "_L1FastJet_"+jec_era
 else:
     jec_path = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
     jec_era = "Summer16_07Aug2017_V10_standardMedianErr_meanWhenSmall_rspRangeLarge_fitMin15_useFitRange_"+flav
 
-jec_levels = "2"
+jec_levels = "1"
 
 # keep this small as cannot handle long lists of files (9993 char limit?)
-Nfiles = 1
+Nfiles = 25
 
 job = dict_to_condor_contents(create_condor_template_dict())
 job += "\n\n"
@@ -210,7 +212,8 @@ job += "\narguments = %s\n\n" % arguments
 job += "\nqueue\n"
 # print job
 
-job_args = [] 
+job_args = []
+job_names = []
 
 for name, input_dir in infos:
     # Put all files from given sample in own directory to make future steps easier
@@ -219,40 +222,48 @@ for name, input_dir in infos:
         os.makedirs(this_output_dir)
 
     # Split files to avoid running out of disk space on workers
-    # pattern = os.path.join(input_dir, "JRA*.root")
-    pattern = os.path.join(input_dir, "jaj*.root")
+    pattern = os.path.join(input_dir, "JRA*.root")  # straight ntuples
+    # pattern = os.path.join(input_dir, "jaj*.root")  # if already had JAJ applied once
 
     for ind, group in enumerate(grouper(glob(pattern), Nfiles, "")):
 
         for algo in all_algos:
             args_dict = {
-                "name": "JAJ_"+name+"_"+algo.split(":")[0]+"_"+str(ind), 
+                "name": "JAJ_"+name+"_"+algo.split(":")[0]+"_"+str(ind),
                 "inputf": " ".join(group).strip(),
-                "outputf": os.path.join(this_output_dir, "jaj_%s_%s_L1FastJetL2_%d.root" % (name, algo.split(":")[0], ind)),
+                "outputf": os.path.join(this_output_dir, "jaj_%s_%s_L1FastJet_%d.root" % (name, algo.split(":")[0], ind)),
                 "algos": algo,
             }
             # job += "\n".join(["%s=%s" % (k, v) for k,v in args_dict.items()])
             # job += "\nqueue\n\n"
             job_args.append(" ".join(['%s="%s"' % (k, v) for k,v in args_dict.items()]))
+            job_names.append(args_dict['name'])
 
 print job
 
-job_filename = "do_jet_apply_jec_x_job_%s.condor" % flav
+if len(job_names) == 0:
+    raise RuntimeError("Didn't find any files to run over!")
+
+job_filename = "htc_do_jet_apply_jec_x_job_%s.condor" % flav
 with open(job_filename, 'w') as f:
     f.write(job)
 
 
 dag = ""
-for ind, job_args_entry in enumerate(job_args):
-    jobname = "JAJ"+str(ind)
-    dag += "JOB {0} {1}\n".format(jobname, job_filename)
-    dag += "VARS {0} {1}\n".format(jobname, job_args_entry) 
+for ind, (job_name, job_args_entry) in enumerate(zip(job_names, job_args)):
+    dag += "JOB {0} {1}\n".format(job_name, job_filename)
+    dag += "VARS {0} {1}\n".format(job_name, job_args_entry)
 
 dag += "RETRY ALL_NODES 3\n"
+status_file = job_filename.replace(".condor", ".dagstatus")
+dag += "NODE_STATUS_FILE %s\n" % (status_file)
 
 dag_filename = job_filename.replace(".condor", ".dag")
 with open(dag_filename, 'w') as f:
     f.write(dag)
 
-cmd = "condor_submit_dag -f %s" % dag_filename
+print "Submitting", len(job_names), "jobs"
+cmd = "condor_submit_dag -maxjobs 200 -maxidle 1000 -f %s" % dag_filename
 subprocess.check_call(cmd, shell=True)
+print "Check status with"
+print "DAGstatus", status_file

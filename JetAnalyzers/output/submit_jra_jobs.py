@@ -2,6 +2,9 @@
 
 import os
 import subprocess
+from itertools import izip_longest
+from glob import glob
+
 
 def create_condor_template_dict():
     template = {
@@ -24,6 +27,14 @@ def create_condor_template_dict():
 def dict_to_condor_contents(input_dict):
     contents = ['%s=%s' % (k, str(v)) for k, v in input_dict.items()]
     return "\n".join(contents)
+
+
+def grouper(iterable, n, fillvalue=None):
+    "Collect data into fixed-length chunks or blocks"
+    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx
+    args = [iter(iterable)] * n
+    return izip_longest(fillvalue=fillvalue, *args)
+
 
 flav = "s"
 infos = [
@@ -95,39 +106,74 @@ output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_P
 if not os.path.isdir(output_dir):
     os.makedirs(output_dir)
 
+Nfiles = 5
+
 job = dict_to_condor_contents(create_condor_template_dict())
 job += "\n"
 job += "JobBatchName=JRA\n"
 arguments = ("jet_response_analyzer_x ../config/jra_flavour.config -input $(inputf) -output $(outputf) "
     "-algs $(algos) -flavorDefinition $(flavdef) "
     "-xsection $(xsec) -luminosity 35900 "
-    "-jtptmin 4 -relpthatmax 5 "
+    "-jtptmin 4 -relpthatmax 2.5 "
     "-nbinsrelrsp 10000 -relrspmax 6 "
     "-useweight $(weight)"
 )
 job += "\narguments = %s\n\n" % arguments
+job += "\nqueue\n"
 
+job_args = []
+job_names = []
 for name, input_dir, xsec in infos:
     for algo in all_algos:
         algo_name, radius = algo.split(":")
-        args_dict = {
-            "name": "JRA_"+name+"_"+algo_name, 
-            "inputf": os.path.join(input_dir, "*%s*.root" % algo_name), 
-            "outputf": "%s/jra_%s_%s_L1FastJet_wideBinning_rspRangeLarge_absEta_physicsParton.root" % (output_dir, name, algo_name),
-            "xsec": "%.8f" % xsec, 
-            "algos": " ".join([algo, algo.replace(":", "l1l2l3:"), algo.replace(":", "l1:"), algo.replace(":", "l1l2:")]),
-            # "flavdef": "hadron",
-            "flavdef": "physics",
-            "weight": "true",
-        }
-        job += "\n".join(["%s=%s" % (k, v) for k,v in args_dict.items()])
-        job += "\nqueue\n\n"
+
+        # Split files to avoid running out of disk space on workers
+        pattern = os.path.join(input_dir, "*.root")
+
+        for ind, group in enumerate(grouper(glob(pattern), Nfiles, "")):
+
+            args_dict = {
+                "name": "JRA_"+name+"_"+algo_name+"_"+str(ind),
+                # "inputf": os.path.join(input_dir, "*%s*.root" % algo_name),
+                "inputf":  " ".join(group).strip(),
+                "outputf": "%s/jra_%s_%s_L1FastJet_rspRangeLarge_absEta_hadronParton.root" % (output_dir, name, algo_name),
+                "xsec": "%.8f" % xsec,
+                "algos": " ".join([algo, algo.replace(":", "l1l2l3:"), algo.replace(":", "l1:"), algo.replace(":", "l1l2:")]),
+                # "flavdef": "hadron",
+                "flavdef": "HADRONPARTON",
+                "weight": "true",
+            }
+            # job += "\n".join(["%s=%s" % (k, v) for k,v in args_dict.items()])
+            # job += "\nqueue\n\n"
+            job_args.append(" ".join(['%s="%s"' % (k, v) for k,v in args_dict.items()]))
+            job_names.append(args_dict['name'])
 
 print job
 
-job_filename = "do_jet_response_analyzer_x_job_%s.condor" % (flav)
+if len(job_names) == 0:
+    raise RuntimeError("Didn't find any files to run over!")
+
+# job_filename = "do_jet_response_analyzer_x_job_%s.condor" % (flav)
+# job_filename = "htc_do_jet_response_analyzer_x_job_2017a.condor"
+job_filename = "htc_do_jet_response_analyzer_x_job_2016.condor"
 with open(job_filename, 'w') as f:
     f.write(job)
 
-cmd = "condor_submit %s" % job_filename
+dag = ""
+for ind, (job_name, job_args_entry) in enumerate(zip(job_names, job_args)):
+    dag += "JOB {0} {1}\n".format(job_name, job_filename)
+    dag += "VARS {0} {1}\n".format(job_name, job_args_entry)
+
+dag += "RETRY ALL_NODES 3\n"
+status_file = job_filename.replace(".condor", ".dagstatus")
+dag += "NODE_STATUS_FILE %s\n" % (status_file)
+
+dag_filename = job_filename.replace(".condor", ".dag")
+with open(dag_filename, 'w') as f:
+    f.write(dag)
+
+print "Submitting", len(job_names), "jobs"
+cmd = "condor_submit_dag -maxjobs 200 -maxidle 1000 -f %s" % dag_filename
 subprocess.check_call(cmd, shell=True)
+print "Check status with:"
+print "DAGstatus", status_file
