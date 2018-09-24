@@ -13,6 +13,9 @@ __init__.py
 *.sub
 *.rescue*
 *.metrics
+*.root
+*.diff
+*.patch
 
 JetAnalyzers/plots
 JetAnalyzers/test/crab*
