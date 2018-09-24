@@ -19,7 +19,7 @@
 #include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
- 
+
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
@@ -29,6 +29,7 @@
 #include "DataFormats/Candidate/interface/CandMatchMap.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
+#include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
 #include "DataFormats/JetReco/interface/JPTJet.h"
 #include "DataFormats/JetReco/interface/CaloJet.h"
 #include "DataFormats/JetReco/interface/PFJet.h"
@@ -90,7 +91,40 @@ private:
 private:
   // member data
   std::string   moduleLabel_;
-  
+
+  //helper classes to handle AOD vs MiniAOD
+  //taken from RecoEgamma/ElectronIdentification/plugins/ElectronHEEPIDValueMapProducer.cc
+  template<typename T, typename T2>
+  struct DualToken {
+    edm::EDGetTokenT<T> aod;
+    edm::EDGetTokenT<T2> miniAOD;
+    bool isAOD() const { return !aod.isUninitialized(); }
+  };
+
+  class DataFormat {
+  public:
+    enum Format {AUTO=0, AOD=1, MINIAOD=2};
+  private:
+    int data_;
+  public:
+    DataFormat(int val):data_(val){}
+    bool tryAOD() const { return data_==AUTO || data_==AOD; }
+    bool tryMiniAOD() const { return data_==AUTO || data_==MINIAOD; }
+    int operator()() const { return data_; }
+    void setFormat(int val) { data_ = val; }
+  };
+
+  template<typename T, typename T2>
+  void setToken(DualToken<T, T2> & token, const edm::ParameterSet & iPara, const std::string & tagAOD, const std::string & tagMiniAOD, DataFormat & format);
+
+  template<typename T, typename T2>
+  void setHandle(edm::Handle<T> & handle, const edm::Event& iEvent, const DualToken<T, T2>& token);
+
+  template<typename T, typename T2>
+  void setHandle(edm::Handle<T2> & handle, const edm::Event& iEvent, const DualToken<T, T2>& token);
+
+  DataFormat dataFormat_;
+
   edm::EDGetTokenT<reco::CandidateView> srcRef_;
   edm::EDGetTokenT<reco::CandViewMatchMap> srcJetToUncorJetMap_;
   edm::EDGetTokenT<reco::CandViewMatchMap> srcRefToJetMap_;
@@ -104,7 +138,7 @@ private:
   //edm::EDGetTokenT<vector<reco::PFCandidate> > srcPFCandidates_;
   edm::EDGetTokenT<PFCandidateView> srcPFCandidates_;
   edm::EDGetTokenT<std::vector<edm::FwdPtr<reco::PFCandidate> > > srcPFCandidatesAsFwdPtr_;
-  edm::EDGetTokenT<vector<reco::GenParticle> > srcGenParticles_;
+  DualToken<vector<reco::GenParticle>, vector<pat::PackedGenParticle> > srcGenParticles_;
 
   std::string   jecLabel_;
   

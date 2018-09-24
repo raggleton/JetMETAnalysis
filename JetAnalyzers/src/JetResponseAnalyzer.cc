@@ -17,6 +17,7 @@
 //______________________________________________________________________________
 JetResponseAnalyzer::JetResponseAnalyzer(const edm::ParameterSet& iConfig)
   : moduleLabel_            (iConfig.getParameter<std::string>            ("@module_label"))
+  , dataFormat_             (iConfig.getParameter<int>("dataFormat"))
   , srcRef_                 (consumes<reco::CandidateView>(iConfig.getParameter<edm::InputTag>                ("srcRef")))
   , srcJetToUncorJetMap_    (consumes<reco::CandViewMatchMap>(iConfig.getParameter<edm::InputTag>("srcJetToUncorJetMap")))
   , srcRefToJetMap_         (consumes<reco::CandViewMatchMap>(iConfig.getParameter<edm::InputTag>     ("srcRefToJetMap")))
@@ -25,11 +26,10 @@ JetResponseAnalyzer::JetResponseAnalyzer(const edm::ParameterSet& iConfig)
   , srcRhoHLT_              (consumes<double>(iConfig.getParameter<edm::InputTag>                          ("srcRhoHLT")))
   , srcVtx_                 (consumes<reco::VertexCollection>(iConfig.getParameter<edm::InputTag>             ("srcVtx")))
   , srcGenInfo_             (consumes<GenEventInfoProduct>(edm::InputTag("generator"))                                   )
-  , srcPileupInfo_          (consumes<vector<PileupSummaryInfo> >(edm::InputTag("addPileupInfo"))                        )
+  , srcPileupInfo_          (consumes<vector<PileupSummaryInfo> >(iConfig.getParameter<edm::InputTag>  ("srcPileupInfo")))
   //, srcPFCandidates_      (consumes<vector<reco::PFCandidate> >(iConfig.getParameter<edm::InputTag>("srcPFCandidates")))
   , srcPFCandidates_        (consumes<PFCandidateView>(iConfig.getParameter<edm::InputTag>("srcPFCandidates")))
   , srcPFCandidatesAsFwdPtr_(consumes<std::vector<edm::FwdPtr<reco::PFCandidate> > >(iConfig.getParameter<edm::InputTag>("srcPFCandidates")))
-  , srcGenParticles_        (consumes<vector<reco::GenParticle> >(iConfig.getParameter<edm::InputTag>("srcGenParticles")))
   , jecLabel_      (iConfig.getParameter<std::string>                 ("jecLabel"))
   , doComposition_ (iConfig.getParameter<bool>                   ("doComposition"))
   , doFlavor_      (iConfig.getParameter<bool>                        ("doFlavor"))
@@ -44,6 +44,8 @@ JetResponseAnalyzer::JetResponseAnalyzer(const edm::ParameterSet& iConfig)
   , getFlavorFromMap_(false)
   , jetCorrector_(0)
 {
+  setToken(srcGenParticles_, iConfig, "srcGenParticles", "srcGenParticles", dataFormat_);
+
   if (iConfig.exists("deltaRMax")) {
     doBalancing_=false;
      deltaRMax_=iConfig.getParameter<double>("deltaRMax");
@@ -134,6 +136,7 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
   edm::Handle<PFCandidateView>                   pfCandidates;
   edm::Handle<std::vector<edm::FwdPtr<reco::PFCandidate> > >  pfCandidatesAsFwdPtr;
   edm::Handle<vector<reco::GenParticle> >        genParticles;
+  edm::Handle<vector<pat::PackedGenParticle> >   packedGenParticles;
 
   // Jet CORRECTOR
   jetCorrector_ = (jecLabel_.empty()) ? 0 : JetCorrector::getJetCorrector(jecLabel_,iSetup);
@@ -186,14 +189,25 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
 
   // GENERATED PV INFORMATION & PU DENSITY
   JRAEvt_->refpvz = -1000.0;
-  iEvent.getByToken(srcGenParticles_, genParticles);
-  for (size_t i = 0; i < genParticles->size(); ++i) {
-     const reco::GenParticle & genIt = (*genParticles)[i];
-     if ( genIt.isHardProcess() ) {
+
+  if (srcGenParticles_.isAOD()){
+    setHandle<vector<reco::GenParticle>, vector<pat::PackedGenParticle> >(genParticles, iEvent, srcGenParticles_);
+    for (const auto & genIt : *genParticles) {
+      if (genIt.isHardProcess()) {
         JRAEvt_->refpvz = genIt.vz();
         break;
-     }
+      }
+    }
+  } else {
+    setHandle<vector<reco::GenParticle>, vector<pat::PackedGenParticle> >(packedGenParticles, iEvent, srcGenParticles_);
+    for (const auto & genIt : *packedGenParticles) {
+      if (genIt.fromHardProcessFinalState()) {
+        JRAEvt_->refpvz = genIt.vz();
+        break;
+      }
+    }
   }
+
   int zbin = getBin(abs(JRAEvt_->refpvz),&vz.at(0),vz.size()-1);
 
   // MC PILEUP INFORMATION
@@ -502,6 +516,35 @@ int JetResponseAnalyzer::getBin(double x, const double boundaries[], int length)
          return i;
    }
    return 0;
+}
+
+
+//______________________________________________________________________________
+template<typename T, typename T2>
+void JetResponseAnalyzer::setToken(DualToken<T, T2> & token, const edm::ParameterSet & iPara, const std::string & tagAOD, const std::string & tagMiniAOD, DataFormat & format)
+{
+  if(format.tryAOD()) {
+    token.aod=consumes<T>(iPara.getParameter<edm::InputTag>(tagAOD));
+    format.setFormat(DataFormat::AOD);
+  }
+  if(format.tryMiniAOD()) {
+    token.miniAOD=consumes<T2>(iPara.getParameter<edm::InputTag>(tagMiniAOD));
+    format.setFormat(DataFormat::MINIAOD);
+  }
+}
+
+template<typename T, typename T2>
+void JetResponseAnalyzer::setHandle(edm::Handle<T> & handle, const edm::Event& iEvent, const DualToken<T, T2>& token)
+{
+  if(token.isAOD()) iEvent.getByToken(token.aod, handle);
+  else throw std::runtime_error("Cannot get AOD handle");
+}
+
+template<typename T, typename T2>
+void JetResponseAnalyzer::setHandle(edm::Handle<T2> & handle, const edm::Event& iEvent, const DualToken<T, T2>& token)
+{
+  if(!token.isAOD()) iEvent.getByToken(token.miniAOD, handle);
+  else throw std::runtime_error("Cannot get MiniAOD handle");
 }
 
 ////////////////////////////////////////////////////////////////////////////////

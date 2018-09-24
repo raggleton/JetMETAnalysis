@@ -115,13 +115,14 @@ import JetMETAnalysis.JetAnalyzers.Defaults_cff as Defaults
 
 # set to False to use jets from the input file (NOT RECOMMENDED)
 doJetReco = True
+doMiniAOD = True
 outCom = cms.untracked.vstring('drop *')
 from JetMETAnalysis.JetAnalyzers.addAlgorithm import addAlgorithm
 for algorithm in algorithms:
     if (algorithm.find('HLT') > 0) :
         process.load("Configuration.Geometry.GeometryIdeal_cff")
         process.load("Configuration.StandardSequences.MagneticField_cff")
-        addAlgorithm(process,algorithm,Defaults,False,doProducer)
+        addAlgorithm(process,algorithm,Defaults,False,doProducer,doMiniAOD)
     else:
         addAlgorithm(process,algorithm,Defaults,doJetReco,doProducer)
     outCom.extend(['keep *_'+algorithm+'_*_*'])
