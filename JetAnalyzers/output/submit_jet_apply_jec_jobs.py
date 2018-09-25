@@ -187,6 +187,7 @@ output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_P
 useAlgLevel = "true"
 if flav == "All":
     jec_era = "Summer16_07Aug2017_V11_L1fix_MC"
+    jec_era = "Summer16_07Aug2017_V15_MC"
     jec_path = "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JECDatabase/textFiles/"+jec_era
     useAlgLevel = "false"
     output_dir += "_L1FastJet_"+jec_era
