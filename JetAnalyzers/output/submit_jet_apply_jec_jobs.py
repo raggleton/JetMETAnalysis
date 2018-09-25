@@ -87,21 +87,21 @@ infos = [
 # ("QCD_Pt_3200toInf_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_3200toInf_pythia_18_Jun_18_noJEC_storePFCand2_storePhysicsAlgoHadronFlav/*/*/"),
 
 # apply L2 ontop of L1
-("QCD_Pt_15to30_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_15to30_NoJEC_newFlav/"),
-("QCD_Pt_30to50_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_30to50_NoJEC_newFlav/"),
-("QCD_Pt_50to80_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_50to80_NoJEC_newFlav/"),
-("QCD_Pt_80to120_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_80to120_NoJEC_newFlav/"),
-("QCD_Pt_120to170_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_120to170_NoJEC_newFlav/"),
-("QCD_Pt_170to300_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_170to300_NoJEC_newFlav/"),
-("QCD_Pt_300to470_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_300to470_NoJEC_newFlav/"),
-("QCD_Pt_470to600_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_470to600_NoJEC_newFlav/"),
-("QCD_Pt_600to800_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_600to800_NoJEC_newFlav/"),
-("QCD_Pt_800to1000_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_800to1000_NoJEC_newFlav/"),
-("QCD_Pt_1000to1400_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_1000to1400_NoJEC_newFlav/"),
-("QCD_Pt_1400to1800_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_1400to1800_NoJEC_newFlav/"),
-("QCD_Pt_1800to2400_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_1800to2400_NoJEC_newFlav/"),
-("QCD_Pt_2400to3200_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_2400to3200_NoJEC_newFlav/"),
-("QCD_Pt_3200toInf_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_3200toInf_NoJEC_newFlav/"),
+# ("QCD_Pt_15to30_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_15to30_NoJEC_newFlav/"),
+# ("QCD_Pt_30to50_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_30to50_NoJEC_newFlav/"),
+# ("QCD_Pt_50to80_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_50to80_NoJEC_newFlav/"),
+# ("QCD_Pt_80to120_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_80to120_NoJEC_newFlav/"),
+# ("QCD_Pt_120to170_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_120to170_NoJEC_newFlav/"),
+# ("QCD_Pt_170to300_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_170to300_NoJEC_newFlav/"),
+# ("QCD_Pt_300to470_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_300to470_NoJEC_newFlav/"),
+# ("QCD_Pt_470to600_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_470to600_NoJEC_newFlav/"),
+# ("QCD_Pt_600to800_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_600to800_NoJEC_newFlav/"),
+# ("QCD_Pt_800to1000_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_800to1000_NoJEC_newFlav/"),
+# ("QCD_Pt_1000to1400_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_1000to1400_NoJEC_newFlav/"),
+# ("QCD_Pt_1400to1800_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_1400to1800_NoJEC_newFlav/"),
+# ("QCD_Pt_1800to2400_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_1800to2400_NoJEC_newFlav/"),
+# ("QCD_Pt_2400to3200_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_2400to3200_NoJEC_newFlav/"),
+# ("QCD_Pt_3200toInf_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL1/QCD_Pt_3200toInf_NoJEC_newFlav/"),
 
 
 # ("QCD_HT50to100_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_HT50to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_QCD_HT50to100_mg-pythia_25_May_18_newFlav_noJEC_storePFCand2/*/*/"),
@@ -128,7 +128,9 @@ infos = [
 
 # ("QCD_Pt_15to7000_Herwig_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/crab_QCD_Pt-15to7000_herwig_16_Apr_18_newFlav_noJEC_storePFCand/180416_133226/0000/"),
 
-# ("QCD_Pt_15to7000_Herwig_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/crab_QCD_Pt-15to7000_herwig_18_Jun_18_noJEC_storePFCand2_storePhysicsAlgoHadronFlav/*/*/"),
+("QCD_Pt_15to7000_Herwig_NoJEC_newFlav_small", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/crab_QCD_Pt-15to7000_herwig_18_Jun_18_noJEC_storePFCand2_storePhysicsAlgoHadronFlav/*/*/"),
+
+("QCD_Pt_15to7000_Herwig_NoJEC_newFlav_ext", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/crab_QCD_Pt-15to7000_ext1_herwig_22_Sep_18_noJEC_storePhysicsAlgoHadronFlav_v2/*/*/"),
 
 # ("GJets_Herwig_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/GJet_Pt-15To6000_TuneCUETHS1-Flat_13TeV_herwigpp/crab_GJet_Pt-15To6000_TuneCUETHS1-Flat_13TeV_herwigpp_herwig_16_Apr_18_newFlav_noJEC_storePFCand/180416_133255/0000/"),
 
@@ -165,11 +167,11 @@ all_algos = [
 
 flav = "All"
 
-# output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF"
+# output_dir = "QCD_Pt_NoJEC_jtptmin4_withPF_PhysicsAlgoHadron"
 # output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
-output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2"+flav
+# output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2"+flav
 # output_dir = "QCD_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
-# output_dir = "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron"
+output_dir = "QCD_Pt_Herwig_NoJEC_jtptmin4_PhysicsAlgoHadron"
 # output_dir = "DYJets_HT_NoJEC_relPtHatCut5_jtptmin4"
 # output_dir = "DYJets_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
 # output_dir = "GJet_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF"
@@ -245,7 +247,7 @@ print job
 if len(job_names) == 0:
     raise RuntimeError("Didn't find any files to run over!")
 
-job_filename = "htc_do_jet_apply_jec_x_job_%s.condor" % flav
+job_filename = "htc_do_jet_apply_jec_x_job_%s2.condor" % flav
 with open(job_filename, 'w') as f:
     f.write(job)
 
