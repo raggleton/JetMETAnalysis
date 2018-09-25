@@ -33,12 +33,12 @@ int main(int argc,char**argv)
   // evaluate command-line / configuration file options
   // 
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return 1;
 
   bool           batch              = cl.getValue<bool>   ("batch",              false);
   string         makeCanvasVariable = cl.getValue<string> ("makeCanvasVariable",    "");
 
-  if (!cl.partialCheck()) return 0;
+  if (!cl.partialCheck()) return 1;
   cl.print();
 
   //

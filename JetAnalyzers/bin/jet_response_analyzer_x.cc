@@ -121,7 +121,7 @@ int main(int argc,char**argv)
   // evaluate command-line / configuration file options
   //
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return 1;
 
   vector<string> input             = cl.getVector<string>("input");
   vector<float>  binspt            = cl.getVector<float> ("binspt",                     "");
@@ -196,7 +196,7 @@ int main(int argc,char**argv)
   TString        DataPUHistoName   = cl.getValue<TString>("DataPUHistoName","pileup_jt400");
   bool           verbose           = cl.getValue<bool>   ("verbose",                 false);
 
-  if (!cl.check()) return 0;
+  if (!cl.check()) return 1;
   cl.print();
 
   gEnv->SetValue("TFile.AsyncPrefetching", 1);
@@ -243,10 +243,10 @@ int main(int argc,char**argv)
   //
   if (input.size() == 0) { cout << "No input files specified" << endl; return 1; }
   TFile* ifile = TFile::Open(input[0].c_str(),"READ");
-  if (!ifile->IsOpen()) {  cout<<"Can't open "<<input[0]<<endl; return 0; }
+  if (!ifile->IsOpen()) {  cout<<"Can't open "<<input[0]<<endl; return 1; }
   
   TFile* ofile = new TFile(output.c_str(),"RECREATE");
-  if (!ofile->IsOpen()) { cout<<"Can't create "<<output<<endl; return 0; }
+  if (!ofile->IsOpen()) { cout<<"Can't create "<<output<<endl; return 1; }
 
   TIter next(ifile->GetListOfKeys());
   TKey* key(0);
@@ -280,7 +280,7 @@ int main(int argc,char**argv)
        {
           cout << "Getting the weight histogram all_ ... " << flush; 
           weightMap["all_"] = (TH2D*)gDirectory->Get("all_");
-          if(weightMap["all_"]==0) { cout<<"FAIL!"<<endl<<"Histogram of weights named \"all_\" was not in file "<<weightfile<<endl; return 0; } 
+          if(weightMap["all_"]==0) { cout<<"FAIL!"<<endl<<"Histogram of weights named \"all_\" was not in file "<<weightfile<<endl; return 1; }
           cout << "DONE" << endl;
        }
        else
@@ -293,7 +293,7 @@ int main(int argc,char**argv)
               }
              else
                 weightMap[flavors[f]] = (TH2D*)gDirectory->Get("all_");
-             if(weightMap[flavors[f]]==0) { cout<<"FAIL!"<<endl<<"Histogram of weights named \""<< flavors[f]<< "\" was not in file "<<weightfile<<endl; return 0; } 
+             if(weightMap[flavors[f]]==0) { cout<<"FAIL!"<<endl<<"Histogram of weights named \""<< flavors[f]<< "\" was not in file "<<weightfile<<endl; return 1; }
              cout << "DONE" << endl;
           }
        }
