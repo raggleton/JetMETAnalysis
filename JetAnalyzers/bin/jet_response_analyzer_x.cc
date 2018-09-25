@@ -1529,8 +1529,13 @@ int main(int argc,char**argv)
               pdgid = JRAEvt->refpdgid_parton_algo->at(iref);
             else if (flavorDefinition.CompareTo("HADRON")==0)
               pdgid = JRAEvt->refpdgid_hadron->at(iref);
-            else if (flavorDefinition.CompareTo("HADRONPARTON")==0)
-              pdgid = JRAEvt->refpdgid_hadron->at(iref) != 0 ? JRAEvt->refpdgid_hadron->at(iref) : JRAEvt->refpdgid_parton_physics->at(iref);
+            else if (flavorDefinition.CompareTo("HADRONPARTON")==0) {
+              int hadronid = JRAEvt->refpdgid_hadron->at(iref);
+              int partonid = JRAEvt->refpdgid_parton_physics->at(iref);
+              // Only identify b and c jets through Hadron definition
+              if (abs(partonid) == 4 || abs(partonid) == 5) partonid = 0;
+              pdgid = hadronid != 0 ? hadronid : partonid;
+            }
           }
           float absrsp = pt-refpt;
           float relrsp = pt/refpt;
