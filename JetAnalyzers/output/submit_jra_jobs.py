@@ -136,7 +136,7 @@ for name, input_dir, xsec in infos:
                 "name": "JRA_"+name+"_"+algo_name+"_"+str(ind),
                 # "inputf": os.path.join(input_dir, "*%s*.root" % algo_name),
                 "inputf":  " ".join(group).strip(),
-                "outputf": "%s/jra_%s_%s_L1FastJet_rspRangeLarge_absEta_hadronParton.root" % (output_dir, name, algo_name),
+                "outputf": "%s/jra_%s_%s_L1FastJet_rspRangeLarge_absEta_hadronParton_%d.root" % (output_dir, name, algo_name, ind),
                 "xsec": "%.8f" % xsec,
                 "algos": " ".join([algo, algo.replace(":", "l1l2l3:"), algo.replace(":", "l1:"), algo.replace(":", "l1l2:")]),
                 # "flavdef": "hadron",
