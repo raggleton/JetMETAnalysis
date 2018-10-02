@@ -26,6 +26,7 @@ L2Creator::L2Creator() {
     maxFitIter = 30;
     fitMin = 10;
     flavor = "";
+    useLastFitParams = false;
 }
 
 //______________________________________________________________________________
@@ -49,6 +50,7 @@ L2Creator::L2Creator(CommandLine& cl) {
     fitMin     = cl.getValue<double>   ("fitMin",            10);
     histogramMetric = HistUtil::getHistogramMetricType(histMet);
     flavor     = cl.getValue<string>  ("flavor",            "");
+    useLastFitParams = cl.getValue<bool> ("useLastFitParams", false);
 
     if (!cl.partialCheck()) return;
     cl.print();
@@ -214,6 +216,8 @@ void L2Creator::loopOverEtaBins() {
     vector<unsigned int> indices;
     TH1F* hrsp(0);
     hl_rsp.begin_loop();
+
+    std::vector<float> lastFitParams;
 
     while ((hrsp=hl_rsp.next_object(indices))) {
 
@@ -548,6 +552,14 @@ void L2Creator::loopOverEtaBins() {
                 if (alg.find("HLT")!=string::npos) {
                     ((TF1*)gabscor->GetListOfFunctions()->First())->FixParameter(7,fabscor->Eval(fabscor->GetParameter(6)));
                     fabscor->FixParameter(7,fabscor->Eval(fabscor->GetParameter(6)));
+                }
+            }
+
+            if (fabscor && useLastFitParams) {
+                if (lastFitParams.size() == 0)
+                    lastFitParams.resize(fabscor->GetNpar());
+                for (uint ip=0; ip < lastFitParams.size(); ip++) {
+                    lastFitParams.at(ip) = fabscor->GetParameter((int) ip);
                 }
             }
 

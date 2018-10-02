@@ -99,7 +99,7 @@ private:
     string                    input, era, l3input, histMet, flavor;
     TString                   output, outputDir, l2calofit, l2pffit;
     vector<string>            formats, algs;
-    bool                      l2l3, delphes;
+    bool                      l2l3, delphes, useLastFitParams;
     int                       maxFitIter;
     double                    fitMin;
     HistUtil::HistogramMetric histogramMetric;
