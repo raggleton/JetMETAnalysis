@@ -27,6 +27,7 @@ L2Creator::L2Creator() {
     fitMin = 10;
     flavor = "";
     useLastFitParams = false;
+    setFitMinTurnover = false;
 }
 
 //______________________________________________________________________________
@@ -51,6 +52,7 @@ L2Creator::L2Creator(CommandLine& cl) {
     histogramMetric = HistUtil::getHistogramMetricType(histMet);
     flavor     = cl.getValue<string>  ("flavor",            "");
     useLastFitParams = cl.getValue<bool> ("useLastFitParams", false);
+    setFitMinTurnover = cl.getValue<bool> ("setFitMinTurnover", false);
 
     if (!cl.partialCheck()) return;
     cl.print();
@@ -389,6 +391,19 @@ void L2Creator::loopOverEtaBins() {
                             gsl_spline *spline_akima = gsl_spline_alloc(gsl_interp_akima, gabscor->GetN());
                             gsl_spline_init(spline_akima, gabscor->GetX(), gabscor->GetY(), gabscor->GetN());
                             vabscor_eta_spline.back()->setSpline(PiecewiseSpline::gslToROOT_spline(spline_akima,"TSpline3_akima"));
+                        }
+
+                        if (setFitMinTurnover) {
+                            float lastY = gabscor->GetY()[0];
+                            for (int ix=1; ix < 10; ix++) {
+                                cout << gabscor->GetX()[ix] << " : " << gabscor->GetY()[ix] << endl;
+                                if (gabscor->GetY()[ix] > lastY) {
+                                    lastY = gabscor->GetY()[ix];
+                                } else {
+                                    xmin = gabscor->GetX()[ix-1];
+                                    break;
+                                }
+                            }
                         }
 
                         fabscor=new TF1("fit",fcn.Data(),xmin,xmax);
