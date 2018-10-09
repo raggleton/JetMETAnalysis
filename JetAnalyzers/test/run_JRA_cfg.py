@@ -124,7 +124,7 @@ for algorithm in algorithms:
         process.load("Configuration.StandardSequences.MagneticField_cff")
         addAlgorithm(process,algorithm,Defaults,False,doProducer,doMiniAOD)
     else:
-        addAlgorithm(process,algorithm,Defaults,doJetReco,doProducer)
+        addAlgorithm(process,algorithm,Defaults,doJetReco,doProducer,doMiniAOD)
     outCom.extend(['keep *_'+algorithm+'_*_*'])
 
 
