@@ -540,6 +540,12 @@ void L2Creator::loopOverEtaBins() {
                 }
             }
 
+            if (useLastFitParams) {
+                for (uint ip=0; ip < lastFitParams.size(); ip++) {
+                    fabscor->SetParameter((int) ip, lastFitParams.at(ip));
+                }
+            }
+
             //
             // obtain the best fit of the function fabscor to the histo gabscor
             //
