@@ -1260,7 +1260,7 @@ void L2Creator::perform_smart_fit(TGraphErrors * gabscor, TF1 * fabscor, int max
         //
         // do the fit, get the results and the parameters of the fitted function
         //
-        fitResultPtrs.push_back(gabscor->Fit(fabscor,"RES"));
+        fitResultPtrs.push_back(gabscor->Fit(fabscor,"REMSQ"));
         //vector<double> auxPars = fitResPtr.Get()->Parameters();
 
         //
