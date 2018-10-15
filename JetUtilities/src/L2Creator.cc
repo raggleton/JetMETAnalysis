@@ -28,6 +28,7 @@ L2Creator::L2Creator() {
     flavor = "";
     useLastFitParams = false;
     setFitMinTurnover = false;
+    minRelCorErr = -1;
 }
 
 //______________________________________________________________________________
@@ -53,6 +54,7 @@ L2Creator::L2Creator(CommandLine& cl) {
     flavor     = cl.getValue<string>  ("flavor",            "");
     useLastFitParams = cl.getValue<bool> ("useLastFitParams", false);
     setFitMinTurnover = cl.getValue<bool> ("setFitMinTurnover", false);
+    minRelCorErr = cl.getValue<double> ("minRelCorErr", -1);
 
     if (!cl.partialCheck()) return;
     cl.print();
@@ -301,6 +303,10 @@ void L2Creator::loopOverEtaBins() {
             if (absrsp > 0) {
                 abscor  =1.0/absrsp;
                 eabscor = abscor*abscor*epeak;
+                if (minRelCorErr > 0) {
+                    if ((eabscor / abscor) < minRelCorErr) eabscor = abscor*minRelCorErr;
+                }
+
             }
             if ((abscor>0) && (absrsp>0) && (eabscor>1e-5) && (eabscor/abscor<0.5) && (eabsrsp>1e-4) && (eabsrsp/absrsp<0.5)) {
                 int n = vabsrsp_eta.back()->GetN();

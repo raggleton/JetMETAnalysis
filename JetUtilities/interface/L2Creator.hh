@@ -101,7 +101,7 @@ private:
     vector<string>            formats, algs;
     bool                      l2l3, delphes, useLastFitParams, setFitMinTurnover;
     int                       maxFitIter;
-    double                    fitMin;
+    double                    fitMin, minRelCorErr;
     HistUtil::HistogramMetric histogramMetric;
     TFile*                    ofile;
     TFile*                    ifile;
