@@ -29,6 +29,7 @@ L2Creator::L2Creator() {
     useLastFitParams = false;
     setFitMinTurnover = false;
     minRelCorErr = -1;
+    plateauBelowRangeMin = false;
 }
 
 //______________________________________________________________________________
@@ -55,6 +56,7 @@ L2Creator::L2Creator(CommandLine& cl) {
     useLastFitParams = cl.getValue<bool> ("useLastFitParams", false);
     setFitMinTurnover = cl.getValue<bool> ("setFitMinTurnover", false);
     minRelCorErr = cl.getValue<double> ("minRelCorErr", -1);
+    plateauBelowRangeMin = cl.getValue<bool> ("plateauBelowRangeMin", false);
 
     if (!cl.partialCheck()) return;
     cl.print();
@@ -587,6 +589,34 @@ void L2Creator::loopOverEtaBins() {
                     lastFitParams.resize(fabscor->GetNpar());
                 for (uint ip=0; ip < lastFitParams.size(); ip++) {
                     lastFitParams.at(ip) = fabscor->GetParameter((int) ip);
+                }
+            }
+
+            if (plateauBelowRangeMin) {
+                // Create a compound TF1 that plateaus below the x range
+                // minimum of the function, using the value at the
+                // lower edge of the x range
+                if (xmin > 0.0001) {
+                    int nPar = fabscor->GetNpar();
+                    int xminPar = nPar;
+                    int plateauPar = nPar+1;
+                    // NO SPACES IN THE FORMULA since the header line is space-separated
+                    // And use GetTitle(), not GetExpFormula(), as the latter uses [p0]
+                    // for parameters, rather than [0]
+                    TString plateauEqn = TString::Format("((x<[%d])*([%d]))+((x>=[%d])*("+(TString)fabscor->GetTitle()+"))", xminPar, plateauPar, xminPar);
+                    TF1 * fabscornew = new TF1(fabscor->GetName(), plateauEqn, 0.001, 6500);
+                    for (int ip=0; ip<nPar; ip++) {
+                        fabscornew->SetParameter(ip, fabscor->GetParameter(ip));
+                    }
+                    fabscornew->SetParameter(xminPar, xmin);
+                    fabscornew->SetParameter(plateauPar, fabscor->Eval(xmin));
+                    // copy across important fit-related values
+                    // wish we just had the FitResultPtr instead...
+                    fabscornew->SetChisquare(fabscor->GetChisquare());
+                    fabscornew->SetNDF(fabscor->GetNDF());
+                    fabscor = fabscornew;
+                    gabscor->GetListOfFunctions()->Clear();
+                    gabscor->GetListOfFunctions()->AddLast(fabscor);
                 }
             }
 
@@ -1346,9 +1376,10 @@ void L2Creator::writeTextFileForCurrentAlgorithm() {
         else grelcor = vrelcor_eta[ieta]; //For L2 & L3 Corrections Separate
         TF1* frelcor = (TF1*)grelcor->GetListOfFunctions()->Last();
         if(frelcor!=0) {
-            if(ieta==0 || (ieta==1 && delphes))
-               fout<<"{2 JetEta JetPt 1 JetPt max(0.0001,"<<frelcor->GetTitle()<<") Correction L2Relative}"<<endl;
-               //fout<<"{1 JetEta 1 JetPt max(0.0001,"<<frelcor->GetExpFormula()<<") Correction L2Relative}"<<endl;
+            if(ieta==0 || (ieta==1 && delphes)) {
+               if(!plateauBelowRangeMin) fout<<"{2 JetEta JetPt 1 JetPt max(0.0001,"<<frelcor->GetTitle()<<") Correction L2Relative}"<<endl;
+               else fout<<"{1 JetEta 1 JetPt max(0.0001,"<<frelcor->GetTitle()<<") Correction L2Relative}"<<endl;
+            }
             double  etamin  = hl_jetpt.minimum(0,ieta);
             double  etamax  = hl_jetpt.maximum(0,ieta);
             // use graph as limits of function
@@ -1357,27 +1388,31 @@ void L2Creator::writeTextFileForCurrentAlgorithm() {
             // use fit range as limits of function
             double ptmin, ptmax;
             frelcor->GetRange(ptmin, ptmax);
-            // For pt < the lower limit of the fit range, we want the correction
-            // at the lower limit, not the default of 1.
-            double lowLimitCorr = frelcor->Eval(ptmin);
-            fout<<setw(8)<<etamin<<setw(8)<<etamax
-                <<setw(12)<<setprecision(8)<<0.001
-                <<setw(12)<<setprecision(8)<<ptmin
-                <<setw(6)<<(int)(frelcor->GetNpar()+2) //Number of parameters + 2
-                <<setw(12)<<setprecision(8)<<0.001
-                <<setw(12)<<setprecision(8)<<ptmin;
-                for(int p=0; p<frelcor->GetNpar(); p++) {
-                    if (p==0)
-                       fout<<setw(17)<<setprecision(10)<<lowLimitCorr;
-                    else
-                       fout<<setw(17)<<setprecision(10)<<0.0;
-                }
-                fout<<endl;
+            if (!plateauBelowRangeMin) {
+                // For pt < the lower limit of the fit range, we want the correction
+                // at the lower limit, not the default of 1.
+                double lowLimitCorr = frelcor->Eval(ptmin);
+                fout<<setw(8)<<etamin<<setw(8)<<etamax
+                    <<setw(12)<<setprecision(8)<<0.001
+                    <<setw(12)<<setprecision(8)<<ptmin
+                    <<setw(6)<<(int)(frelcor->GetNpar()+2) //Number of parameters + 2
+                    <<setw(12)<<setprecision(8)<<0.001
+                    <<setw(12)<<setprecision(8)<<ptmin;
+                    for(int p=0; p<frelcor->GetNpar(); p++) {
+                        if (p==0)
+                           fout<<setw(17)<<setprecision(10)<<lowLimitCorr;
+                        else
+                           fout<<setw(17)<<setprecision(10)<<0.0;
+                    }
+                    fout<<endl;
+            }
             // print the function
-            fout<<setw(8)<<etamin<<setw(8)<<etamax
-                <<setw(12)<<setprecision(8)<<ptmin
-                <<setw(12)<<setprecision(8)<<ptmax
-                <<setw(6)<<(int)(frelcor->GetNpar()+2) //Number of parameters + 2
+            fout<<setw(8)<<etamin<<setw(8)<<etamax;
+            if (!plateauBelowRangeMin) {
+                fout <<setw(12)<<setprecision(8)<<ptmax
+                 <<setw(12)<<setprecision(8)<<ptmin;
+            }
+            fout<<setw(6)<<(int)(frelcor->GetNpar()+2) //Number of parameters + 2
                 <<setw(12)<<setprecision(8)<<ptmin
                 <<setw(12)<<setprecision(8)<<ptmax;
                 for(int p=0; p<frelcor->GetNpar(); p++) {
