@@ -818,8 +818,10 @@ int main(int argc,char**argv)
             float muf = JRAEvt->jtmuf->at(iref);
             float nhf = JRAEvt->jtnhf->at(iref);
             float chf = JRAEvt->jtchf->at(iref);
-            int nmult = JRAEvt->jtnmult->at(iref);
-            int chmult = JRAEvt->jtchmult->at(iref);
+            // int nmult = JRAEvt->jtnmult->at(iref);
+            int nmult = 0;
+            // int chmult = JRAEvt->jtchmult->at(iref);
+            int chmult = 0;
             int numConst = nmult+chmult;
             bool passJetID = false;
             if (jetID == "loose") {
@@ -1029,8 +1031,8 @@ int main(int argc,char**argv)
                JtmufVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtmuf->at(iref),weight);
                JthfhfVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jthfhf->at(iref),weight);
                JthfefVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jthfef->at(iref),weight);
-               JtchmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtchmult->at(iref),weight);
-               JtnmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtnmult->at(iref),weight);
+               // JtchmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtchmult->at(iref),weight);
+               // JtnmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtnmult->at(iref),weight);
 
             }
 
