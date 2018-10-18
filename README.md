@@ -40,13 +40,16 @@ Besides the standard installation using scram, the parts necessary to run the ex
 ### Standard
 The standard way to build the plugins, libraries, and executable programs provided by JetMETAnalysis/JetAnalyzers and JetMETAnalysis/JetUtilities is using scram, which was last tested to work with the CMSSW_9_2_X_2017-05-17-2300 IB, but it should also work with any of the 81X, 82X, 91X, or 92X CMSSW releases:
 
+80X only: We also need to add in a flavour definitions update to modify HadronAndPartonSelector
+
 ```
-setenv SCRAM_ARCH slc6_amd64_gcc530
-cmsrel CMSSW_9_2_X
-cd CMSSW_9_2_X/src
+export SCRAM_ARCH=slc6_amd64_gcc530
+cmsrel CMSSW_8_0_28
+cd CMSSW_8_0_28/src
 cmsenv
 git-cms-init
-git clone git@github.com:cms-jet/JetMETAnalysis.git
+git cms-merge-topic raggleton:Backport_JetFlavour
+git clone git@github.com:raggleton/JetMETAnalysis.git
 scram b -j 4
 ```
 
