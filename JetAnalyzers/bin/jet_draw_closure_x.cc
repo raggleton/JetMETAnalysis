@@ -47,7 +47,7 @@ int main(int argc,char**argv)
    	bool doFlavorDifference = cl.getValue<bool> ("doFlavorDifference", false);
     bool ptcl               = cl.getValue<bool> ("ptcl",               false);
 
-   	if (!cl.partialCheck()) return 0;
+   	if (!cl.partialCheck()) return CommandLine::BAD_CHECK;
    	cl.print();
 
 	setTDRStyle();

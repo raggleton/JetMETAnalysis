@@ -112,7 +112,7 @@ int main(int argc,char**argv)
    vector<string> algs      = cl.getVector<string> ("algs",          "");
    bool           batch     = cl.getValue<bool>    ("batch",      false);
 
-   if (!cl.partialCheck()) return 0;
+   if (!cl.partialCheck()) return CommandLine::BAD_CHECK;
    cl.print();
 
    //

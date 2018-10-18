@@ -38,7 +38,7 @@ int main(int argc,char**argv)
   bool           batch              = cl.getValue<bool>   ("batch",              false);
   string         makeCanvasVariable = cl.getValue<string> ("makeCanvasVariable",    "");
 
-  if (!cl.partialCheck()) return 0;
+  if (!cl.partialCheck()) return CommandLine::BAD_CHECK;
   cl.print();
 
   //
