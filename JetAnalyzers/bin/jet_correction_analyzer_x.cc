@@ -344,7 +344,7 @@ int main(int argc,char**argv)
                                      "bxns","npus","tnpus","sumpt_lowpt","refdrjt",
                                      "jtchf", "jtnhf", "jtnef", "jtcef", "jtmuf", "jthfhf", "jthfef",
                                      "jtchmult", "jtnmult",
-                                     "pfcand_pt", "pfcand_eta", "pfcand_phi", "pfcand_id", "pfcand_e",
+                                     // "pfcand_pt", "pfcand_eta", "pfcand_phi", "pfcand_id", "pfcand_e",
                                      "refpdgid_parton_physics", "refpdgid_parton_algo", "refpdgid_hadron",
                                      "npv","rho","rho_hlt","pthat","weight"};
       for(auto n : branch_names) {
