@@ -121,7 +121,7 @@ int main(int argc,char**argv)
   // evaluate command-line / configuration file options
   //
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
 
   string         input             = cl.getValue<string> ("input");
   vector<float>  binspt            = cl.getVector<float> ("binspt",                     "");
@@ -195,7 +195,7 @@ int main(int argc,char**argv)
   TString        DataPUHistoName   = cl.getValue<TString>("DataPUHistoName","pileup_jt400");
   bool           verbose           = cl.getValue<bool>   ("verbose",                 false);
 
-  if (!cl.check()) return 0;
+  if (!cl.check()) return CommandLine::BAD_CHECK;
   cl.print();
 
   gEnv->SetValue("TFile.AsyncPrefetching", 1);

@@ -38,7 +38,7 @@ int main(int argc,char**argv)
    	// evaluate command-line / configuration file options
    	// 
    	CommandLine cl;
-   	if (!cl.parse(argc,argv)) return 0;
+   	if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
   
    	bool doPt       		= cl.getValue<bool> ("doPt", 	   		   false);
    	bool doEta      		= cl.getValue<bool> ("doEta",	   		   false);

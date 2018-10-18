@@ -50,7 +50,7 @@ int main(int argc,char**argv)
   // evaluate command-line / configuration file options
   //
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
 
   vector<string> inputs   = cl.getVector<string>("inputs");
   vector<string> algs     = cl.getVector<string>("algs","kt4calol2l3");
@@ -68,7 +68,7 @@ int main(int argc,char**argv)
   bool           batch    = cl.getValue<bool>   ("batch",       false);
   vector<string> formats  = cl.getVector<string>("formats",        "");
   
-  if (!cl.check()) return 0;
+  if (!cl.check()) return CommandLine::BAD_CHECK;
   cl.print();
   
   TH1::SetDefaultSumw2();

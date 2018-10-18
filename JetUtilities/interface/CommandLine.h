@@ -40,6 +40,12 @@ public:
   template <class T> std::vector<T> getVector(const std::string& name,
 					      const std::string& default_as_string);
   
+  //
+  // Exit codes
+  //
+  const static int BAD_PARSE = 3;
+  const static int BAD_CHECK = 4;
+
 private:
   bool parse_file(const std::string& file_name);
   

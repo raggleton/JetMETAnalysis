@@ -52,7 +52,7 @@ int main(int argc,char**argv) {
   // evaluate command-line / configuration file options
   //
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
 
   TString         path          = cl.getValue<TString>  ("path");
   TString         odir          = cl.getValue<TString>  ("odir",            "./");
@@ -64,7 +64,7 @@ int main(int argc,char**argv) {
   bool            modifiedError = cl.getValue<bool>     ("modifiedError",  false);
   vector<TString> outputFormats = cl.getVector<TString> ("outputFormats", ".pdf");
 
-  if (!cl.check()) return 0;
+  if (!cl.check()) return CommandLine::BAD_CHECK;
   cl.print();
 
   if(modifiedError && !minimalist)

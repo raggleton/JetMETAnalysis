@@ -66,7 +66,7 @@ int main(int argc,char**argv) {
     // evaluate command-line / configuration file options
     // 
     CommandLine cl;
-    if (!cl.parse(argc,argv)) return 0;
+    if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
 
     string         input          = cl.getValue<string>  ("input");
     vector<string> flavors        = cl.getVector<string> ("flavors");
@@ -81,7 +81,7 @@ int main(int argc,char**argv) {
     bool           normToAll      = cl.getValue<bool>    ("normToAll",           true);
     bool           refOrJetPt     = cl.getValue<bool>    ("refOrJetPt",             0);
 
-    if (!cl.check()) return 0;
+    if (!cl.check()) return CommandLine::BAD_CHECK;
     cl.print();
 
     //

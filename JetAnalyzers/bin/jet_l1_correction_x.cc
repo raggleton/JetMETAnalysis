@@ -130,7 +130,7 @@ TTree* toTree(THnSparseF* h);
 int main(int argc,char**argv){
    
     CommandLine cl;
-    if (!cl.parse(argc,argv)) return 0;
+    if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
     string         inputDir      = cl.getValue<string> ("inputDir",           "./");
     string         outputDir     = cl.getValue<string> ("outputDir",          "./");
     string         algo1         = cl.getValue<string> ("algo1",           "ak5pf");
@@ -145,7 +145,7 @@ int main(int argc,char**argv){
     bool           forTesting    = cl.getValue<bool>   ("forTesting",        false);
     bool           debug         = cl.getValue<bool>   ("debug",             false);
 
-    if (!cl.check()) return 0;
+    if (!cl.check()) return CommandLine::BAD_CHECK;
     cl.print();
 
     TBenchmark* m_benchmark = new TBenchmark();

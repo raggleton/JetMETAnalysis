@@ -62,7 +62,7 @@ void setChainElementNames(TChain* c, string dirTreeName);
 int main(int argc,char**argv)
 {
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
   
   string         input      = cl.getValue<string>  ("input");
   string         era        = cl.getValue<string>  ("era");
@@ -78,7 +78,7 @@ int main(int argc,char**argv)
   bool           debug      = cl.getValue<bool>    ("debug",     false);
   bool           help       = cl.getValue<bool>    ("help",      false);
   
-  if(!cl.check()) return 0;
+  if (!cl.check()) return CommandLine::BAD_CHECK;
   cl.print();
   if(help) return 0;
   

@@ -47,7 +47,7 @@ int main(int argc,char**argv)
   // evaluate command-line / configuration file options
   // 
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
   
   vector<TString> algs         = cl.getVector<TString> ("algs");
   TString         flavor       = cl.getValue<TString>  ("flavor",           "");
@@ -57,7 +57,7 @@ int main(int argc,char**argv)
   bool            combinePU    = cl.getValue<bool>     ("combinePU",     false);
   TString         divByNPU0    = cl.getValue<TString>  ("divByNPU0",        "");
 
-  if (!cl.check()) return 0;
+  if (!cl.check()) return CommandLine::BAD_CHECK;
   cl.print();
 
   vector<TFile*> infs;

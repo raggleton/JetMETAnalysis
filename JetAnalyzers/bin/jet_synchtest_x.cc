@@ -1471,7 +1471,7 @@ void MatchEventsAndJets::Report() {
 int main(int argc,char**argv)
 {
    CommandLine cl;
-   if (!cl.parse(argc,argv)) return 0;
+   if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
    string       samplePU          = cl.getValue<string>  ("samplePU");
    string       sampleNoPU        = cl.getValue<string>  ("sampleNoPU");
    string       basepath          = cl.getValue<string>  ("basepath", "/fdata/hepx/store/user/aperloff/");
@@ -1502,7 +1502,7 @@ int main(int argc,char**argv)
    bool         help              = cl.getValue<bool>    ("help",                                  false);
 
    if (help) {cl.print(); return 0;}
-   if (!cl.check()) return 0;
+   if (!cl.check()) return CommandLine::BAD_CHECK;
    cl.print();
 
    TBenchmark* m_benchmark = new TBenchmark();

@@ -65,7 +65,7 @@ int main(int argc,char**argv)
   // evaluate command-line / configuration file options
   //
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
 
   string         input        = cl.getValue<string> ("input");
   string         particle     = cl.getValue<string> ("particle",     "Z");
@@ -80,7 +80,7 @@ int main(int argc,char**argv)
   vector<string> algs         = cl.getVector<string>("algs",          "");
   vector<string> legs_as_vstr = cl.getVector<string>("legs",      "5:-5");
   
-  if (!cl.check()) return 0;
+  if (!cl.check()) return CommandLine::BAD_CHECK;
   cl.print();
   
   TH1::SetDefaultSumw2(true);

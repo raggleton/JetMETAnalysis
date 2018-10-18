@@ -104,7 +104,7 @@ int main(int argc,char**argv)
    // evaluate command-line / configuration file options
    // 
    CommandLine cl;
-   if (!cl.parse(argc,argv)) return 0;
+   if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
 
    string         input     = cl.getValue<string>  ("input");
    string         output    = cl.getValue<string>  ("output", "l5.root");

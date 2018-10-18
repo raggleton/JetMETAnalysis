@@ -492,7 +492,7 @@ void createPDFFile(TFile* fout, TString pdfFilename, const vector<FitRes> & fitR
 int main(int argc,char**argv){
    
    CommandLine cl;
-   if (!cl.parse(argc,argv)) return 0;
+   if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
    string         inputDir     = cl.getValue<string> ("inputDir",           "./");
    string         outputDir    = cl.getValue<string> ("outputDir",          "./");
    string         aalgo1       = cl.getValue<string> ("algo1",           "ak5pf");
@@ -502,7 +502,7 @@ int main(int argc,char**argv){
    string         functionType = cl.getValue<string> ("functionType", "standard");
    string         era          = cl.getValue<string> ("era",             "<era>");
 
-   if (!cl.check()) return 0;
+   if (!cl.check()) return CommandLine::BAD_CHECK;
    cl.print();
 
    if(inputDir.empty())      inputDir  = string(gSystem->pwd())+"/";

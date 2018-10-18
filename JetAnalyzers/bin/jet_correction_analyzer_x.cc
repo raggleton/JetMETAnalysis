@@ -119,7 +119,7 @@ int main(int argc,char**argv)
    // evaluate command-line / configuration file options
    // 
    CommandLine cl;
-   if (!cl.parse(argc,argv)) return 0;
+   if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
 
    vector<string>  algs              = cl.getVector<string>      ("algs");
    string          path              = cl.getValue<string>       ("path");
@@ -174,7 +174,7 @@ int main(int argc,char**argv)
    bool            verbose           = cl.getValue<bool>         ("verbose",           false);
    bool            debug             = cl.getValue<bool>         ("debug",             false);
 
-   if (!cl.check()) return 0;
+   if (!cl.check()) return CommandLine::BAD_CHECK;
    cl.print();
 
    TBenchmark* m_benchmark = new TBenchmark();

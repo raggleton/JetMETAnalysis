@@ -40,7 +40,7 @@ using namespace std;
 int main(int argc,char**argv)
 {
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
   
   vector<string> inputs    = cl.getVector<string>("inputs");
   string         datapath  = cl.getValue <string>("datapath",               "");
@@ -56,7 +56,7 @@ int main(int argc,char**argv)
   bool           batch     = cl.getValue <bool>  ("batch",               false);
   vector<string> formats   = cl.getVector<string>("formats",                "");
   
-  if(!cl.check()) return 0;
+  if (!cl.check()) return CommandLine::BAD_CHECK;
   cl.print();
   
   if (datapath.empty()) datapath=".";

@@ -49,14 +49,14 @@ int getBin(double x, const double boundaries[], int length);
 int main(int argc,char**argv)
 {
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
   
   string         input     = cl.getValue<string>  ("input");
   string         output    = cl.getValue<string>  ("output",       "");
   vector<string> algs      = cl.getVector<string> ("algs",         "");
   bool           debug     = cl.getValue<bool>    ("debug",     false);
   
-  if(!cl.check()) return 0;
+  if (!cl.check()) return CommandLine::BAD_CHECK;
   cl.print();
   
   //

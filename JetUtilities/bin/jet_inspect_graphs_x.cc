@@ -97,7 +97,7 @@ void draw_labels(const vector<string>& labels,bool leginplot,bool tdrautobins);
 int main(int argc,char** argv)
 {
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
 
   vector<string> inputs    = cl.getVector<string>("inputs");
   vector<string> algs      = cl.getVector<string>("algs",           "ak5calo");
@@ -165,7 +165,7 @@ int main(int argc,char** argv)
   bool           drawSpline= cl.getValue<bool>   ("drawSpline",         false);
 
 
-  if (!cl.check()) return 0;
+  if (!cl.check()) return CommandLine::BAD_CHECK;
   cl.print();
   
   // sanity check

@@ -47,7 +47,7 @@ int main(int argc,char**argv)
   // evaluate command-line / configuration file options
   // 
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
   
   vector<TString> algs         = cl.getVector<TString> ("algs");
   TString         flavor       = cl.getValue<TString>  ("flavor",           "");
@@ -55,7 +55,7 @@ int main(int argc,char**argv)
   TString         outputDir    = cl.getValue<TString>  ("outputDir",  "images");
   TString         outputFormat = cl.getValue<TString>  ("outputFormat", ".png");
 
-  if (!cl.check()) return 0;
+  if (!cl.check()) return CommandLine::BAD_CHECK;
   cl.print();
 
   for(unsigned int a=0; a<algs.size(); a++)

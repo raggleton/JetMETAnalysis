@@ -113,13 +113,13 @@ void compareJC(string ifilename) {
 int main(int argc,char**argv){
 
 	CommandLine cl;
-    if (!cl.parse(argc,argv)) return 0;
+    if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
     unsigned int nBenchmarkJCP = cl.getValue<unsigned int> ("nBenchmarkJCP",     0);
     string       theBenchmark  = cl.getValue<string>       ("theBenchmark", "both");
     bool         doCompareJCP  = cl.getValue<bool>         ("doCompareJCP",  false);
     bool         doCompareJC   = cl.getValue<bool>         ("doCompareJC",   false);
     string       ifilename     = cl.getValue<string>       ("ifilename",        "");
-    if (!cl.check()) return 0;
+    if (!cl.check()) return CommandLine::BAD_CHECK;
     cl.print();
 
 	if(nBenchmarkJCP > 0) benchmarkJCP(nBenchmarkJCP, theBenchmark);

@@ -37,7 +37,7 @@ int main(int argc,char**argv)
   // evaluate command-line / configuration file options
   // 
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
   
   TString        algo         = cl.getValue<TString> ("algo");
   vector<string> filenameNum  = cl.getVector<string> ("filenameNum");
@@ -47,7 +47,7 @@ int main(int argc,char**argv)
   TString        outputFormat = cl.getValue<TString> ("outputFormat", ".png");
   bool           errOverSq2   = cl.getValue<bool>    ("errOverSq2",    false);
 
-  if (!cl.check()) return 0;
+  if (!cl.check()) return CommandLine::BAD_CHECK;
   cl.print();
 
   if(filenameNum.size()!=filenameDen.size())

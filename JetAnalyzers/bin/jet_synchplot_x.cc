@@ -1425,7 +1425,7 @@ void SynchPlots(TString inputDir="./",TString calgo1="ak5pf",TString calgo2="ak5
 int main(int argc,char**argv)
 {
    CommandLine cl;
-   if (!cl.parse(argc,argv)) return 0;
+   if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
    string         inputDir          = cl.getValue<string>   ("inputDir",       "./");
    string         algo1             = cl.getValue<string>   ("algo1",       "ak5pf");
    string         algo2             = cl.getValue<string>   ("algo2",       "ak5pf");
@@ -1439,7 +1439,7 @@ int main(int argc,char**argv)
                   minNpvRhoNpu      = cl.getValue<int>      ("minNpvRhoNpu",      0);
                   maxNpvRhoNpu      = cl.getValue<int>      ("maxNpvRhoNpu",    159);
 
-   if (!cl.check()) return 0;
+   if (!cl.check()) return CommandLine::BAD_CHECK;
    cl.print();
 
    if (tdr) {

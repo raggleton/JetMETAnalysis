@@ -62,7 +62,7 @@ bool histogram_in_range(const ObjectLoader<TH1F>& hl, const vector<unsigned int>
 //______________________________________________________________________________
 int main(int argc,char** argv) {
 	CommandLine cl;
-	if (!cl.parse(argc,argv)) return 0;
+	if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
 
 	string         input      = cl.getValue<string> ("input");
     string         output     = cl.getValue<string> ("output",                      "");
@@ -81,7 +81,7 @@ int main(int argc,char** argv) {
     bool           norm       = cl.getValue<bool>   ("norm",                     false);
 	bool           verbose    = cl.getValue<bool>   ("verbose",                  false);
 
-	if (!cl.check()) return 0;
+	if (!cl.check()) return CommandLine::BAD_CHECK;
 	cl.print();
 
 	if (verbose) cout<<"Verbosity not implemented...:/"<<endl;

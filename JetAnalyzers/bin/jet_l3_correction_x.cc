@@ -60,7 +60,7 @@ int main(int argc,char**argv)
   // evaluate command-line / configuration file options
   // 
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
 
   string         input   = cl.getValue<string> ("input");
   string         era     = cl.getValue<string> ("era");
@@ -73,7 +73,7 @@ int main(int argc,char**argv)
   string         flavor  = cl.getValue<string> ("flavor",       "");
   int            tpeak   = cl.getValue<int>    ("tpeak",         1);
     
-  if (!cl.check()) return 0;
+  if (!cl.check()) return CommandLine::BAD_CHECK;
   cl.print();
   
 

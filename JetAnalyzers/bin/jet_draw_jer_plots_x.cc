@@ -49,7 +49,7 @@ int main(int argc,char**argv) {
   // evaluate command-line / configuration file options
   //
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
 
   TString    path       = cl.getValue<TString> ("path");
   string     seta       = cl.getValue<string>  ("seta",       "BB");
@@ -57,7 +57,7 @@ int main(int argc,char**argv) {
   const bool _noaeff    = cl.getValue<bool>    ("noaeff",     true);
   bool       pfAndPfchs = cl.getValue<bool>    ("pfAndPfchs", false);
 
-  if (!cl.check()) return 0;
+  if (!cl.check()) return CommandLine::BAD_CHECK;
   cl.print();
   
   const char *ceta = seta.c_str();

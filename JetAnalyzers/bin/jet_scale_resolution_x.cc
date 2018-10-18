@@ -62,7 +62,7 @@ bool decode_dirinfo(const string& dirinfo,string& fnc,vector<Float_t>& pars);
 int main(int argc,char**argv)
 {
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
   
   vector<string> inputs    = cl.getVector<string>("inputs");
   string         scalefnc  = cl.getValue<string> ("scalefnc", "[0]");
@@ -71,7 +71,7 @@ int main(int argc,char**argv)
   vector<string> dirname   = cl.getVector<string>("dirname",     "");
   string         datapath  = cl.getValue<string> ("datapath",   ".");
  
-  if(!cl.check()) return 0;
+  if (!cl.check()) return CommandLine::BAD_CHECK;
   cl.print();
   
   //

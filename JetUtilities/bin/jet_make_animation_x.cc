@@ -26,7 +26,7 @@ using namespace std;
 //______________________________________________________________________________
 int main(int argc,char** argv) {
     CommandLine cl;
-    if (!cl.parse(argc,argv)) return 0;
+    if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
 
     vector<string> inputs     = cl.getVector<string>("inputs");
     string         outputDir  = cl.getValue<string> ("outputDir",             "./");
@@ -36,7 +36,7 @@ int main(int argc,char** argv) {
     int            lastdelay  = cl.getValue<int>    ("lastdelay",                0); //10*NN milliseconds delay
     int            repeats    = cl.getValue<int>    ("repeats",                 -1);
 
-    if (!cl.check()) return 0;
+    if (!cl.check()) return CommandLine::BAD_CHECK;
     cl.print();
 
     if(outputDir.empty())     outputDir = string(gSystem->pwd())+"/";

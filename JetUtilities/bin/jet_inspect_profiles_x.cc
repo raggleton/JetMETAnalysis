@@ -43,7 +43,7 @@ using namespace std;
 int main(int argc,char** argv)
 {
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
 
   vector<string> inputs     = cl.getVector<string>("inputs");
   vector<string> algs       = cl.getVector<string>("algs",              "ak5pf");
@@ -70,7 +70,7 @@ int main(int argc,char** argv)
   vector<string> formats    = cl.getVector<string>("formats",                "");
   bool           batch      = cl.getValue<bool>   ("batch",               false);
 
-  if (!cl.check()) return 0;
+  if (!cl.check()) return CommandLine::BAD_CHECK;
   cl.print();
 
   if (batch&&formats.size()==0) formats.push_back("pdf");

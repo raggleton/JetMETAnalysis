@@ -104,7 +104,7 @@ int main(int argc,char**argv) {
    // evaluate command-line / configuration file options
    // 
 	CommandLine cl;
-	if (!cl.parse(argc,argv)) return 0;
+	if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
 
     string       inputFilePath  = cl.getValue<string>       ("inputFilePath");
 	string 	 	 inputFilename  = cl.getValue<string> 	    ("inputFilename",                 "");
@@ -115,7 +115,7 @@ int main(int argc,char**argv) {
 	int          maxEvts        = cl.getValue<int>          ("maxEvts",                        0);
 	unsigned int nRefMax_       = cl.getValue<unsigned int> ("nRefMax",                        0);
 
-	if (!cl.check()) return 0;
+	if (!cl.check()) return CommandLine::BAD_CHECK;
 	cl.print();
 
 	TBenchmark* m_benchmark = new TBenchmark();

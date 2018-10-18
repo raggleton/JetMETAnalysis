@@ -61,7 +61,7 @@ int main(int argc,char**argv)
    // evaluate command-line / configuration file options
    // 
    CommandLine cl;
-   if (!cl.parse(argc,argv)) return 0;
+   if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
   
    string          filepath1    = cl.getValue<string>   ("filepath1");
    string          filepath2    = cl.getValue<string>   ("filepath2");
@@ -73,7 +73,7 @@ int main(int argc,char**argv)
    vector<TString> outputFormat = cl.getVector<TString> ("outputFormat", ".png:::.eps");
    bool            tdr          = cl.getValue<bool>     ("tdr",                  false);
 
-   if (!cl.check()) return 0;
+   if (!cl.check()) return CommandLine::BAD_CHECK;
    cl.print();
 
    if (tdr) {

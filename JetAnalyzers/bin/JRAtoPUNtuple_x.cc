@@ -417,7 +417,7 @@ int main(int argc,char**argv)
 {
 
    /*CommandLine cl;
-   if (!cl.parse(argc,argv)) return 0;
+   if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
    TString samplePU          = cl.getValue<TString> ("samplePU");
    TString sampleNoPU        = cl.getValue<TString> ("sampleNoPU");
    TString basepath          = cl.getValue<TString> ("basepath", "/fdata/hepx/store/user/aperloff/");
@@ -432,7 +432,7 @@ int main(int argc,char**argv)
    int     npvRhoNpuBinWidth = cl.getValue<int>     ("npvRhoNpuBinWidth",                         5);
    int     NBinsNpvRhoNpu    = cl.getValue<int>     ("NBinsNpvRhoNpu",                            6);
   
-   if (!cl.check()) return 0;
+   if (!cl.check()) return CommandLine::BAD_CHECK;
    cl.print();
 
    if(outputPath.IsNull()) outputPath = string (gSystem->pwd())+"/";

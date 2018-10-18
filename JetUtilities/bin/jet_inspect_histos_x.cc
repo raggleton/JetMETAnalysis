@@ -85,7 +85,7 @@ string get_animated_name(string prefix, const ObjectLoader<TH1F>& hl, vector<uns
 int main(int argc,char** argv)
 {
   CommandLine cl;
-  if (!cl.parse(argc,argv)) return 0;
+  if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
 
   vector<string> inputs     = cl.getVector<string>("inputs");
   vector<string> algs       = cl.getVector<string>("algs",          "kt4calo");
@@ -138,7 +138,7 @@ int main(int argc,char** argv)
   int            rebin      = cl.getValue<int>    ("rebin",                 1);
 
 
-  if (!cl.check()) return 0;
+  if (!cl.check()) return CommandLine::BAD_CHECK;
   cl.print();
 
   /// IF THE IMAGE IS ANIMATED IT MAKES SENSE TO HAVE EVERY HISTOGRAM IN ITS OWN CANVAS

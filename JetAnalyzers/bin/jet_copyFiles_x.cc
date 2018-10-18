@@ -93,7 +93,7 @@ void CopyFile(const char *fname, bool algs_to_skip, vector<TString> ati, int nen
 int main(int argc,char**argv)
 {
    CommandLine cl;
-   if (!cl.parse(argc,argv)) return 0;
+   if (!cl.parse(argc,argv)) return CommandLine::BAD_PARSE;
    
    vector<TString>      input     = cl.getVector<TString>      ("input");
    TString              output    = cl.getValue<TString>       ("output",       "");
@@ -105,7 +105,7 @@ int main(int argc,char**argv)
    bool                 help      = cl.getValue<bool>          ("help",      false);
 
    if (help) {cl.print(); return 0;}
-   if(!cl.check()) return 0;
+   if (!cl.check()) return CommandLine::BAD_CHECK;
    cl.print();
    
    
