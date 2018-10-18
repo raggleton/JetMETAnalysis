@@ -172,13 +172,13 @@ int main(int argc,char**argv)
 
     string algName = alg;
     // strip the lxxx bit for JEC files
+    // useful if rerunning over input already processed by jet_apply_jec_x
+    // and you are dealing with dirs like ak4pfchsl1
     if (!useAlgLevel) {
       auto loc = algName.find("l");
       if (loc != string::npos) {
         algName = algName.substr(0, loc);
         cout << "algName: " << algName << endl;
-      } else {
-        cout << "Couldn't find l" << endl;
       }
     }
 
