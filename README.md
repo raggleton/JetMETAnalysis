@@ -50,6 +50,8 @@ cmsenv
 git-cms-init
 git cms-merge-topic raggleton:Backport_JetFlavour
 git clone git@github.com:raggleton/JetMETAnalysis.git
+# Get the latest JEC files
+git clone git@github.com:cms-jet/JECDatabase.git
 scram b -j 4
 ```
 
