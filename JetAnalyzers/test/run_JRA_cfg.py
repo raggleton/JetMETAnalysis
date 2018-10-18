@@ -24,6 +24,7 @@ if doProducer:
 # Correction levels: '' (blank), l1, l2, l3, l2l3, l1l2l3
 algsizetype = {'ak':[4,8]}
 jettype = ['pfchs','puppi']
+
 algsizetype = {'ak':[4]}
 jettype = ['pfchs']
 corrs = ['']
@@ -68,7 +69,7 @@ if conditionsSource != "GT":
 #!
 #! INPUT
 #!
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(50))
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(5000))
 
 ##############################################
 # External Input File (most likely from DAS) #
@@ -82,20 +83,8 @@ process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(50))
 #           )
 #     process.source = cms.Source("PoolSource", fileNames = inputFiles )
 process.source = cms.Source("PoolSource",
-        # fileNames = cms.untracked.vstring('root://cmsxrootd.fnal.gov//store/mc/RunIISummer16DR80Premix/QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/110000/06E1B43E-AAB5-E611-8FB7-001E674FCA99.root')
-        # fileNames = cms.untracked.vstring('root://cmsxrootd.fnal.gov//store/mc/RunIISummer16DR80Premix/QCD_Pt-15to7000_TuneCUETP8M1_FlatP6_13TeV_pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/110000/00D5AF84-33B7-E611-8E07-D067E5F91B8A.root')
-        # fileNames = cms.untracked.vstring('file:/afs/desy.de/user/k/karavdia/public/JERC/PUPPI_check_2016/pickevents_AOD.root')
-        # fileNames = cms.untracked.vstring('root://cmsxrootd.fnal.gov//store/mc/RunIISummer16DR80Premix/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/110000/00B371BA-8BB1-E611-8D83-24BE05CEEC21.root')
-        # fileNames = cms.untracked.vstring('root://cmsxrootd.fnal.gov//store/mc/RunIISummer16DR80Premix/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/100000/02A0DA71-14D3-E611-8FEE-A0000420FE80.root')
-        # fileNames = cms.untracked.vstring('root://cmsxrootd.fnal.gov//store/mc/RunIISummer16DR80Premix/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/3CE8B39C-D8BA-E611-8017-0CC47A7C340C.root')
+        fileNames = cms.untracked.vstring('root://cmsxrootd.fnal.gov//store/mc/RunIISummer16DR80Premix/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/100000/02A0DA71-14D3-E611-8FEE-A0000420FE80.root')
         # fileNames = cms.untracked.vstring('root://cmsxrootd.fnal.gov//store/mc/RunIISummer16MiniAODv2/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/10000/3C313E17-5DAF-E811-9A68-A0369F7F8E80.root')
-        fileNames = cms.untracked.vstring('root://cmsxrootd.fnal.gov//store/mc/RunIISummer16MiniAODv2/QCD_Pt_80to170_bcToE_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PUMoriond17_backup_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/80000/FEF77AC0-59BE-E611-872A-002590747DC8.root '),
-        # fileNames = cms.untracked.vstring('file:/pnfs/desy.de/cms/tier2/store/mc/RunIISummer16MiniAODv2/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/10000/3C313E17-5DAF-E811-9A68-A0369F7F8E80.root'),
-        # fileNames = cms.untracked.vstring('/store/mc/RunIISummer16MiniAODv2/QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/0E15E987-84BD-E611-8DDE-A0369F3102B6.root'),
-        # fileNames = cms.untracked.vstring('/store/mc/RunIISummer16MiniAODv2/DYJetsToLL_M-50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/52D899A9-92D0-E611-857A-001E674FCAE9.root'),
-        # fileNames = cms.untracked.vstring('file:/pnfs/desy.de/cms/tier2/store/mc/RunIISummer16DR80Premix/GJet_Pt-15To6000_TuneCUETHS1-Flat_13TeV_herwigpp/AODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/110000/DC3D7036-96B6-E611-BC23-02163E01769A.root'),
-        # skipEvents = cms.untracked.uint32(2)
-        # eventsToProcess=cms.untracked.VEventRange('1:473780420')
 )
 
 
@@ -104,7 +93,7 @@ process.source = cms.Source("PoolSource",
 #!
 process.load('FWCore.MessageLogger.MessageLogger_cfi')
 process.MessageLogger.cerr.FwkReport.reportEvery = 100
-process.MessageLogger.cerr.FwkReport.reportEvery = 1
+# process.MessageLogger.cerr.FwkReport.reportEvery = 1
 process.options = cms.untracked.PSet( wantSummary = cms.untracked.bool(True))
 if doProducer:
     process.add_(cms.Service("Tracer"))
@@ -134,7 +123,7 @@ import JetMETAnalysis.JetAnalyzers.Defaults_cff as Defaults
 
 # set to False to use jets from the input file (NOT RECOMMENDED)
 doJetReco = True
-doMiniAOD = True
+doMiniAOD = False
 outCom = cms.untracked.vstring('drop *')
 from JetMETAnalysis.JetAnalyzers.addAlgorithm import addAlgorithm
 for algorithm in algorithms:
