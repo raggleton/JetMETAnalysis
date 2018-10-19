@@ -189,13 +189,13 @@ int main(int argc,char**argv)
    if(pThatReweight!=-9999 && useweight==false) {
       cout << "ERROR::jet_correction_analyzer_x Can't reweight the pThat spectrum without first using the existing"
            << " weights to return to an unmodified spectrum. Set the \"useweight\" option to true." << endl;
-           return -1;
+           return 10;
    }
 
    // Check that the size of the drmax values matches that of the algs
    if(drmax.size()>0 && algs.size()!=drmax.size()) {
       cout << "ERROR::jet_correction_analyzer_x The size of the drmax vector must match the size of the algs vector" << endl;
-      return 0;
+      return 11;
    }
 
    //
@@ -232,7 +232,7 @@ int main(int argc,char**argv)
          if (!weightFile->IsOpen()) { cout<<"Can't open "<<weightfilename<<endl; }
          cout << "Getting the weight histogram all_ ... " << flush; 
          weightHist = (TH2D*)weightFile->Get((algs[a]+"/all_").c_str());
-         if(weightHist==nullptr) { cout<<"FAIL!"<<endl<<"Histogram of weights named \"all_\" was not in file "<<weightfilename<<endl; return 0; } 
+         if(weightHist==nullptr) { cout<<"FAIL!"<<endl<<"Histogram of weights named \"all_\" was not in file "<<weightfilename<<endl; return 12; }
          cout << "DONE" << endl;
       }
    
@@ -263,7 +263,7 @@ int main(int argc,char**argv)
          chain->AddFileInfoList((TCollection*)fc.GetList());
          if(chain->GetListOfFiles()->GetEntries()!=fc.GetNFiles()) {
             cout << "ERROR::DelphesNtupleToJRANtuple_x::main Something went wrong and the number of files in the filesList doesn't equal the number of files in the chain." << endl;
-            return -1;           
+            return 13;
          }
          file_count = chain->GetListOfFiles()->GetEntries();
       }
@@ -290,7 +290,7 @@ int main(int argc,char**argv)
       }
       if (file_count==0){
          cout << "\tNo files found!  Aborting.\n";
-         return 0;
+         return 14;
       }
       if (0==chain) { cout<<"no tree/chain found."<<endl; continue; }
       JRAEvent* JRAEvt = new JRAEvent(chain,85);
@@ -508,7 +508,7 @@ int main(int argc,char**argv)
          if (!RespVsRho) {
             cout << "ERROR::Could not retrieve RespVsRhoVsEtaVsPt" << endl
                  << "Ending program !!" << endl;
-            return 0;
+            return 15;
          }
          RespVsRho->SetDirectory(0);
       }

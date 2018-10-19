@@ -174,16 +174,16 @@ int main(int argc,char** argv)
       (inputs.size()>1&&variables.size()>1))) {
     cout<<"Provide more than one value only for one of inputs/algs/variables!"
 	<<endl;
-    return 0;
+    return 10;
   }
 
   if (resmcdata && defmcdata.size()!=2 && !interpolate) {
     cout<<"If using residual for MC to data comparison you MUST provide"<<endl
 	<<"in defmcdata: 1) number of graph with MC (+fit) 2) number of data graph"<<endl;
-    return 0;
+    return 11;
   }
   
-  if (!text.empty()){cout<<"option -text depreciated; use -tdrlabels!"<<endl;return 0;}
+  if (!text.empty()){cout<<"option -text depreciated; use -tdrlabels!"<<endl;return 12;}
   if (0==tdrlabels.size()&&tdrautobins) {
     cout<<"Found no tdrlabels - resetting tdrautobins = false"<<endl;
     tdrautobins = false;
@@ -223,7 +223,7 @@ int main(int argc,char** argv)
   }
   if (!override && quantities.size()!=1) {
     cout<<"ERROR: don't try to compare different quantities!"<<endl;
-    return 0;
+    return 13;
   }
   
   // determine legend labels
@@ -231,7 +231,7 @@ int main(int argc,char** argv)
     if (leglabels.size()>0) {
       if (leglabels.size()-extraleglabels!=algs.size()) {
 	cout<<"ERROR: leglabels / algs mismatch!"<<endl;
-	return 0;
+	return 14;
       }
     }
     else {
@@ -254,7 +254,7 @@ int main(int argc,char** argv)
     if (leglabels.size()>0) {
       if (leglabels.size()-extraleglabels!=variables.size()) {
 	cout<<"ERROR: leglabels / variables mismatch!"<<endl;
-	return 0;
+	return 15;
       }
     }
   }
@@ -274,7 +274,7 @@ int main(int argc,char** argv)
     
     string input=inputs[iinput].substr(0,inputs[iinput].find(':'));
     TFile* file=new TFile(input.c_str(),"READ");
-    if (!file->IsOpen()) {cout<<"Can't open "<<file->GetName()<<endl;return 0;}
+    if (!file->IsOpen()) {cout<<"Can't open "<<file->GetName()<<endl;return 16;}
     
     /// LOOP OVER ALGORITHMS
     for (unsigned int ialg=0;ialg<algs.size();ialg++) {
@@ -287,7 +287,7 @@ int main(int argc,char** argv)
       }
       else if(0==dir) {
         cout<<"No dir "<<algs[ialg]<<" found"<<endl;
-        return 0;
+        return 17;
       }
 
       /// LOOP OVER VARIABLES
@@ -475,7 +475,7 @@ int main(int argc,char** argv)
     } // algorithms
   } // inputs
 
-  if (0==mg) { cout<<"ERROR: No data points in the graph!"<<endl; return 0; }
+  if (0==mg) { cout<<"ERROR: No data points in the graph!"<<endl; return 18; }
 
   TCanvas* c;
   

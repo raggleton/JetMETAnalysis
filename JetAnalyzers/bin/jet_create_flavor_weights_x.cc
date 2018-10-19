@@ -98,10 +98,10 @@ int main(int argc,char**argv) {
     gStyle->SetPalette(1);
 
     TFile *inf = TFile::Open(input.c_str(),"READ");
-    if (!inf->IsOpen()) {  cout<<"Can't open "<<input<<endl; return 0; }
+    if (!inf->IsOpen()) {  cout<<"Can't open "<<input<<endl; return 10; }
     if(!outputDir.empty() && outputDir.back()!='/') outputDir += "/";
     TFile *outf = TFile::Open((outputDir+outputFilename).c_str(),"RECREATE");
-    if (!outf->IsOpen()) { cout<<"Can't create "<<outputDir+outputFilename<<endl; return 0; }
+    if (!outf->IsOpen()) { cout<<"Can't create "<<outputDir+outputFilename<<endl; return 11; }
 
     //
     // Split the DRmax from the algorithms

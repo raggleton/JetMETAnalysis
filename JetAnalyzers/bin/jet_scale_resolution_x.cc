@@ -83,14 +83,14 @@ int main(int argc,char**argv)
     // open input file
     string input = inputs[iinput]; input = datapath + "/" + input;
     TFile* ifile = new TFile(input.c_str(),"READ");
-    if (!ifile->IsOpen()) { cout<<"Failed to open "<<input<<endl; return 0; }
+    if (!ifile->IsOpen()) { cout<<"Failed to open "<<input<<endl; return 10; }
 
     // create temporary output file
     size_t pos = input.find(".root");
     string output = input.substr(0,pos);
     output = output + ".jer.root";
     TFile* ofile = new TFile(output.c_str(),"RECREATE");
-    if (!ofile->IsOpen()) { cout<<"Failed to create "<<output<<endl; return 0; }
+    if (!ofile->IsOpen()) { cout<<"Failed to create "<<output<<endl; return 11; }
 
     // loop over input directories
     TIter next(ifile->GetListOfKeys());
@@ -118,11 +118,11 @@ int main(int argc,char**argv)
 
       // create output directory
       TDirectory* odir = (TDirectory*)ofile->mkdir(idirname.c_str());
-      if(0==odir){cout<<"Failed to make "<<idirname<<" in "<<output<<endl;return 0;}
+      if(0==odir){cout<<"Failed to make "<<idirname<<" in "<<output<<endl;return 12;}
 
       // open input tree
       TTree* itree = (TTree*)idir->Get(treename.c_str());
-      if(0==itree){cout<<"No "<<treename<<" in "<<output<<":"<<idirname<<endl;return 0;}
+      if(0==itree){cout<<"No "<<treename<<" in "<<output<<":"<<idirname<<endl;return 13;}
 
       // don't copy dijets branches if they already exist
       itree->SetBranchStatus("jtpt",0);

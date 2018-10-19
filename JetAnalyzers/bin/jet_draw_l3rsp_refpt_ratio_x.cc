@@ -55,7 +55,7 @@ int main(int argc,char**argv)
       cout << "The number of numerator files is not equal to the number of denominator files" << endl
            << "Please make sure there are an equal number of files in each and try again." << endl
            << "The program will now exit" << endl;
-      return 0;
+      return 10;
     }
 
   //
@@ -96,7 +96,7 @@ int main(int argc,char**argv)
           cout << "One or more of the graph pointers from files " << filenameNum[f] << "and" << filenameDen[f] 
                << " is NULL." << endl << "Please correct this and try again" << endl 
                << "The program will now exit" << endl;
-          return 0;
+          return 11;
         }
 
       ratioGraphs.push_back(new TGraphErrors(graphDen->GetN()));

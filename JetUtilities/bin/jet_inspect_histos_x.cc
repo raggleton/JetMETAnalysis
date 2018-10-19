@@ -158,7 +158,7 @@ int main(int argc,char** argv)
   if (batch&&formats.size()==0) formats.push_back("pdf");
 
   if (!fillstyles.empty() && (colors.size()!=fillstyles.size())) {
-    cout<<"Error: #Fillstyles has no corresponding colors!"<<endl;return 0;
+    cout<<"Error: #Fillstyles has no corresponding colors!"<<endl;return 10;
   }
 
   //assert (fillstyles.size()==markstyles.size());
@@ -197,14 +197,14 @@ int main(int argc,char** argv)
 
     string input(inputs[ifile]);
     TFile* file=new TFile(input.c_str(),"READ");
-    if (!file->IsOpen()) {cout<<"Can't open "<<file->GetName()<<endl;return 0;}
+    if (!file->IsOpen()) {cout<<"Can't open "<<file->GetName()<<endl;return 11;}
     
     /// LOOP OVER ALGORITHMS
     for (unsigned int ialg=0;ialg<algs.size();ialg++) {
 
       string alg = algs[ialg];
       TDirectory* dir =(TDirectory*)file->Get(alg.c_str());
-      if (0==dir) { cout<<"No dir "<<algs[ialg]<<" found"<<endl; return 0; }
+      if (0==dir) { cout<<"No dir "<<algs[ialg]<<" found"<<endl; return 12; }
 
       /// LOOP OVER VARIABLES
       for (unsigned int ivar=0;ivar<variables.size();ivar++) {

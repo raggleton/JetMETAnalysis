@@ -523,7 +523,7 @@ int main(int argc,char**argv){
    TString inputFilename = inputDir+"output_"+algo12+".root";
    TProfile3D *prof=0, *profPt=0, *profRho=0;
    if (!getInputProfiles(inputFilename, prof, profPt, profRho, useNPU))
-      return 1;
+      return 10;
    
 // Create the output file to store the graphs
    TString rootFilename = outputDir+"Parameter_"+algo12+".root";

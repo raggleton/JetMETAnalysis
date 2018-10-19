@@ -95,7 +95,7 @@ int main(int argc,char** argv)
     
     string input(inputs[ifile]);
     TFile* file=new TFile(input.c_str(),"READ");
-    if (!file->IsOpen()) {cout<<"Can't open "<<file->GetName()<<endl;return 0;}
+    if (!file->IsOpen()) {cout<<"Can't open "<<file->GetName()<<endl;return 10;}
     
     /// LOOP OVER ALGORITHMS
     for (unsigned int ialg=0;ialg<algs.size();ialg++) {
@@ -103,10 +103,10 @@ int main(int argc,char** argv)
       string alg = algs[ialg];
 
       TDirectory* dir =(TDirectory*)file->Get(alg.c_str());
-      if (0==dir) { cout<<"No dir '"<<alg<<"' found"<<endl; return 0; }
+      if (0==dir) { cout<<"No dir '"<<alg<<"' found"<<endl; return 11; }
       
       TTree* tree=(TTree*)dir->Get(treename.c_str());
-      if (0==tree) { cout<<"No tree '"<<treename<<"' for "<<alg<<endl; return 0; }
+      if (0==tree) { cout<<"No tree '"<<treename<<"' for "<<alg<<endl; return 12; }
       
       /// LOOP OVER SELECTIONS
       for (unsigned int isel=0;isel<selections.size();isel++) {

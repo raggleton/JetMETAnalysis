@@ -71,10 +71,10 @@ int main(int argc,char**argv)
  
   
   TFile* ifile = TFile::Open(input.c_str(),"READ");
-  if (!ifile) { cout<<"Can't open file "<<input<<endl; return 0; }
+  if (!ifile) { cout<<"Can't open file "<<input<<endl; return 10; }
 
   TFile* ofile = TFile::Open(output.c_str(),"RECREATE");
-  if (!ofile) { cout<<"Can't open file "<<output<<endl; return 0; }
+  if (!ofile) { cout<<"Can't open file "<<output<<endl; return 11; }
   
   if (algs.size()==0) {
     TIter nextDir(ifile->GetListOfKeys());
@@ -91,7 +91,7 @@ int main(int argc,char**argv)
     JetInfo jetInfo(algs[ialg]);
     
     TDirectory* idir=(TDirectory*)ifile->Get(alg.c_str());
-    if (0==idir) { cout<<"No dir "<<alg<<" found"<<endl; return 0; }
+    if (0==idir) { cout<<"No dir "<<alg<<" found"<<endl; return 12; }
     
     cout<<"jet algorithm: "<<alg<<endl;
     

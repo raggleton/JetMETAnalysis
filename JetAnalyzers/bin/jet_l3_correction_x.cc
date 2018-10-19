@@ -89,14 +89,14 @@ int main(int argc,char**argv)
   // open output file
   //
   TFile* ofile = new TFile(output.c_str(),"RECREATE");
-  if (!ofile->IsOpen()) { cout<<"Can't create "<<output<<endl; return 0; }
+  if (!ofile->IsOpen()) { cout<<"Can't create "<<output<<endl; return 10; }
   
 
   //
   // open input file and loop over directories (algorithms)
   //
   TFile* ifile = new TFile(input.c_str(),"READ");
-  if (!ifile->IsOpen()) { cout<<"Can't open "<<input<<endl; return 0; }
+  if (!ifile->IsOpen()) { cout<<"Can't open "<<input<<endl; return 11; }
 
   if (algs.size()==0) {
     TIter nextDir(ifile->GetListOfKeys());

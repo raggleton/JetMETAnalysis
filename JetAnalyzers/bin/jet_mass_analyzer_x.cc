@@ -110,7 +110,7 @@ int main(int argc,char**argv)
   for (unsigned ileg=0;ileg<legs_as_vstr.size();ileg++) {
     string legs_as_str = legs_as_vstr[ileg];
     vector<int> ilegs;
-    if (!legs_from_string(legs_as_str,ilegs)) {cout<<"Buh!"<<endl; return 0;}
+    if (!legs_from_string(legs_as_str,ilegs)) {cout<<"Buh!"<<endl; return 10;}
     legs.push_back(ilegs);
     if (ilegs.size()>2||ilegs[0]!=-ilegs[1])
       legs.push_back(charge_conjugate(ilegs));
@@ -121,10 +121,10 @@ int main(int argc,char**argv)
   // open input/output files and loop over input directories/trees (=algorithms!)
   //
   TFile* ifile = new TFile(input.c_str(),"READ");
-  if (!ifile->IsOpen()) {  cout<<"Can't open "<<input<<endl; return 0; }
+  if (!ifile->IsOpen()) {  cout<<"Can't open "<<input<<endl; return 11; }
   
   TFile* ofile = new TFile(output.c_str(),"RECREATE");
-  if (!ofile->IsOpen()) { cout<<"Can't create "<<output<<endl; return 0; }
+  if (!ofile->IsOpen()) { cout<<"Can't create "<<output<<endl; return 12; }
   
   TIter next(ifile->GetListOfKeys());
   TKey* key(0);

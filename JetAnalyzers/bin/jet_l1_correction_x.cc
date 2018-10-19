@@ -166,7 +166,7 @@ int main(int argc,char**argv){
     TString inputFilename = inputDir+"output_"+algo12+".root";
     THnSparseF *prof=0, *profPt=0, *profEntries=0;
     if(!getInputHistograms(inputFilename, prof, profPt, profEntries, useNPU))
-        return -1;
+        return 10;
 
     pair<float,float> rho_bounds = find_rho_bounds(prof,profPt,profEntries,rebinEta,rebinRho);
 

@@ -216,7 +216,7 @@ int main(int argc,char**argv)
   }
   
   TFile* ofile = new TFile(output.c_str(),"RECREATE");
-  if (!ofile->IsOpen()) { cout<<"Can't create "<<output<<endl; return 0; }
+  if (!ofile->IsOpen()) { cout<<"Can't create "<<output<<endl; return 10; }
   vector<TGraphErrors*> vrsp;
   vector<TGraphErrors*> vres;
   vector<TGraphErrors*> vaone;
@@ -228,7 +228,7 @@ int main(int argc,char**argv)
   // open input file and loop over input directories (=algorithms)
   //
   TFile* ifile = new TFile(input.c_str(),"READ");
-  if (!ifile->IsOpen()) { cout<<"Can't open "<<input<<endl; return 0; }
+  if (!ifile->IsOpen()) { cout<<"Can't open "<<input<<endl; return 11; }
   
   if (algs.size()==0) {
     TIter nextDir(ifile->GetListOfKeys());
@@ -262,7 +262,7 @@ int main(int argc,char**argv)
     JERWriter resolutions(alg,fera,fprefix,true, domu || dorho || dopudensity, writeHeader, indirectProf);
 
     TDirectory* idir = (TDirectory*)ifile->Get(alg.c_str());
-    if (0==idir) { cout<<"No dir "<<alg<<" found"<<endl; return 0; }
+    if (0==idir) { cout<<"No dir "<<alg<<" found"<<endl; return 12; }
     
     cout<<alg<<" ... "<<flush;
     

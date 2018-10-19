@@ -81,7 +81,7 @@ int main(int argc,char**argv)
           if(!infs.back()->IsOpen())
             {
               cout << "WARNING:File " << paths[p] << "ClosureVsEta_" << algs[a] << ".root is was not opened." << endl << " Check the path and filename and try again." << endl << " The program will now exit." << endl;
-              return 0;
+              return 10;
             }
 
           if(!divByNPU0.IsNull())
@@ -91,7 +91,7 @@ int main(int argc,char**argv)
               if(!infsNPU0.back()->IsOpen())
                 {
                   cout << "WARNING:File " << divByNPU0 << "ClosureVsEta_" << algs[a] << ".root is was not opened." << endl << " Check the path and filename and try again." << endl << " The program will now exit." << endl;
-              return 0;
+              return 10;
                 }
             }
 

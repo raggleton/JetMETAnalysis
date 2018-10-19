@@ -241,10 +241,10 @@ int main(int argc,char**argv)
   // open input/output files and loop over input directories/trees (=algorithms!)
   //
   TFile* ifile = TFile::Open(input.c_str(),"READ");
-  if (!ifile->IsOpen()) {  cout<<"Can't open "<<input<<endl; return 0; }
+  if (!ifile->IsOpen()) {  cout<<"Can't open "<<input<<endl; return 10; }
   
   TFile* ofile = new TFile(output.c_str(),"RECREATE");
-  if (!ofile->IsOpen()) { cout<<"Can't create "<<output<<endl; return 0; }
+  if (!ofile->IsOpen()) { cout<<"Can't create "<<output<<endl; return 11; }
 
   TIter next(ifile->GetListOfKeys());
   TKey* key(0);
@@ -277,7 +277,7 @@ int main(int argc,char**argv)
        {
           cout << "Getting the weight histogram all_ ... " << flush; 
           weightMap["all_"] = (TH2D*)gDirectory->Get("all_");
-          if(weightMap["all_"]==0) { cout<<"FAIL!"<<endl<<"Histogram of weights named \"all_\" was not in file "<<weightfile<<endl; return 0; } 
+          if(weightMap["all_"]==0) { cout<<"FAIL!"<<endl<<"Histogram of weights named \"all_\" was not in file "<<weightfile<<endl; return 12; }
           cout << "DONE" << endl;
        }
        else
@@ -290,7 +290,7 @@ int main(int argc,char**argv)
               }
              else
                 weightMap[flavors[f]] = (TH2D*)gDirectory->Get("all_");
-             if(weightMap[flavors[f]]==0) { cout<<"FAIL!"<<endl<<"Histogram of weights named \""<< flavors[f]<< "\" was not in file "<<weightfile<<endl; return 0; } 
+             if(weightMap[flavors[f]]==0) { cout<<"FAIL!"<<endl<<"Histogram of weights named \""<< flavors[f]<< "\" was not in file "<<weightfile<<endl; return 12; }
              cout << "DONE" << endl;
           }
        }

@@ -96,7 +96,7 @@ int main(int argc,char**argv)
       jecpath = cmssw_release_base + "/src/CondFormats/JetMETObjects/data";
     if (stat(jecpath.c_str(),&st)!=0) {
       cout<<"ERROR: tried to set jecpath but failed, abort."<<endl;
-      return -1;
+      return 10;
     }
     else cout<<"jecpath set to "<<jecpath<<endl;
   }
@@ -106,7 +106,7 @@ int main(int argc,char**argv)
   if (url_string.empty()) {
     ichain->Add(input.c_str());
     ifile = TFile::Open(input.c_str(),"READ");
-    if (!ifile) { cout<<"Can't open file "<<input<<endl; return -2; }
+    if (!ifile) { cout<<"Can't open file "<<input<<endl; return 11; }
     if (output.empty()) output=input.substr(0,input.find(".root"))+"_jec.root";
   }
   #if(has_xrdcl)
@@ -125,7 +125,7 @@ int main(int argc,char**argv)
       }
       TChainElement* chEl = (TChainElement*)ichain->GetListOfFiles()->First();
       ifile = TFile::Open(chEl->GetTitle(),"READ");
-      if (file_count==0){ cout<<"No files found! Aborting."<<endl; return -3; }
+      if (file_count==0){ cout<<"No files found! Aborting."<<endl; return 12; }
       if (output.empty()) {
         output = chEl->GetTitle();
         output = output.substr(output.rfind("/")+1,output.find(".root")-output.rfind("/")-1)+"_jec.root";
@@ -133,11 +133,11 @@ int main(int argc,char**argv)
     }
   #else
     cout << "Can't find the header file \"xrootd/XrdCl/XrdClFileSystem.hh\" and thus can't use xrootd." << endl;
-    return -4;
+    return 13;
   #endif
 
   TFile* ofile = TFile::Open(output.c_str(),"RECREATE");
-  if (!ofile) { cout<<"Can't open file "<<output<<endl; return 0; }
+  if (!ofile) { cout<<"Can't open file "<<output<<endl; return 14; }
   else { cout<<"Write output to "<<output<<endl; }
   
   if (algs.size()==0) {
@@ -156,7 +156,7 @@ int main(int argc,char**argv)
     setChainElementNames(ichain,alg+"/t");
     
     TDirectory* idir=(TDirectory*)ifile->Get(alg.c_str());
-    if (0==idir) { cout<<"No dir "<<alg<<" found"<<endl; return 0; }
+    if (0==idir) { cout<<"No dir "<<alg<<" found"<<endl; return 15; }
     
     bool exclude(false);
     for (unsigned int i=0;i<levels.size();i++) {

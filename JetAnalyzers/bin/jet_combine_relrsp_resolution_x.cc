@@ -79,7 +79,7 @@ int main(int argc,char**argv)
           if(!infs.back()->IsOpen())
             {
               cout << "WARNING:File " << paths[p] << "Closure_" << algs[a] << ".root is was not opened." << endl << " Check the path and filename and try again." << endl << " The program will now exit." << endl;
-              return 0;
+              return 10;
             }
 
           TString path(paths[p]);

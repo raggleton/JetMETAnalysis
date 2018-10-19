@@ -99,10 +99,10 @@ int main(int argc,char** argv) {
     // open input file and loop over input directories (=algorithms)
     //
 	TFile* ifile = new TFile(input.c_str(),"READ");
-	if (!ifile->IsOpen()) { cout<<"Can't open "<<input<<endl; return 0; }
+	if (!ifile->IsOpen()) { cout<<"Can't open "<<input<<endl; return 10; }
 
 	TFile* ofile = new TFile(output.c_str(),"UPDATE");
-	if (!ofile->IsOpen()) { cout<<"Can't create "<<output<<endl; return 0; }
+	if (!ofile->IsOpen()) { cout<<"Can't create "<<output<<endl; return 11; }
 
 	TIter nextDir(ifile->GetListOfKeys());
 	TKey* dirKey(0);

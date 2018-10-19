@@ -131,7 +131,7 @@ int main(int argc,char**argv) {
   		chain.AddFileInfoList((TCollection*)fc.GetList());
   		if(chain.GetListOfFiles()->GetEntries()!=fc.GetNFiles()) {
   			cout << "ERROR::DelphesNtupleToJRANtuple_x::main Something went wrong and the number of files in the filesList doesn't equal the number of files in the chain." << endl;
-			return -1;  			
+			return 10;
   		}
   		file_count = chain.GetListOfFiles()->GetEntries();
   	}
@@ -154,7 +154,7 @@ int main(int argc,char**argv) {
     }
     if (file_count==0){
        cout << "\tNo files found!  Aborting.\n";
-       return 0;
+       return 11;
     }
 
     // Turn off unwanted all branches and turn on only the ones we want

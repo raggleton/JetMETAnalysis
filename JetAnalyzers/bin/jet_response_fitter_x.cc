@@ -105,7 +105,7 @@ int main(int argc,char**argv)
   cl.print();
   
   if (fittype<0 || fittype>1) {
-    cout<<"ERROR: fittype not known, choose 0 for GAUSS, 1 for DSCB";return 0;
+    cout<<"ERROR: fittype not known, choose 0 for GAUSS, 1 for DSCB";return 10;
   }
   else if (0==fittype) cout<<"*** Fitting with distributions w/ GAUSS"<<endl;
   else cout<<"*** Fitting response distributions w/ DSCB"<<endl; 
@@ -124,10 +124,10 @@ int main(int argc,char**argv)
   // open input file and loop over input directories (=algorithms)
   //
   TFile* ifile = new TFile(input.c_str(),"READ");
-  if (!ifile->IsOpen()) { cout<<"Can't open "<<input<<endl; return 0; }
+  if (!ifile->IsOpen()) { cout<<"Can't open "<<input<<endl; return 11; }
 
   TFile* ofile = new TFile(output.c_str(),"UPDATE");
-  if (!ofile->IsOpen()) { cout<<"Can't create "<<output<<endl; return 0; }
+  if (!ofile->IsOpen()) { cout<<"Can't create "<<output<<endl; return 12; }
 
   TIter nextDir(ifile->GetListOfKeys());
   TKey* dirKey(0);

@@ -1517,7 +1517,7 @@ int main(int argc,char**argv)
    if(pThatReweight && !useweight) {
       cout << "ERROR::jet_synchtest_x Can't reweight the pThat spectrum without first using the existing"
            << " weights to return to an unmodified spectrum. Set the \"useweight\" option to true." << endl;
-           return -1;
+           return 10;
    }
 
    gEnv->SetValue("TFile.AsyncPrefetching", 1);
