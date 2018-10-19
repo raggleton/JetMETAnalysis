@@ -43,8 +43,8 @@ public:
   //
   // Exit codes
   //
-  const static int BAD_PARSE = 3;
-  const static int BAD_CHECK = 4;
+  const static int BAD_PARSE = 33;
+  const static int BAD_CHECK = 44;
 
 private:
   bool parse_file(const std::string& file_name);
