@@ -385,8 +385,6 @@ def addAlgorithm(process, alg_size_type_corr, Defaults, reco, doProducer, doMini
             recJets.Rho_EtaMax    = cms.double(4.4) # FIX LATER
         recJets.jetPtMin = cms.double(3.0)
         setattr(process, recLabel, recJets)
-        if doMiniAOD:
-            recJets.src = cms.InputTag("pfCHS")
         sequence = cms.Sequence(recJets * sequence)
         if type == 'PUPPI':
             process.load('CommonTools.PileupAlgos.Puppi_cff')
@@ -585,7 +583,11 @@ def addAlgorithm(process, alg_size_type_corr, Defaults, reco, doProducer, doMini
                                          src = cms.InputTag("packedPFCandidates"),
                                          cut = cms.string("fromPV"))
             process.kt6PFchsJetsRhos.src = "pfCHS"
-            sequence = cms.Sequence(process.pfCHS * sequence)
+            process.particleFlow = cms.EDFilter("CandPtrSelector",
+                                                src = cms.InputTag("packedPFCandidates"),
+                                                cut = cms.string(""))
+            sequence = cms.Sequence(process.particleFlow * process.pfCHS * sequence)
+            recJetsDict[alg_size_type][1].src = cms.InputTag("pfCHS")
         jra.srcRhos = cms.InputTag("kt6PFchsJetsRhos", "rhos")
         jra.srcRho = cms.InputTag("fixedGridRhoFastjetAll")
         jra.srcPFCandidates = cms.InputTag('pfCHS') if doMiniAOD else cms.InputTag('pfNoPileUpJME')
