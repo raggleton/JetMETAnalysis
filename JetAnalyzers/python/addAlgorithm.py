@@ -588,6 +588,8 @@ def addAlgorithm(process, alg_size_type_corr, Defaults, reco, doProducer, doMini
                                                 cut = cms.string(""))
             sequence = cms.Sequence(process.particleFlow * process.pfCHS * sequence)
             recJetsDict[alg_size_type][1].src = cms.InputTag("pfCHS")
+        else:
+            sequence = cms.Sequence(process.pfNoPileUpJMESequence * sequence)
         jra.srcRhos = cms.InputTag("kt6PFchsJetsRhos", "rhos")
         jra.srcRho = cms.InputTag("fixedGridRhoFastjetAll")
         jra.srcPFCandidates = cms.InputTag('pfCHS') if doMiniAOD else cms.InputTag('pfNoPileUpJME')
@@ -638,10 +640,6 @@ def addAlgorithm(process, alg_size_type_corr, Defaults, reco, doProducer, doMini
 
     setattr(process,alg_size_type_corr,jra)
     sequence = cms.Sequence(sequence * jra)
-
-    ## add chs to path is needed
-    if type == 'PFchs' and not doMiniAOD:
-        sequence = cms.Sequence(process.pfNoPileUpJMESequence * sequence)
 
     ## create the path and put in the sequence
     sequence = cms.Sequence(sequence)
