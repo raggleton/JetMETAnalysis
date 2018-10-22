@@ -532,7 +532,8 @@ def addAlgorithm(process, alg_size_type_corr, Defaults, reco, doProducer, doMini
     ## jet response analyzer
     jraAnalyzer = 'JetResponseAnalyzer'
     vtxSrc = "offlineSlimmedPrimaryVertices" if doMiniAOD else "offlinePrimaryVertices"
-    genSrc = "packedGenParticles" if doMiniAOD else "genParticles"
+    # need pruned not packed for hard process info
+    genSrc = "prunedGenParticles" if doMiniAOD else "genParticles"
     puSrc = "slimmedAddPileupInfo" if doMiniAOD else "addPileupInfo"
     dataFormat = 2 if doMiniAOD else 1
     jra = cms.EDAnalyzer(jraAnalyzer,

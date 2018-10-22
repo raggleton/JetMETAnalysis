@@ -30,6 +30,7 @@ JetResponseAnalyzer::JetResponseAnalyzer(const edm::ParameterSet& iConfig)
   //, srcPFCandidates_      (consumes<vector<reco::PFCandidate> >(iConfig.getParameter<edm::InputTag>("srcPFCandidates")))
   , srcPFCandidates_        (consumes<PFCandidateView>(iConfig.getParameter<edm::InputTag>("srcPFCandidates")))
   , srcPFCandidatesAsFwdPtr_(consumes<std::vector<edm::FwdPtr<reco::PFCandidate> > >(iConfig.getParameter<edm::InputTag>("srcPFCandidates")))
+  , srcGenParticles_        (consumes<vector<reco::GenParticle> >(iConfig.getParameter<edm::InputTag>("srcGenParticles")))
   , jecLabel_      (iConfig.getParameter<std::string>                 ("jecLabel"))
   , doComposition_ (iConfig.getParameter<bool>                   ("doComposition"))
   , doFlavor_      (iConfig.getParameter<bool>                        ("doFlavor"))
@@ -44,7 +45,7 @@ JetResponseAnalyzer::JetResponseAnalyzer(const edm::ParameterSet& iConfig)
   , getFlavorFromMap_(false)
   , jetCorrector_(0)
 {
-  setToken(srcGenParticles_, iConfig, "srcGenParticles", "srcGenParticles", dataFormat_);
+  // setToken(srcGenParticles_, iConfig, "srcGenParticles", "srcGenParticles", dataFormat_);
 
   if (iConfig.exists("deltaRMax")) {
     doBalancing_=false;
@@ -190,21 +191,11 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
   // GENERATED PV INFORMATION & PU DENSITY
   JRAEvt_->refpvz = -1000.0;
 
-  if (srcGenParticles_.isAOD()){
-    setHandle<vector<reco::GenParticle>, vector<pat::PackedGenParticle> >(genParticles, iEvent, srcGenParticles_);
-    for (const auto & genIt : *genParticles) {
-      if (genIt.isHardProcess()) {
-        JRAEvt_->refpvz = genIt.vz();
-        break;
-      }
-    }
-  } else {
-    setHandle<vector<reco::GenParticle>, vector<pat::PackedGenParticle> >(packedGenParticles, iEvent, srcGenParticles_);
-    for (const auto & genIt : *packedGenParticles) {
-      if (genIt.fromHardProcessFinalState()) {
-        JRAEvt_->refpvz = genIt.vz();
-        break;
-      }
+  iEvent.getByToken(srcGenParticles_, genParticles);
+  for (const auto & genIt : *genParticles) {
+    if (genIt.isHardProcess()) {
+      JRAEvt_->refpvz = genIt.vz();
+      break;
     }
   }
 

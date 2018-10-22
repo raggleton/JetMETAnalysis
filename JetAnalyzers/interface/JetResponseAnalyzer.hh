@@ -138,7 +138,8 @@ private:
   //edm::EDGetTokenT<vector<reco::PFCandidate> > srcPFCandidates_;
   edm::EDGetTokenT<PFCandidateView> srcPFCandidates_;
   edm::EDGetTokenT<std::vector<edm::FwdPtr<reco::PFCandidate> > > srcPFCandidatesAsFwdPtr_;
-  DualToken<vector<reco::GenParticle>, vector<pat::PackedGenParticle> > srcGenParticles_;
+  // DualToken<vector<reco::GenParticle>, vector<pat::PackedGenParticle> > srcGenParticles_;
+  edm::EDGetTokenT<vector<reco::GenParticle> > srcGenParticles_;
 
   std::string   jecLabel_;
   
