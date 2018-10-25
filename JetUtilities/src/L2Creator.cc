@@ -305,9 +305,7 @@ void L2Creator::loopOverEtaBins() {
             if (absrsp > 0) {
                 abscor  =1.0/absrsp;
                 eabscor = abscor*abscor*epeak;
-                if (minRelCorErr > 0) {
-                    if ((eabscor / abscor) < minRelCorErr) eabscor = abscor*minRelCorErr;
-                }
+
 
             }
             if ((abscor>0) && (absrsp>0) && (eabscor>1e-50) && (eabscor/abscor<0.5) && (eabsrsp>1e-40) && (eabsrsp/absrsp<0.5)) {
@@ -574,6 +572,11 @@ void L2Creator::loopOverEtaBins() {
             //
             int origIgnoreLevel = gErrorIgnoreLevel;
             gErrorIgnoreLevel = kBreak;
+
+            // Keep copy of original to have another go with different settings
+            TGraphErrors * gabscorCopy = (TGraphErrors*) gabscor->Clone();
+            TF1 * fabscorCopy = (TF1*) fabscor->Clone("fit"); // must be called fit to work
+
             perform_smart_fit(gabscor,fabscor,maxFitIter);
             gErrorIgnoreLevel = origIgnoreLevel;
 
@@ -581,6 +584,37 @@ void L2Creator::loopOverEtaBins() {
                 if (alg.find("HLT")!=string::npos) {
                     ((TF1*)gabscor->GetListOfFunctions()->First())->FixParameter(7,fabscor->Eval(fabscor->GetParameter(6)));
                     fabscor->FixParameter(7,fabscor->Eval(fabscor->GetParameter(6)));
+                }
+            }
+
+            // repeat fit, this time with inflated errors on graph
+            if (minRelCorErr > 0) {
+                cout << "Doing another fit with inflated minRelCorErr" << endl;
+                double * yPoints = gabscorCopy->GetY();
+                for (int iN=0; iN < gabscorCopy->GetN(); iN++) {
+                    double ex = gabscorCopy->GetErrorX(iN);
+                    double y = yPoints[iN];
+                    double ey = gabscorCopy->GetErrorY(iN);
+                    if ((ey/y) < minRelCorErr) {
+                        gabscorCopy->SetPointError(iN, ex, y*minRelCorErr);
+                    }
+                }
+                gErrorIgnoreLevel = kBreak;
+                perform_smart_fit(gabscorCopy, fabscorCopy, maxFitIter);
+                gErrorIgnoreLevel = origIgnoreLevel;
+
+                // Now calculate the chi2 using the original graph but our new function
+                // If the new one is better, use that as the fit
+                float chi2 = gabscor->Chisquare(fabscor);
+                float chi2New = gabscor->Chisquare(fabscorCopy);
+                cout << "chi2 orig: " << chi2 << endl;
+                cout << "chi2 new: " << chi2New << endl;
+                if (chi2New < chi2) {
+                    fabscor->SetName("fitOld");
+                    fabscorCopy->SetName("fit");
+                    fabscor = fabscorCopy;
+                    gabscor->GetListOfFunctions()->Clear();
+                    gabscor->GetListOfFunctions()->Add(fabscorCopy);
                 }
             }
 
