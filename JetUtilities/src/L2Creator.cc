@@ -402,9 +402,10 @@ void L2Creator::loopOverEtaBins() {
                         }
 
                         if (setFitMinTurnover) {
+                            // find "peak" at lower end of graph
                             float lastY = gabscor->GetY()[0];
                             for (int ix=1; ix < 10; ix++) {
-                                cout << gabscor->GetX()[ix] << " : " << gabscor->GetY()[ix] << endl;
+                                // cout << gabscor->GetX()[ix] << " : " << gabscor->GetY()[ix] << endl;
                                 if (gabscor->GetY()[ix] > lastY) {
                                     lastY = gabscor->GetY()[ix];
                                 } else {
