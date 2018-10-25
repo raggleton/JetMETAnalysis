@@ -29,6 +29,7 @@ L2Creator::L2Creator() {
     useLastFitParams = false;
     setFitMinTurnover = false;
     minRelCorErr = -1;
+    chooseByMaxDiff = false;
     plateauBelowRangeMin = false;
 }
 
@@ -56,6 +57,7 @@ L2Creator::L2Creator(CommandLine& cl) {
     useLastFitParams = cl.getValue<bool> ("useLastFitParams", false);
     setFitMinTurnover = cl.getValue<bool> ("setFitMinTurnover", false);
     minRelCorErr = cl.getValue<double> ("minRelCorErr", -1);
+    chooseByMaxDiff = cl.getValue<bool> ("chooseByMaxDiff", false);
     plateauBelowRangeMin = cl.getValue<bool> ("plateauBelowRangeMin", false);
 
     if (!cl.partialCheck()) return;
@@ -603,18 +605,49 @@ void L2Creator::loopOverEtaBins() {
                 perform_smart_fit(gabscorCopy, fabscorCopy, maxFitIter);
                 gErrorIgnoreLevel = origIgnoreLevel;
 
-                // Now calculate the chi2 using the original graph but our new function
-                // If the new one is better, use that as the fit
-                float chi2 = gabscor->Chisquare(fabscor);
-                float chi2New = gabscor->Chisquare(fabscorCopy);
-                cout << "chi2 orig: " << chi2 << endl;
-                cout << "chi2 new: " << chi2New << endl;
-                if (chi2New < chi2) {
-                    fabscor->SetName("fitOld");
-                    fabscorCopy->SetName("fit");
-                    fabscor = fabscorCopy;
-                    gabscor->GetListOfFunctions()->Clear();
-                    gabscor->GetListOfFunctions()->Add(fabscorCopy);
+                if (!chooseByMaxDiff) {
+                    // Now calculate the chi2 using the original graph but our new function
+                    // If the new one is better, use that as the fit
+                    float chi2 = gabscor->Chisquare(fabscor);
+                    float chi2New = gabscor->Chisquare(fabscorCopy);
+                    cout << "chi2 orig: " << chi2 << endl;
+                    cout << "chi2 new: " << chi2New << endl;
+                    if (chi2New < chi2) {
+                        fabscor->SetName("fitOld");
+                        fabscorCopy->SetName("fit");
+                        fabscor = fabscorCopy;
+                        gabscor->GetListOfFunctions()->Clear();
+                        gabscor->GetListOfFunctions()->Add(fabscorCopy);
+                    }
+                }
+                else if (chooseByMaxDiff) {
+                    // calculate maximum relative difference between graph and fitted function
+                    // ignoring errors
+                    float maxDiff = 0;
+                    float maxDiffNew = 0;
+                    // -1 so that we ignore the highest point, which is typically rubbish
+                    for (int iN=0; iN<(gabscor->GetN()-1); iN++) {
+                        double thisX(0), thisY(0);
+                        gabscor->GetPoint(iN, thisX, thisY);
+                        if ((thisX < xmin) || (thisX > xmax)) continue; // don't consider points outside fit range
+
+                        float fitY = fabscor->Eval(thisX);
+                        float thisDiff = fabs((fitY / thisY) - 1);
+                        if (thisDiff > maxDiff) { maxDiff = thisDiff; }
+
+                        float fitYNew = fabscorCopy->Eval(thisX);
+                        thisDiff = fabs((fitYNew / thisY) - 1);
+                        if (thisDiff > maxDiffNew) { maxDiffNew = thisDiff; }
+                    }
+                    cout << "max diff orig: " << maxDiff << endl;
+                    cout << "max diff new: " << maxDiffNew << endl;
+                    if (maxDiffNew < maxDiff) {
+                        fabscor->SetName("fitOld");
+                        fabscorCopy->SetName("fit");
+                        fabscor = fabscorCopy;
+                        gabscor->GetListOfFunctions()->Clear();
+                        gabscor->GetListOfFunctions()->Add(fabscorCopy);
+                    }
                 }
             }
 
