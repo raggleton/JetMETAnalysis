@@ -610,7 +610,9 @@ void L2Creator::loopOverEtaBins() {
                     // Now calculate the chi2 using the original graph but our new function
                     // If the new one is better, use that as the fit
                     float chi2 = gabscor->Chisquare(fabscor);
+                    fabscor->SetChisquare(chi2);
                     float chi2New = gabscor->Chisquare(fabscorCopy);
+                    fabscorCopy->SetChisquare(chi2New);
                     cout << "chi2 orig: " << chi2 << endl;
                     cout << "chi2 new: " << chi2New << endl;
                     if (chi2New < chi2) {
@@ -643,6 +645,8 @@ void L2Creator::loopOverEtaBins() {
                     cout << "max diff orig: " << maxDiff << endl;
                     cout << "max diff new: " << maxDiffNew << endl;
                     if (maxDiffNew < maxDiff) {
+                        float chi2New = gabscor->Chisquare(fabscorCopy);
+                        fabscorCopy->SetChisquare(chi2New);
                         fabscor->SetName("fitOld");
                         fabscorCopy->SetName("fit");
                         fabscor = fabscorCopy;
