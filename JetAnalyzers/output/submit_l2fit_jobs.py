@@ -10,6 +10,10 @@ from glob import glob
 from itertools import izip_longest
 
 
+def float2str(num):
+    return str(num).replace(".", "p")
+
+
 def create_condor_template_dict():
     template = {
         "executable": "run_prog.sh",
@@ -36,10 +40,12 @@ job = dict_to_condor_contents(create_condor_template_dict())
 job += "\n"
 job += "JobBatchName=JL2C\n"
 arguments = ('jet_l2_correction_x '
-    '-input $(inputf) -algs $(algos) -useLastFitParams true '
-    '-minRelCorErr 0.01 -l2l3 true -histMet median -era $(era) '
+    '-input $(inputf) -algs $(algos) -useLastFitParams false '
+    '-minRelCorErr $(minrelcorerr) -l2l3 true -histMet median -era $(era) '
     '-outputDir $(outputdir) -output $(outputfile) -batch true '
-    '-flavor $(pdgid) -fitMin $(fitmin) -l2pffit $(fitfunc)'
+    '-flavor $(pdgid) -fitMin $(fitmin) -l2pffit $(fitfunc) '
+    '-setFitMinTurnover true -plateauBelowRangeMin true '
+    '-chooseByMaxDiff true'
 )
 job += '\narguments = "%s"\n\n' % arguments
 job += "\nqueue\n"
@@ -80,19 +86,20 @@ all_algos = [
 ][:]
 
 flavours = [
-    # "ud_",
+    "ud_",
     "s_",
     "c_",
     "b_",
     "g_",
-    "",
+    # "",
 ]
 
-fit_min = 15
+fit_min = 10
 fit_func = "standard"
 # fit_func = "powerlaw"
+min_rel_cor_err = 0.005
 
-append = "_standardMedianErr_allMedian_rspRangeLarge_fitMin%d_fitFunc%s_HadronParton_useLastFitParams_minRelCorErr0p01" % (fit_min, fit_func)
+append = "_standardMedianErr_allMedian_rspRangeLarge_fitMin%d_fitFunc%s_HadronParton_minRelCorErr%s_setFitMinTurnoverPlusOne_plateauBelowRangeMin_minRelCorErrMaxRelDiffCompete" % (fit_min, fit_func, float2str(min_rel_cor_err))
 
 job_args = []
 job_names = []
@@ -116,10 +123,11 @@ for name, input_file in infos:
                 "outputdir": input_dir,
                 "outputfile": "l2%s_%s.root" % (append, flav_name),
                 "algos": algo,
-                "pdgid": flav,
+                "pdgid": flav if flav != "" else '\"\"',
                 "era": "Summer16_07Aug2017_V15_%s_%s" % (append, flav_name),
                 "fitmin" : str(fit_min),
                 "fitfunc": fit_func,
+                "minrelcorerr": str(min_rel_cor_err),
             }
             job_args.append(" ".join(['%s="%s"' % (k, v) for k,v in args_dict.items()]))
             these_job_names.append(args_dict['name'])
