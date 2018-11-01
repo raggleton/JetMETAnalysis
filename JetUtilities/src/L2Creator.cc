@@ -409,7 +409,7 @@ void L2Creator::loopOverEtaBins() {
                                 if (gabscor->GetY()[ix] > lastY) {
                                     lastY = gabscor->GetY()[ix];
                                 } else {
-                                    xmin = gabscor->GetX()[ix-1];
+                                    xmin = gabscor->GetX()[ix];
                                     break;
                                 }
                             }
