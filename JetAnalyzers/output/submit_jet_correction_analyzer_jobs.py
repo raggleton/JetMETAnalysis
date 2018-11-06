@@ -5,8 +5,7 @@ import subprocess
 from glob import glob
 from collections import OrderedDict
 
-ORIGINAL_ERA_DIR = "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JECDatabase/textFiles/Summer16_07Aug2017_V10_MC"
-
+ORIGINAL_ERA_DIR = "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JECDatabase/textFiles/Summer16_07Aug2017_V15_MC"
 PYTHIA_ERA_DIR = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
 HERWIG_ERA_DIR = "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
 
@@ -484,7 +483,7 @@ infos = [
         "pf_PID": GJETS_PF_PID,  # 2 = e, 3 = mu, 4 = gamma
         "pf_pt": 5,
         "pf_dr": 0.4,
-        "findGamma": True, 
+        "findGamma": True,
     },
     {
         "name": "GJets_HT-40To100_ext_NoJEC_newFlav",
@@ -497,7 +496,7 @@ infos = [
         "pf_PID": GJETS_PF_PID,  # 2 = e, 3 = mu, 4 = gamma
         "pf_pt": 5,
         "pf_dr": 0.4,
-        "findGamma": True, 
+        "findGamma": True,
     },
     {
         "name": "GJets_HT-100To200_NoJEC_newFlav",
@@ -510,7 +509,7 @@ infos = [
         "pf_PID": GJETS_PF_PID,  # 2 = e, 3 = mu, 4 = gamma
         "pf_pt": 5,
         "pf_dr": 0.4,
-        "findGamma": True, 
+        "findGamma": True,
     },
     {
         "name": "GJets_HT-100To200_ext_NoJEC_newFlav",
@@ -523,7 +522,7 @@ infos = [
         "pf_PID": GJETS_PF_PID,  # 2 = e, 3 = mu, 4 = gamma
         "pf_pt": 5,
         "pf_dr": 0.4,
-        "findGamma": True, 
+        "findGamma": True,
     },
     {
         "name": "GJets_HT-200To400_NoJEC_newFlav",
@@ -536,7 +535,7 @@ infos = [
         "pf_PID": GJETS_PF_PID,  # 2 = e, 3 = mu, 4 = gamma
         "pf_pt": 5,
         "pf_dr": 0.4,
-        "findGamma": True, 
+        "findGamma": True,
     },
     {
         "name": "GJets_HT-200To400_ext_NoJEC_newFlav",
@@ -549,7 +548,7 @@ infos = [
         "pf_PID": GJETS_PF_PID,  # 2 = e, 3 = mu, 4 = gamma
         "pf_pt": 5,
         "pf_dr": 0.4,
-        "findGamma": True, 
+        "findGamma": True,
     },
     {
         "name": "GJets_HT-400To600_NoJEC_newFlav",
@@ -562,7 +561,7 @@ infos = [
         "pf_PID": GJETS_PF_PID,  # 2 = e, 3 = mu, 4 = gamma
         "pf_pt": 5,
         "pf_dr": 0.4,
-        "findGamma": True, 
+        "findGamma": True,
     },
     {
         "name": "GJets_HT-400To600_ext_NoJEC_newFlav",
@@ -575,7 +574,7 @@ infos = [
         "pf_PID": GJETS_PF_PID,  # 2 = e, 3 = mu, 4 = gamma
         "pf_pt": 5,
         "pf_dr": 0.4,
-        "findGamma": True, 
+        "findGamma": True,
     },
     {
         "name": "GJets_HT-600ToInf_NoJEC_newFlav",
@@ -588,7 +587,7 @@ infos = [
         "pf_PID": GJETS_PF_PID,  # 2 = e, 3 = mu, 4 = gamma
         "pf_pt": 5,
         "pf_dr": 0.4,
-        "findGamma": True, 
+        "findGamma": True,
     },
     {
         "name": "GJets_HT-600ToInf_ext_NoJEC_newFlav",
@@ -601,7 +600,7 @@ infos = [
         "pf_PID": GJETS_PF_PID,  # 2 = e, 3 = mu, 4 = gamma
         "pf_pt": 5,
         "pf_dr": 0.4,
-        "findGamma": True, 
+        "findGamma": True,
     },
     {
         "name": "GJets_Herwig_NoJEC_newFlav",
@@ -685,17 +684,25 @@ job = dict_to_condor_contents(create_condor_template_dict())
 job += "\n"
 job += "JobBatchName=JCA\n"
 arguments = ("jet_correction_analyzer_x $(inputf) "
-    "-outputDir $(odir) -suffix $(suffix) -algs $(algos) "
+    "-outputDir $(outputdir) -suffix $(suffix) -algs $(algos) "
     "-era $(era) -path $(mypath) -levels 2 "  # JEC set info
-    "-doflavor $(doflav) -pdgid $(pdgid) -flavorDefinition PHYSICS "  # flav def/selection info
+    "-doflavor $(doflav) -pdgid $(pdgid) -flavorDefinition HADRONPARTON "  # flav def/selection info
     "-xsection $(xsec) -luminosity 35900 -useweight $(weight) "  # reweighting info
     "-nrefmax $(nrefmax) -ptgenmin 10 -ptrawmin 4 -relpthatmax 3.5 -relrspmax 2 "  # cuts
     "-alphamax $(alpha) -pfCandIds $(pfpid) -pfCandPtMin $(pfpt) -pfCandDr $(pfdr) -efmax $(efmax) "  # more cuts
     "-findZ $(findz) -findGamma $(findgamma) "  # identify bosons and veto against them
-    "-drmin $(drmin) "  # matching param for genjet-genjet 
+    "-drmin $(drmin) "  # matching param for genjet-genjet
     "-drmax $(drmax)"  # matching param for gen-reco
 )
-job += "\narguments = %s\n\n" % arguments
+job += '\narguments = "%s"\n\n' % arguments
+job += "\nqueue\n"
+
+hadd_job = dict_to_condor_contents(create_condor_template_dict())
+hadd_job += "\n"
+hadd_job += "JobBatchName=HaddJCA\n"
+hadd_job += '\narguments = "hadd -f $(finalfile) $(inputfiles)"\n\n'
+hadd_job += "\nqueue\n"
+
 
 era_append = "_standardMedianErr_meanWhenSmall_rspRangeLarge_fitMin15_useFitRange"
 
@@ -704,15 +711,22 @@ ef_str = float_to_str(ef_max)
 # append = "_relRspMax2_relPtHatMax3p5_ptGenMin10_jtnefLt%s_jtcefLt%s_jtmufLt%s_centralEFcuts_unscaleEF_absEta" % (ef_str, ef_str, ef_str)
 append = "_relRspMax2_relPtHatMax3p5_ptGenMin10_absEta_noDPhiCut"
 
+job_args = []
+job_names = []
+
+hadd_job_names = []
+hadd_job_args = []
+hadd_job_depends = []
+
 for sample_dict in infos2[:]:
 
-    if (("herwig" in sample_dict['input'].lower() and "herwig" not in sample_dict['era_dir'].lower()) 
+    if (("herwig" in sample_dict['input'].lower() and "herwig" not in sample_dict['era_dir'].lower())
         or (("herwig" not in sample_dict['input'].lower() and "herwig" in sample_dict['era_dir'].lower()))):
         raise RuntimeError("Mixing Herwig/Pythia dataset/jec!")
 
     if not os.path.isdir(sample_dict['output_dir']):
         os.makedirs(sample_dict['output_dir'])
-    
+
     # pf = {
     #     "pf_PID": "2 3 4",  # 2 = e, 3 = mu, 4 = gamma
     #     "pf_pt": 5,
@@ -723,42 +737,44 @@ for sample_dict in infos2[:]:
     for algo in all_algos:
         algo_name, dr_max = algo.split(":")
 
+        these_job_names = []
+        component_files = []
+
+        dr_min = 4*float(dr_max)
+
+        this_append = append
+        if sample_dict.get('alpha', 0) > 0:
+            this_append += '_alpha' + float_to_str(sample_dict['alpha'])
+        this_append += "_nrefmax%d" % sample_dict.get("nrefmax", 0)
+        this_append += "_drmin" + float_to_str(dr_min)
+        this_append += "_ptGenOverlap10"
+
+        if sample_dict.get("findZ", False):
+            this_append += "_findZ"
+
+        if sample_dict.get("findGamma", False):
+            this_append += "_findGamma"
+
+        if sample_dict.get('pf_PID', DUMMY_PF_ID) != DUMMY_PF_ID:
+            parts = ""
+            if "2" in sample_dict['pf_PID']:
+                parts += "e"
+            if "3" in sample_dict['pf_PID']:
+                parts += "mu"
+            if "4" in sample_dict['pf_PID']:
+                parts += "g"
+            this_append += "_%sCandOverlapGt0p5" % parts
+        else:
+            sample_dict['pf_PID'] = DUMMY_PF_ID
+
+        if "pf_dr" in sample_dict:
+            sample_dict['pf_dr'] = 2*float(dr_max)
+
         for flav, flav_name in flav_dict.iteritems():
-            
-            dr_min = 4*float(dr_max)
-            
-            this_append = append
-            if sample_dict.get('alpha', 0) > 0:
-                this_append += '_alpha' + float_to_str(sample_dict['alpha'])
-            this_append += "_nrefmax%d" % sample_dict.get("nrefmax", 0) 
-            this_append += "_drmin" + float_to_str(dr_min) 
-            this_append += "_ptGenOverlap10"
-
-            if sample_dict.get("findZ", False):
-                this_append += "_findZ"
-
-            if sample_dict.get("findGamma", False):
-                this_append += "_findGamma"
-
-            if sample_dict.get('pf_PID', DUMMY_PF_ID) != DUMMY_PF_ID:
-                parts = ""
-                if "2" in sample_dict['pf_PID']:
-                    parts += "e"
-                if "3" in sample_dict['pf_PID']:
-                    parts += "mu"
-                if "4" in sample_dict['pf_PID']:
-                    parts += "g"
-                this_append += "_%sCandOverlapGt0p5" % parts
-            else:
-                sample_dict['pf_PID'] = DUMMY_PF_ID
-
-            if "pf_dr" in sample_dict:
-                sample_dict['pf_dr'] = 2*float(dr_max)
-
 
             args_dict = {
                 "name": "JCA_"+sample_dict['name']+"_"+algo_name+"_"+flav_name,
-                "odir": sample_dict['output_dir'],
+                "outputdir": sample_dict['output_dir'],
                 "xsec": "%.8f" % sample_dict.get('xsec', -1),
                 "algos": algo_name+"l1",
                 "drmax": dr_max,
@@ -780,11 +796,12 @@ for sample_dict in infos2[:]:
                 "findGamma": str(sample_dict.get('findGamma', False)).lower(),
             }
             args_dict = OrderedDict(args_dict)
-            
+
             if flav_name == "all":
                 args_dict['mypath'] = ORIGINAL_ERA_DIR
-                args_dict['era'] = "Summer16_07Aug2017_V10_MC"
+                args_dict['era'] = os.path.basename(ORIGINAL_ERA_DIR.rstrip("/"))
 
+            # Setup input files, tricky as different options used depending on if single file or directory
             if sample_dict['input'].endswith(".root"):
                 # if one ROOT file, then leave inputfilepath blank and put full path for inputfilename
                 args_dict['inputf'] = "-inputFilename " + sample_dict['input']
@@ -792,13 +809,46 @@ for sample_dict in infos2[:]:
                 # if multiple files, the program will add *.root to inputfilename if you specify inputfilepath
                 args_dict["inputf"] = "-inputFilename jaj*%s" % algo_name  # program does *.root for us
                 args_dict["inputf"] += " -inputFilePath " + sample_dict['input']
-            
-            job += "\n".join(["%s=%s" % (k, v) for k,v in args_dict.items()])
-            job += "\nqueue\n\n"
 
-job_filename = "do_jet_correction_analyzer_x_job2.condor"
-with open(job_filename, 'w') as f:
+            job_args.append(" ".join(['%s="%s"' % (k, v) for k,v in args_dict.items()]))
+            these_job_names.append(args_dict['name'])
+            component_files.append(os.path.join(args_dict['outputdir'], "Closure_%s_%s.root" % (args_dict['algos'], args_dict['suffix'])))
+
+        job_names.extend(these_job_names)
+        final_output_file = os.path.join(sample_dict['output_dir'], "Closure_%s_%s.root" % (args_dict['algos'], "_".join([sample_dict['name'], this_append]),))
+        hadd_name = "HADD_%s_%s" % (name, algo)
+        hadd_job_args.append('name="%s" finalfile="%s" inputfiles="%s"' % (hadd_name, final_output_file, " ".join(component_files)))
+        hadd_job_depends.append(' '.join(these_job_names))
+        hadd_job_names.append(hadd_name)
+
+
+if len(job_names) == 0:
+    raise RuntimeError("Didn't find any files to run over!")
+
+htc_filename = "htc_do_jet_correction_analyzer_x_job.condor"
+with open(htc_filename, 'w') as f:
     f.write(job)
 
-cmd = "condor_submit %s" % job_filename
+# Add hadd jobs
+hadd_htc_filename = "hadd_%s" % htc_filename
+with open(hadd_htc_filename, 'w') as f:
+    f.write(hadd_job)
+
+for ind, (hname, harg, hdeps) in enumerate(zip(hadd_job_names, hadd_job_args, hadd_job_depends)):
+    dag += "JOB {0} {1}\n".format(hname, hadd_htc_filename)
+    dag += "VARS {0} {1}\n".format(hname, harg)
+    dag += "PARENT {0} CHILD {1}\n".format(hdeps, hname)
+
+# dag += "RETRY ALL_NODES 3\n"  # dont want this as l2 purposely fails when doing checkFormulaEvaluator
+status_file = htc_filename.replace(".condor", ".dagstatus")
+dag += "NODE_STATUS_FILE %s\n" % (status_file)
+
+dag_filename = htc_filename.replace(".condor", ".dag")
+with open(dag_filename, 'w') as f:
+    f.write(dag)
+
+print "Submitting", len(job_names), "jobs"
+cmd = "condor_submit_dag -maxjobs 200 -maxidle 1000 -f %s" % dag_filename
 subprocess.check_call(cmd, shell=True)
+print "Check status with:"
+print "DAGstatus", status_file
