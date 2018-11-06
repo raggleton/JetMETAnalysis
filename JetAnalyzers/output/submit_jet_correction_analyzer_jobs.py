@@ -1,22 +1,28 @@
 #!/usr/bin/env python
 
+
 import os
 import subprocess
 from glob import glob
 from collections import OrderedDict
+from itertools import chain
+
 
 ORIGINAL_ERA_DIR = "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JECDatabase/textFiles/Summer16_07Aug2017_V15_MC"
-PYTHIA_ERA_DIR = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
-HERWIG_ERA_DIR = "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
+PYTHIA_ERA_DIR = "QCD_Pt_NoJEC_relPtHatCut2p5_jtptmin4_withPF_PhysicsAlgoHadron_L1FastJet_Summer16_07Aug2017_V15_HadronParton_nbinsrelrsp_10k_fineBinning_etaPlusMinus"
+HERWIG_ERA_DIR = "QCD_Pt_Herwig_NoJEC_relPtHatCut2p5_jtptmin4_PhysicsAlgoHadron_L1FastJet_Summer16_07Aug2017_V15_HadronParton_nbinsrelrsp_10k_fineBinning_etaPlusMinus"
 
 # QCD_PT_INPUT_DIR = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF"
 # QCD_PT_INPUT_DIR = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
-QCD_PT_INPUT_DIR = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron"
-DY_INPUT_DIR = "DYJets_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
-GJETS_HT_INPUT_DIR = "GJet_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
+QCD_PT_INPUT_DIR = "QCD_Pt_NoJEC_jtptmin4_withPF_PhysicsAlgoHadron_L1FastJet_Summer16_07Aug2017_V15_MC"
+QCD_HERWIG_INPUT_DIR = "QCD_Pt_Herwig_NoJEC_jtptmin4_PhysicsAlgoHadron_L1FastJet_Summer16_07Aug2017_V15_MC"
+
+# DY_INPUT_DIR = "DYJets_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
+# GJETS_HT_INPUT_DIR = "GJet_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
 
 # QCD_PT_OUTPUT_DIR = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
-QCD_PT_OUTPUT_DIR = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_nbinsrelrsp_10k"
+QCD_PT_OUTPUT_DIR = "QCD_Pt_NoJEC_relPtHatCut2p5_jtptmin4_withPF_PhysicsAlgoHadron_L1FastJet_Summer16_07Aug2017_V15_HadronParton_nbinsrelrsp_10k_fineBinning_etaPlusMinus"
+QCD_HERWIG_OUTPUT_DIR = "QCD_Pt_Herwig_NoJEC_relPtHatCut2p5_jtptmin4_PhysicsAlgoHadron_L1FastJet_Summer16_07Aug2017_V15_HadronParton_nbinsrelrsp_10k_fineBinning_etaPlusMinus"
 QCD_HT_OUTPUT_DIR = "QCD_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
 DY_HT_OUTPUT_DIR = "DYJets_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
 GJETS_HT_OUTPUT_DIR = "GJet_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
@@ -38,7 +44,7 @@ GJETS_PF_PID = "2 4" # 2 = e, 3 = mu, 4 = gamma
 GJETS_PF_PID = DUMMY_PF_ID
 
 # run on ntuples
-infos2 = [
+infos_qcd_pythia = [
 # QCD PT BINNED
 # ==============================================================================
 # {
@@ -219,73 +225,24 @@ infos2 = [
 #     "era_dir": PYTHIA_ERA_DIR,
 #     "nrefmax": QCD_NREFMAX,
 # },
-# ]
+]
 
-# infos = [
-# don't hadd beforehand, super slow
-# {
-#     "name": "TT_Pythia_NoJEC_newFlav",
-#     "input": "TT_Pythia_NoJEC_relPtHatCut5_jtptmin4/TT_Pythia_NoJEC_newFlav/",
-#     "xsec": -1,
-#     "output_dir": "TT_Pythia_NoJEC_relPtHatCut5_jtptmin4_nbinsrelrsp_10k",
-#     "era_dir": PYTHIA_ERA_DIR,
-#     "nrefmax": TT_NREFMAX,
-# },
-
-# HERWIG SAMPLES
-# ==============================================================================
-# {
-#     "name": "QCD_Pt_15to7000_Herwig_NoJEC_newFlav",
-#     "input": "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4/JRA_QCD_Pt_15to7000_Herwig_NoJEC_newFlav_L1FastJet.root",
-#     "xsec": -1,
-#     "output_dir": "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_nbinsrelrsp_10k",
-#     "era_dir": HERWIG_ERA_DIR,
-#     "nrefmax": QCD_NREFMAX,
-# },
-# {
-#     "name": "GJets_Herwig_NoJEC_newFlav",
-#     "input": "GJet_Herwig_NoJEC_relPtHatCut5_jtptmin4/GJets_Herwig_NoJEC_newFlav/jaj_GJets_Herwig_NoJEC_newFlav_L1FastJet.root",
-#     "xsec": -1,
-#     "output_dir": "GJet_Herwig_NoJEC_relPtHatCut5_jtptmin4_nbinsrelrsp_10k",
-#     "era_dir": HERWIG_ERA_DIR,
-#     "nrefmax": DY_NREFMAX,
-# },
-# {
-#     "name": "TT_Herwig_NoJEC_newFlav",
-#     "input": "TT_Herwig_NoJEC_relPtHatCut5_jtptmin4/TT_Herwig_NoJEC_newFlav/jaj_TT_Herwig_NoJEC_newFlav_L1FastJet.root",
-#     "xsec": -1.,
-#     "output_dir": "TT_Herwig_NoJEC_relPtHatCut5_jtptmin4_nbinsrelrsp_10k",
-#     "era_dir": HERWIG_ERA_DIR,
-#     "nrefmax": TT_NREFMAX,
-# },
-
-# POWHEG+PYTHIA
-# =============================================================================
-# {
-#     "name": "Dijet_Powheg_Pythia_NoJEC_newFlav",
-#     "input": "Dijet_Powheg_Pythia_NoJEC_relPtHatCut5_jtptmin4/Dijet_Powheg_Pythia_NoJEC_newFlav/jaj_Dijet_Powheg_Pythia_NoJEC_newFlav_ak4pfchs_L1FastJet.root",
-#     "xsec": -1.,
-#     "output_dir": "Dijet_Powheg_Pythia_NoJEC_relPtHatCut5_jtptmin4_nbinsrelrsp_10k",
-#     "era_dir": PYTHIA_ERA_DIR,
-#     "nrefmax": QCD_NREFMAX+1,
-# },
-# ]
-
-# infos = [
+infos_ttbar_pythia = [
+    # don't hadd beforehand, super slow
     {
-        "name": "QCD_Pt_15to7000_Herwig_NoJEC_newFlav",
-        "input": "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron/QCD_Pt_15to7000_Herwig_NoJEC_newFlav/",
+        "name": "TT_Pythia_NoJEC_newFlav",
+        "input": "TT_Pythia_NoJEC_relPtHatCut5_jtptmin4/TT_Pythia_NoJEC_newFlav/",
         "xsec": -1,
-        "output_dir": "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k",
-        "era_dir": HERWIG_ERA_DIR,
-        "nrefmax": QCD_NREFMAX,
-        # "pf_PID": "2 3 4",  # 2 = e, 3 = mu, 4 = gamma
+        "output_dir": "TT_Pythia_NoJEC_relPtHatCut5_jtptmin4_nbinsrelrsp_10k",
+        "era_dir": PYTHIA_ERA_DIR,
+        "nrefmax": TT_NREFMAX,
+        # "pf_PID": "2 3",  # 2 = e, 3 = mu, 4 = gamma
         # "pf_pt": 5,
         # "pf_dr": 0.4
     },
 ]
 
-infos = [
+infos_dy_pythia = [
     {
         "name": "DYJetsToLL_HT-70to100_NoJEC_newFlav",
         "input": "%s/DYJetsToLL_HT-70to100_NoJEC_newFlav/" % DY_INPUT_DIR,
@@ -443,35 +400,9 @@ infos = [
         "pf_dr": PF_DR,
         "findZ": True,
     },
-# ]
+]
 
-# infos  = [
-#     # {
-#     #     "name": "TT_Pythia_NoJEC_newFlav",
-#     #     "input": "TT_Pythia_NoJEC_relPtHatCut5_jtptmin4/TT_Pythia_NoJEC_newFlav/",
-#     #     "xsec": -1,
-#     #     "output_dir": "TT_Pythia_NoJEC_relPtHatCut5_jtptmin4_nbinsrelrsp_10k",
-#     #     "era_dir": PYTHIA_ERA_DIR,
-#     #     "nrefmax": 3,
-#     # }
-#     {
-#         "name": "TT_Herwig_NoJEC_newFlav",
-#         "input": "TT_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF/TT_Herwig_NoJEC_newFlav/jaj_TT_Herwig_NoJEC_newFlav_ak4pfchs_L1FastJet.root",
-#         "xsec": -1.,
-#         "output_dir": "TT_Herwig_NoJEC_relPtHatCut5_jtptmin4_nbinsrelrsp_10k",
-#         "era_dir": HERWIG_ERA_DIR,
-#         "nrefmax": TT_NREFMAX,
-#         "pf_PID": "2 3",  # 2 = e, 3 = mu, 4 = gamma
-#         "pf_pt": 5,
-#         "pf_dr": 0.4
-#     }
-# ]
-
-# infos = [
-
-# ]
-
-# infos = [
+infos_gjets_pythia = [
     {
         "name": "GJets_HT-40To100_NoJEC_newFlav",
         "input": "%s/GJets_HT-40To100_NoJEC_newFlav" % GJETS_HT_INPUT_DIR,
@@ -617,21 +548,76 @@ infos = [
     },
 ]
 
-infos = [
-{
-        "name": "DYJetsToLL_Herwig_NoJEC_newFlav",
-        "input": "DYJets_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10/DYJetsToLL_Herwig_NoJEC_newFlav",
-        "xsec": -1.,
-        "output_dir": "DYJets_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k_dummy",
+# HERWIG SAMPLES
+# ==============================================================================
+infos_qcd_herwig = [
+    {
+        "name": "QCD_Pt_15to7000_Herwig_NoJEC_newFlav",
+        "input": "%s/QCD_Pt_15to7000_Herwig_NoJEC_newFlav/" % QCD_HERWIG_INPUT_DIR,
+        "xsec": -1,
+        "output_dir": QCD_HERWIG_OUTPUT_DIR,
+        "era_dir": HERWIG_ERA_DIR,
+        "nrefmax": QCD_NREFMAX,
+        # "pf_PID": "2 3 4",  # 2 = e, 3 = mu, 4 = gamma
+        # "pf_pt": 5,
+        # "pf_dr": 0.4
+    },
+]
+
+infos_dy_herwig = [
+    {
+            "name": "DYJetsToLL_Herwig_NoJEC_newFlav",
+            "input": "DYJets_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10/DYJetsToLL_Herwig_NoJEC_newFlav",
+            "xsec": -1.,
+            "output_dir": "DYJets_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k_dummy",
+            "era_dir": HERWIG_ERA_DIR,
+            "nrefmax": DY_NREFMAX,
+            "alpha": alpha,
+            "pf_PID": DY_PF_PID,  # 2 = e, 3 = mu, 4 = gamma
+            "pf_pt": DY_PF_PT,
+            "pf_dr": PF_DR,
+            "findZ": True,
+    },
+]
+
+infos_gjets_herwig = [
+    {
+        "name": "GJets_Herwig_NoJEC_newFlav",
+        "input": "GJet_Herwig_NoJEC_relPtHatCut5_jtptmin4/GJets_Herwig_NoJEC_newFlav/jaj_GJets_Herwig_NoJEC_newFlav_L1FastJet.root",
+        "xsec": -1,
+        "output_dir": "GJet_Herwig_NoJEC_relPtHatCut5_jtptmin4_nbinsrelrsp_10k",
         "era_dir": HERWIG_ERA_DIR,
         "nrefmax": DY_NREFMAX,
-        "alpha": alpha,
-        "pf_PID": DY_PF_PID,  # 2 = e, 3 = mu, 4 = gamma
-        "pf_pt": DY_PF_PT,
-        "pf_dr": PF_DR,
-        "findZ": True,
-}
+    },
 ]
+
+infos_ttbar_herwig = [
+    {
+        "name": "TT_Herwig_NoJEC_newFlav",
+        "input": "TT_Herwig_NoJEC_relPtHatCut5_jtptmin4/TT_Herwig_NoJEC_newFlav/jaj_TT_Herwig_NoJEC_newFlav_L1FastJet.root",
+        "xsec": -1.,
+        "output_dir": "TT_Herwig_NoJEC_relPtHatCut5_jtptmin4_nbinsrelrsp_10k",
+        "era_dir": HERWIG_ERA_DIR,
+        "nrefmax": TT_NREFMAX,
+        # "pf_PID": "2 3",  # 2 = e, 3 = mu, 4 = gamma
+        # "pf_pt": 5,
+        # "pf_dr": 0.4
+    },
+]
+
+# POWHEG+PYTHIA
+# =============================================================================
+# infos_qcd_powheg = [
+    # {
+    #     "name": "Dijet_Powheg_Pythia_NoJEC_newFlav",
+    #     "input": "Dijet_Powheg_Pythia_NoJEC_relPtHatCut5_jtptmin4/Dijet_Powheg_Pythia_NoJEC_newFlav/jaj_Dijet_Powheg_Pythia_NoJEC_newFlav_ak4pfchs_L1FastJet.root",
+    #     "xsec": -1.,
+    #     "output_dir": "Dijet_Powheg_Pythia_NoJEC_relPtHatCut5_jtptmin4_nbinsrelrsp_10k",
+    #     "era_dir": PYTHIA_ERA_DIR,
+    #     "nrefmax": QCD_NREFMAX+1,
+    # },
+# ]
+
 
 all_algos = [
     "ak4pfchs:0.2",
@@ -718,7 +704,7 @@ hadd_job_names = []
 hadd_job_args = []
 hadd_job_depends = []
 
-for sample_dict in infos2[:]:
+for sample_dict in chain(infos_qcd_pythia, infos_qcd_herwig):
 
     if (("herwig" in sample_dict['input'].lower() and "herwig" not in sample_dict['era_dir'].lower())
         or (("herwig" not in sample_dict['input'].lower() and "herwig" in sample_dict['era_dir'].lower()))):
