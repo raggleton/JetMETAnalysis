@@ -30,6 +30,7 @@ JetResponseAnalyzer::JetResponseAnalyzer(const edm::ParameterSet& iConfig)
   //, srcPFCandidates_      (consumes<vector<reco::PFCandidate> >(iConfig.getParameter<edm::InputTag>("srcPFCandidates")))
   , srcPFCandidates_        (consumes<PFCandidateView>(iConfig.getParameter<edm::InputTag>("srcPFCandidates")))
   , srcPFCandidatesAsFwdPtr_(consumes<std::vector<edm::FwdPtr<reco::PFCandidate> > >(iConfig.getParameter<edm::InputTag>("srcPFCandidates")))
+  , srcRecoCandidates_      (consumes<edm::View<reco::Candidate> >(iConfig.getParameter<edm::InputTag>("srcPFCandidates")))
   , srcGenParticles_        (consumes<vector<reco::GenParticle> >(iConfig.getParameter<edm::InputTag>("srcGenParticles")))
   , jecLabel_      (iConfig.getParameter<std::string>                 ("jecLabel"))
   , doComposition_ (iConfig.getParameter<bool>                   ("doComposition"))
@@ -136,6 +137,7 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
   edm::Handle<reco::VertexCollection>            vtx;
   edm::Handle<PFCandidateView>                   pfCandidates;
   edm::Handle<std::vector<edm::FwdPtr<reco::PFCandidate> > >  pfCandidatesAsFwdPtr;
+  edm::Handle<edm::View<reco::Candidate> >       recoCandidates;
   edm::Handle<vector<reco::GenParticle> >        genParticles;
   edm::Handle<vector<pat::PackedGenParticle> >   packedGenParticles;
 
@@ -432,6 +434,8 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
   //                  and https://github.com/cihar29/OffsetAnalysis/blob/master/plugins/OffsetAnalysis.cc
   if (saveCandidates_ && isPFJet_) {
       bool isView = iEvent.getByToken(srcPFCandidates_, pfCandidates);
+      bool isPF = iEvent.getByToken(srcPFCandidatesAsFwdPtr_, pfCandidatesAsFwdPtr);
+      bool isReco = iEvent.getByToken(srcRecoCandidates_, recoCandidates);
       if ( isView ) {
           for (auto i_pf=pfCandidates->begin(); i_pf != pfCandidates->end(); ++i_pf) {
               auto i_pfc = (i_pf);
@@ -447,25 +451,41 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
               JRAEvt_->pfcand_id ->push_back(pf_id);
           }
       }
-      else {
-          bool isPF = iEvent.getByToken(srcPFCandidatesAsFwdPtr_, pfCandidatesAsFwdPtr);
-          if ( isPF ) {
-              for (auto i_pf=pfCandidatesAsFwdPtr->begin(); i_pf != pfCandidatesAsFwdPtr->end(); ++i_pf) {
-                  auto i_pfc = (*i_pf);
-                  JRAEvent::Flavor pf_id = getFlavor( i_pfc->particleId() );
-                  if (pf_id == JRAEvent::X) continue;
-                  if (i_pfc->pt() < 3) continue;
-                  JRAEvt_->pfcand_px ->push_back(i_pfc->px());
-                  JRAEvt_->pfcand_py ->push_back(i_pfc->py());
-                  JRAEvt_->pfcand_pt ->push_back(i_pfc->pt());
-                  JRAEvt_->pfcand_eta->push_back(i_pfc->eta());
-                  JRAEvt_->pfcand_phi->push_back(i_pfc->phi());
-                  JRAEvt_->pfcand_e  ->push_back(i_pfc->energy());
-                  JRAEvt_->pfcand_id ->push_back(pf_id);
-              }
+      else if (isPF) {
+          for (auto i_pf=pfCandidatesAsFwdPtr->begin(); i_pf != pfCandidatesAsFwdPtr->end(); ++i_pf) {
+              auto i_pfc = (*i_pf);
+              JRAEvent::Flavor pf_id = getFlavor( i_pfc->particleId() );
+              if (pf_id == JRAEvent::X) continue;
+              if (i_pfc->pt() < 3) continue;
+              JRAEvt_->pfcand_px ->push_back(i_pfc->px());
+              JRAEvt_->pfcand_py ->push_back(i_pfc->py());
+              JRAEvt_->pfcand_pt ->push_back(i_pfc->pt());
+              JRAEvt_->pfcand_eta->push_back(i_pfc->eta());
+              JRAEvt_->pfcand_phi->push_back(i_pfc->phi());
+              JRAEvt_->pfcand_e  ->push_back(i_pfc->energy());
+              JRAEvt_->pfcand_id ->push_back(pf_id);
           }
       }
-  }
+      else if (isReco) {
+
+        for(size_t j=0; j<recoCandidates->size();j++){
+          const pat::PackedCandidate* i_pfc = dynamic_cast<const pat::PackedCandidate*>(&(recoCandidates->at(j)));
+          JRAEvent::Flavor pf_id = getFlavor(i_pfc->pdgId());
+          if (pf_id == JRAEvent::X) continue;
+          if (i_pfc->pt() < 3) continue;
+          JRAEvt_->pfcand_px ->push_back(i_pfc->px());
+          JRAEvt_->pfcand_py ->push_back(i_pfc->py());
+          JRAEvt_->pfcand_pt ->push_back(i_pfc->pt());
+          JRAEvt_->pfcand_eta->push_back(i_pfc->eta());
+          JRAEvt_->pfcand_phi->push_back(i_pfc->phi());
+          JRAEvt_->pfcand_e  ->push_back(i_pfc->energy());
+          JRAEvt_->pfcand_id ->push_back(pf_id);
+        }
+      }
+      else {
+        throw cms::Exception("BadCand") << "Cannot determine type of srcPFCandidates";
+      }
+    }
 
   
   tree_->Fill();
@@ -491,6 +511,35 @@ JRAEvent::Flavor JetResponseAnalyzer::getFlavor(reco::PFCandidate::ParticleType 
         return JRAEvent::egamma_HF;
     else
         return JRAEvent::X;
+}
+
+
+JRAEvent::Flavor JetResponseAnalyzer::getFlavor(int id) {
+  switch (abs(id)) {
+    case 211: //PFCandidate::h:       // charged hadron
+      return JRAEvent::h;
+
+    case 130: //PFCandidate::h0 :    // neutral hadron
+      return JRAEvent::h0;
+
+    case 22: //PFCandidate::gamma:   // photon
+      return JRAEvent::gamma;
+
+    case 11: // PFCandidate::e:       // electron
+      return JRAEvent::e;
+
+    case 13: //PFCandidate::mu:      // muon
+      return JRAEvent::mu;
+
+    case 1: // PFCandidate::h_HF :    // hadron in HF
+      return JRAEvent::h_HF;
+
+    case 2: //PFCandidate::egamma_HF :    // electromagnetic in HF
+      return JRAEvent::egamma_HF ;
+
+    default:
+      return JRAEvent::X;
+  }
 }
 
 //______________________________________________________________________________

@@ -24,12 +24,15 @@
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 
+#include "FWCore/Utilities/interface/Exception.h"
+
 #include "DataFormats/Common/interface/Handle.h"
 #include "DataFormats/Candidate/interface/CandidateFwd.h"
 #include "DataFormats/Candidate/interface/CandMatchMap.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
 #include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
+#include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 #include "DataFormats/JetReco/interface/JPTJet.h"
 #include "DataFormats/JetReco/interface/CaloJet.h"
 #include "DataFormats/JetReco/interface/PFJet.h"
@@ -87,6 +90,7 @@ private:
   void endJob() {;}
 
   JRAEvent::Flavor getFlavor(reco::PFCandidate::ParticleType id);
+  JRAEvent::Flavor getFlavor(int id);
 
 private:
   // member data
@@ -138,6 +142,7 @@ private:
   //edm::EDGetTokenT<vector<reco::PFCandidate> > srcPFCandidates_;
   edm::EDGetTokenT<PFCandidateView> srcPFCandidates_;
   edm::EDGetTokenT<std::vector<edm::FwdPtr<reco::PFCandidate> > > srcPFCandidatesAsFwdPtr_;
+  edm::EDGetTokenT<edm::View<reco::Candidate>> srcRecoCandidates_;
   // DualToken<vector<reco::GenParticle>, vector<pat::PackedGenParticle> > srcGenParticles_;
   edm::EDGetTokenT<vector<reco::GenParticle> > srcGenParticles_;
 
