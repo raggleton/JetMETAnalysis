@@ -791,7 +791,7 @@ int main(int argc,char**argv)
                   gamma.SetPtEtaPhiE(JRAEvt->pfcand_pt->at(iPf), JRAEvt->pfcand_eta->at(iPf), JRAEvt->pfcand_phi->at(iPf), JRAEvt->pfcand_e->at(iPf));
                }
             }
-            if (gamma.Pt() < 10) continue;
+            if (gamma.Pt() < 10 || fabs(gamma.Eta()) > 2.4) continue;
          }
 
          // First go through and figure out which jet pairs are OK
