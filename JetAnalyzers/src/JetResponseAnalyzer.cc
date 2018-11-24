@@ -284,6 +284,85 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
            // if (cand==&(*jet)) { // reco jets
             JRAEvt_->refpdgid_parton_physics->push_back(itPartonMatch->second.getPartonFlavour());
             JRAEvt_->refpdgid_hadron->push_back(itPartonMatch->second.getHadronFlavour());
+            
+            if (itPartonMatch->second.getHadronFlavour() == 5) {
+              uint numBHadrons = itPartonMatch->second.getbHadrons().size();
+              JRAEvt_->ref_nhadron->push_back(numBHadrons);
+
+              for (const auto & bitr: itPartonMatch->second.getbHadrons()) {
+                // no need to check if b hadron has a b hadron daughter 
+                // as HadronAndPartonSelector already does this for us
+                bool isLeptonicDecay = false;
+
+                // go through all b hadron decay products
+                // in Pythia, a leptonic decay will have a neutrino + lepton
+                // in Herwig++, a leptonic decay will have a W (id=24) first, 
+                // which we don't care about, but we do care about the W decay products
+                uint ndecay = 0;
+                for (uint dind=0; dind < bitr->numberOfDaughters(); dind++) {
+                  const reco::GenParticle & daughter_ = static_cast< const reco::GenParticle &>(*(bitr->daughter(dind)));
+                  uint dauId = abs(daughter_.pdgId());
+                  if (dauId != 24) {
+                    if (dauId >= 11 && dauId <= 16) {
+                      isLeptonicDecay = true;
+                    }
+                    ndecay++;
+                    JRAEvt_->ref_hadron_decay_pt->push_back(daughter_.pt());
+                    JRAEvt_->ref_hadron_decay_eta->push_back(daughter_.eta());
+                    JRAEvt_->ref_hadron_decay_phi->push_back(daughter_.phi());
+                    JRAEvt_->ref_hadron_decay_pdgid->push_back(daughter_.pdgId());
+                  } else if (dauId == 24) {
+                    for (uint gdind=0; gdind < daughter_.numberOfDaughters(); gdind++) {
+                      const reco::GenParticle & grandDaughter_ = static_cast< const reco::GenParticle &>(*(daughter_.daughter(gdind)));
+                      uint gdauId = abs(grandDaughter_.pdgId());
+                      if (gdauId >= 11 && gdauId <= 16) {
+                        isLeptonicDecay = true;
+                      }
+                      ndecay++;
+                      JRAEvt_->ref_hadron_decay_pt->push_back(daughter_.pt());
+                      JRAEvt_->ref_hadron_decay_eta->push_back(daughter_.eta());
+                      JRAEvt_->ref_hadron_decay_phi->push_back(daughter_.phi());
+                      JRAEvt_->ref_hadron_decay_pdgid->push_back(daughter_.pdgId());
+                    }
+                  }
+                }
+
+                JRAEvt_->ref_hadron_pt->push_back(bitr->pt());
+                JRAEvt_->ref_hadron_eta->push_back(bitr->eta());
+                JRAEvt_->ref_hadron_phi->push_back(bitr->phi());
+                JRAEvt_->ref_hadron_pdgid->push_back(bitr->pdgId());
+                JRAEvt_->ref_hadron_ndecay->push_back(ndecay);
+                JRAEvt_->ref_hadron_sldecay->push_back(isLeptonicDecay);
+              }
+
+              // debugging tat
+              // std::cout << "HADRON flavour: " << itPartonMatch->second.getHadronFlavour() << " for jet pt " << ref->pt() << std::endl;
+              // for (const auto & bitr: itPartonMatch->second.getbHadrons()) {
+              //   std::cout << "  B HADRON " << bitr->pt() << " : " << bitr->eta() << " : " << bitr->phi() << " : " << bitr->pdgId() << std::endl;
+              //   for (uint dind=0; dind < bitr->numberOfDaughters(); dind++){
+              //     const reco::GenParticle &daughter_ = static_cast< const reco::GenParticle &>(*(bitr->daughter(dind)));
+              //     std::cout << "    dau " << daughter_.pt() << " : " << daughter_.eta() << " : " << daughter_.phi() << " : " << daughter_.pdgId() << " : " << daughter_.status()<< std::endl;
+              //     if (daughter_.numberOfDaughters() > 0) {
+              //       for (uint gdind=0; gdind < daughter_.numberOfDaughters(); gdind++){
+              //         const reco::GenParticle &granddaughter_ = static_cast< const reco::GenParticle &>(*(daughter_.daughter(gdind)));
+              //         std::cout << "      gdau " << granddaughter_.pt() << " : " << granddaughter_.eta() << " : " << granddaughter_.phi() << " : " << granddaughter_.pdgId() << " : " << granddaughter_.status()<< std::endl;
+              //         if (granddaughter_.numberOfDaughters() > 0) {
+              //           for (uint ggdind=0; ggdind < granddaughter_.numberOfDaughters(); ggdind++){
+              //             const reco::GenParticle &greatgranddaughter_ = static_cast< const reco::GenParticle &>(*(granddaughter_.daughter(ggdind)));
+              //             std::cout << "        ggdau " << greatgranddaughter_.pt() << " : " << greatgranddaughter_.eta() << " : " << greatgranddaughter_.phi() << " : " << greatgranddaughter_.pdgId() << " : " << greatgranddaughter_.status()<< std::endl;
+              //           }
+              //         }
+              //       }                    
+              //     }
+              //   }
+              // }
+            } else {
+              JRAEvt_->ref_nhadron->push_back(0);
+            }
+            // std::cout << "PARTONS CLUSTERED TO JET: " << ref->pt() << " : " << ref->eta() << " : " << itPartonMatch->second.getPartonFlavour() << std::endl;
+            // for (const auto & gitr : itPartonMatch->second.getPartons()) {
+            //   std::cout << "PARTON: " << gitr->pt() << " : " << gitr->eta() << " : " << gitr->status() << " : " << gitr->pdgId() << std::endl;
+            // }
             break;
            }
         }

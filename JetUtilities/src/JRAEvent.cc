@@ -88,6 +88,17 @@ void JRAEvent::MakeTree(TTree* tree)
       fChain->Branch("refpdgid_parton_physics", "vector<Int_t>", &refpdgid_parton_physics);
       fChain->Branch("refpdgid_parton_algo", "vector<Int_t>", &refpdgid_parton_algo);
       fChain->Branch("refpdgid_hadron", "vector<Int_t>", &refpdgid_hadron);
+      fChain->Branch("ref_hadron_pt", "vector<Float_t>", &ref_hadron_pt);
+      fChain->Branch("ref_hadron_eta", "vector<Float_t>", &ref_hadron_eta);
+      fChain->Branch("ref_hadron_phi", "vector<Float_t>", &ref_hadron_phi);
+      fChain->Branch("ref_hadron_pdgid", "vector<Int_t>", &ref_hadron_pdgid);
+      fChain->Branch("ref_hadron_ndecay", "vector<UChar_t>", &ref_hadron_ndecay);
+      fChain->Branch("ref_hadron_sldecay", "vector<bool>", &ref_hadron_sldecay);
+      fChain->Branch("ref_hadron_decay_pt", "vector<Float_t>", &ref_hadron_decay_pt);
+      fChain->Branch("ref_hadron_decay_eta", "vector<Float_t>", &ref_hadron_decay_eta);
+      fChain->Branch("ref_hadron_decay_phi", "vector<Float_t>", &ref_hadron_decay_phi);
+      fChain->Branch("ref_hadron_decay_pdgid", "vector<Int_t>", &ref_hadron_decay_pdgid);
+      fChain->Branch("ref_nhadron", "vector<UChar_t>", &ref_nhadron);
    }
    fChain->Branch("refe", "vector<Float_t>", &refe);
    fChain->Branch("refpt", "vector<Float_t>", &refpt);
@@ -190,6 +201,17 @@ void JRAEvent::Init(TTree *tree)
       fChain->SetBranchAddress("refpdgid_parton_physics", &refpdgid_parton_physics, &b_refpdgid_parton_physics);
       fChain->SetBranchAddress("refpdgid_parton_algo", &refpdgid_parton_algo, &b_refpdgid_parton_algo);
       fChain->SetBranchAddress("refpdgid_hadron", &refpdgid_hadron, &b_refpdgid_hadron);
+      fChain->SetBranchAddress("ref_hadron_pt", &ref_hadron_pt, &b_ref_hadron_pt);
+      fChain->SetBranchAddress("ref_hadron_eta", &ref_hadron_eta, &b_ref_hadron_eta);
+      fChain->SetBranchAddress("ref_hadron_phi", &ref_hadron_phi, &b_ref_hadron_phi);
+      fChain->SetBranchAddress("ref_hadron_pdgid", &ref_hadron_pdgid, &b_ref_hadron_pdgid);
+      fChain->SetBranchAddress("ref_hadron_ndecay", &ref_hadron_ndecay, &b_ref_hadron_ndecay);
+      fChain->SetBranchAddress("ref_hadron_sldecay", &ref_hadron_sldecay, &b_ref_hadron_sldecay);
+      fChain->SetBranchAddress("ref_hadron_decay_pt", &ref_hadron_decay_pt, &b_ref_hadron_decay_pt);
+      fChain->SetBranchAddress("ref_hadron_decay_eta", &ref_hadron_decay_eta, &b_ref_hadron_decay_eta);
+      fChain->SetBranchAddress("ref_hadron_decay_phi", &ref_hadron_decay_phi, &b_ref_hadron_decay_phi);
+      fChain->SetBranchAddress("ref_hadron_decay_pdgid", &ref_hadron_decay_pdgid, &b_ref_hadron_decay_pdgid);
+      fChain->SetBranchAddress("ref_nhadron", &ref_nhadron, &b_ref_nhadron);
    }
    fChain->SetBranchAddress("refe", &refe, &b_refe);
    fChain->SetBranchAddress("refpt", &refpt, &b_refpt);
@@ -281,7 +303,18 @@ void JRAEvent::MakeVectors()
    if(!flags.test(0) || (flags.test(0) && flags.test(2))) {
       refpdgid_parton_physics   = new vector<int>;
       refpdgid_parton_algo      = new vector<int>;
-      refpdgid_hadron      = new vector<int>;
+      refpdgid_hadron           = new vector<int>;
+      ref_hadron_pt             = new vector<float>;
+      ref_hadron_eta            = new vector<float>;
+      ref_hadron_phi            = new vector<float>;
+      ref_hadron_pdgid          = new vector<int>;
+      ref_hadron_ndecay         = new vector<UChar_t>;
+      ref_hadron_sldecay        = new vector<bool>;
+      ref_hadron_decay_pt       = new vector<float>;
+      ref_hadron_decay_eta      = new vector<float>;
+      ref_hadron_decay_phi      = new vector<float>;
+      ref_hadron_decay_pdgid    = new vector<int>;
+      ref_nhadron               = new vector<UChar_t>;
    }
    refe                    = new vector<float>;
    refpt                   = new vector<float>;
@@ -346,6 +379,17 @@ void JRAEvent::clear()
       refpdgid_parton_physics->clear();
       refpdgid_parton_algo->clear();
       refpdgid_hadron->clear();
+      ref_hadron_pt->clear();
+      ref_hadron_eta->clear();
+      ref_hadron_phi->clear();
+      ref_hadron_pdgid->clear();
+      ref_hadron_ndecay->clear();
+      ref_hadron_sldecay->clear();
+      ref_hadron_decay_pt->clear();
+      ref_hadron_decay_eta->clear();
+      ref_hadron_decay_phi->clear();
+      ref_hadron_decay_pdgid->clear();
+      ref_nhadron->clear();
    }
    refe->clear();
    refpt->clear();

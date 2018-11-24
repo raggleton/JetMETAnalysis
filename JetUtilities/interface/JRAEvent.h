@@ -78,6 +78,23 @@ public :
    vector<Int_t>*   refpdgid_parton_physics;
    vector<Int_t>*   refpdgid_parton_algo;
    vector<Int_t>*   refpdgid_hadron;
+
+   // Store all these flattened, since you can have >1 bhadron/jet, 
+   // and >1 daughter / bhadron, store the numbers as well
+   vector<Float_t>* ref_hadron_pt;
+   vector<Float_t>* ref_hadron_eta;
+   vector<Float_t>* ref_hadron_phi;
+   vector<Int_t>* ref_hadron_pdgid;
+   vector<UChar_t>* ref_hadron_ndecay;
+   vector<bool>* ref_hadron_sldecay; //semileptonic decay
+
+   vector<Float_t>* ref_hadron_decay_pt;
+   vector<Float_t>* ref_hadron_decay_eta;
+   vector<Float_t>* ref_hadron_decay_phi;
+   vector<Int_t>* ref_hadron_decay_pdgid;
+
+   vector<UChar_t>* ref_nhadron;
+
    vector<Float_t>* refe;
    vector<Float_t>* refpt;
    vector<Float_t>* refeta;
@@ -140,6 +157,21 @@ public :
    TBranch        *b_refpdgid_parton_physics;   //!
    TBranch        *b_refpdgid_parton_algo;   //!
    TBranch        *b_refpdgid_hadron;   //!
+   
+   TBranch        *b_ref_hadron_pt;   //!
+   TBranch        *b_ref_hadron_eta;   //!
+   TBranch        *b_ref_hadron_phi;   //!
+   TBranch        *b_ref_hadron_pdgid;   //!
+   TBranch        *b_ref_hadron_ndecay;   //!
+   TBranch        *b_ref_hadron_sldecay;   //!
+
+   TBranch        *b_ref_hadron_decay_pt;   //!
+   TBranch        *b_ref_hadron_decay_eta;   //!
+   TBranch        *b_ref_hadron_decay_phi;   //!
+   TBranch        *b_ref_hadron_decay_pdgid;   //!
+
+   TBranch        *b_ref_nhadron;   //!
+
    TBranch        *b_refe;   //!
    TBranch        *b_refpt;   //!
    TBranch        *b_refeta;   //!
