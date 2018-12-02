@@ -446,6 +446,68 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
      JRAEvt_->jtjec   ->push_back(1.0);
      JRAEvt_->jtarea  ->push_back(0.0);
 
+     // Calculate GenJet composition info
+     double chf(0.), cef(0.), muf(0.), nhf(0.), nef(0.);
+     int chmult(0), nmult(0);
+     reco::GenJetRef genjet = ref.castTo<reco::GenJetRef>();
+     // cout << "# dau: " << genjet->numberOfDaughters() << endl;
+     uint nGenJetDau = genjet->numberOfDaughters();
+     for (uint idau=0; idau<nGenJetDau; idau++) {
+       const reco::Candidate * dau = genjet->daughter(idau);
+       switch(abs(dau->pdgId())){
+        case 11: //electron
+          cef += dau->energy();
+          chmult++;
+          break;
+        case 13: //muon
+          muf += dau->energy();
+          chmult++;
+          break;
+        case 22: //photon
+          nef += dau->energy();
+          nmult++;
+          break;
+        case 211: //pi+-
+        case 321: //K
+        case 2212: //p
+        case 3222: //Sigma+
+        case 3112: //Sigma-
+        case 3312: //Xi-
+        case 3334: //Omega-
+          chf += dau->energy();
+          chmult++;
+          break;
+        case 130: //KL0
+        case 310: //KS0
+        case 3122: //Lambda0
+        case 3212: //Sigma0
+        case 3322: //Xi0
+        case 2112: //n0
+          nhf += dau->energy();
+          nmult++;
+          break;
+        default:
+          cout << "bad getGenConstituent with pdgid " << dau->pdgId() << endl;
+          throw runtime_error("No idea what to do with this PDGID");
+       }
+     }
+
+     chf /= genjet->energy();
+     cef /= genjet->energy();
+     muf /= genjet->energy();
+     nhf /= genjet->energy();
+     nef /= genjet->energy();
+
+     JRAEvt_->refchf->push_back(chf);
+     JRAEvt_->refcef->push_back(cef);
+     JRAEvt_->refmuf->push_back(muf);
+     JRAEvt_->refnhf->push_back(nhf);
+     JRAEvt_->refnef->push_back(nef);
+     JRAEvt_->refchmult->push_back(chmult);
+     JRAEvt_->refnmult->push_back(nmult);
+
+     // cout << "chf: " << chf << " cef: " << cef << " muf: " << muf << " nhf: " << nhf << " nef: " << nef << endl;
+
      if (isCaloJet_) {
         JRAEvt_->jtarea->at(JRAEvt_->nref) = jet.castTo<reco::CaloJetRef>()->jetArea();
      }

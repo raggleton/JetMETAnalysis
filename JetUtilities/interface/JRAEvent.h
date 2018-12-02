@@ -106,6 +106,13 @@ public :
    vector<Float_t>* refdphijt;
    vector<Float_t>* refdrjt;
    vector<Float_t>* refarea;
+   vector<Float_t>* refchf;
+   vector<Float_t>* refnhf;
+   vector<Float_t>* refnef;
+   vector<Float_t>* refcef;
+   vector<Float_t>* refmuf;
+   vector<Int_t>* refchmult;
+   vector<Int_t>* refnmult;
    vector<Float_t>* jte;
    vector<Float_t>* jtpt;
    vector<Float_t>* jteta;
@@ -186,6 +193,14 @@ public :
    TBranch        *b_refdphijt;   //!
    TBranch        *b_refdrjt;   //!
    TBranch        *b_refarea;   //!
+   TBranch        *b_refchmult;   //!
+   TBranch        *b_refnmult;   //!
+   TBranch        *b_refchf;   //!
+   TBranch        *b_refnhf;   //!
+   TBranch        *b_refnef;   //!
+   TBranch        *b_refcef;   //!
+   TBranch        *b_refmuf;   //!
+
    TBranch        *b_jte;   //!
    TBranch        *b_jtpt;   //!
    TBranch        *b_jteta;   //!
