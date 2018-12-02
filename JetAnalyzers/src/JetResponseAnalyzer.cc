@@ -282,7 +282,11 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
            const reco::Candidate* cand = &(*thisJet);
            if (cand == &(*ref)) { // gen jets
            // if (cand==&(*jet)) { // reco jets
-            JRAEvt_->refpdgid_parton_physics->push_back(itPartonMatch->second.getPartonFlavour());
+            int partonFlav = 0;
+            if (itPartonMatch->second.getPartons().size() > 0) {
+              partonFlav = itPartonMatch->second.getPartons().at(0)->pdgId();
+            }
+            JRAEvt_->refpdgid_parton_physics->push_back(partonFlav);
             JRAEvt_->refpdgid_hadron->push_back(itPartonMatch->second.getHadronFlavour());
             
             if (itPartonMatch->second.getHadronFlavour() == 5) {
