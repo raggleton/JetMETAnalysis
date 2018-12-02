@@ -323,10 +323,10 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
                         isLeptonicDecay = true;
                       }
                       ndecay++;
-                      JRAEvt_->ref_hadron_decay_pt->push_back(daughter_.pt());
-                      JRAEvt_->ref_hadron_decay_eta->push_back(daughter_.eta());
-                      JRAEvt_->ref_hadron_decay_phi->push_back(daughter_.phi());
-                      JRAEvt_->ref_hadron_decay_pdgid->push_back(daughter_.pdgId());
+                      JRAEvt_->ref_hadron_decay_pt->push_back(grandDaughter_.pt());
+                      JRAEvt_->ref_hadron_decay_eta->push_back(grandDaughter_.eta());
+                      JRAEvt_->ref_hadron_decay_phi->push_back(grandDaughter_.phi());
+                      JRAEvt_->ref_hadron_decay_pdgid->push_back(grandDaughter_.pdgId());
                     }
                   }
                 }
