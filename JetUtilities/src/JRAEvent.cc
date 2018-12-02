@@ -101,6 +101,14 @@ void JRAEvent::MakeTree(TTree* tree)
       fChain->Branch("refdrjt", "vector<Float_t>", &refdrjt);
    }
    fChain->Branch("refarea", "vector<Float_t>", &refarea);
+   fChain->Branch("refchf", "vector<Float_t>", &refchf);
+   fChain->Branch("refnhf", "vector<Float_t>", &refnhf);
+   fChain->Branch("refnef", "vector<Float_t>", &refnef);
+   fChain->Branch("refcef", "vector<Float_t>", &refcef);
+   fChain->Branch("refmuf", "vector<Float_t>", &refmuf);
+   fChain->Branch("refchmult", "vector<Int_t>", &refchmult);
+   fChain->Branch("refnmult", "vector<Int_t>", &refnmult);
+
    fChain->Branch("jte", "vector<Float_t>", &jte);
    fChain->Branch("jtpt", "vector<Float_t>", &jtpt);
    fChain->Branch("jteta", "vector<Float_t>", &jteta);
@@ -203,6 +211,14 @@ void JRAEvent::Init(TTree *tree)
      fChain->SetBranchAddress("refdrjt", &refdrjt, &b_refdrjt);
    }
    fChain->SetBranchAddress("refarea", &refarea, &b_refarea);
+   fChain->SetBranchAddress("refchf", &refchf, &b_refchf);
+   fChain->SetBranchAddress("refnhf", &refnhf, &b_refnhf);
+   fChain->SetBranchAddress("refnef", &refnef, &b_refnef);
+   fChain->SetBranchAddress("refcef", &refcef, &b_refcef);
+   fChain->SetBranchAddress("refmuf", &refmuf, &b_refmuf);
+   fChain->SetBranchAddress("refchmult", &refchmult, &b_refchmult);
+   fChain->SetBranchAddress("refnmult", &refnmult, &b_refnmult);
+
    fChain->SetBranchAddress("jte", &jte, &b_jte);
    fChain->SetBranchAddress("jtpt", &jtpt, &b_jtpt);
    fChain->SetBranchAddress("jteta", &jteta, &b_jteta);
@@ -295,6 +311,14 @@ void JRAEvent::MakeVectors()
       refdrjt                 = new vector<float>;
    }
    refarea                 = new vector<float>;
+   refchf                  = new vector<float>;
+   refnhf                  = new vector<float>;
+   refnef                  = new vector<float>;
+   refcef                  = new vector<float>;
+   refmuf                  = new vector<float>;
+   refchmult               = new vector<int>;
+   refnmult                = new vector<int>;
+
    jte                     = new vector<float>;
    jtpt                    = new vector<float>;
    jteta                   = new vector<float>;
@@ -359,6 +383,14 @@ void JRAEvent::clear()
       refdrjt->clear();
    }
    refarea->clear();
+   refchf->clear();
+   refnhf->clear();
+   refnef->clear();
+   refcef->clear();
+   refmuf->clear();
+   refchmult->clear();
+   refnmult->clear();
+
    jte->clear();
    jtpt->clear();
    jteta->clear();
