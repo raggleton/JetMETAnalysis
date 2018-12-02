@@ -2,7 +2,8 @@
 <!--
   <class name="JRAEvent"/>
 -->
-  <class name="JRAEvent" ClassVersion="33">
+  <class name="JRAEvent" ClassVersion="34">
+   <version ClassVersion="34" checksum="2162898443"/>
    <version ClassVersion="33" checksum="231891418"/>
   <version ClassVersion="32" checksum="1660239356"/>
   <version ClassVersion="31" checksum="1717407430"/>

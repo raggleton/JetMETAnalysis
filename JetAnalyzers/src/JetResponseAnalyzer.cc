@@ -334,6 +334,9 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
                 JRAEvt_->ref_hadron_pt->push_back(bitr->pt());
                 JRAEvt_->ref_hadron_eta->push_back(bitr->eta());
                 JRAEvt_->ref_hadron_phi->push_back(bitr->phi());
+                JRAEvt_->ref_hadron_vx->push_back(bitr->vx());
+                JRAEvt_->ref_hadron_vy->push_back(bitr->vy());
+                JRAEvt_->ref_hadron_vz->push_back(bitr->vz());
                 JRAEvt_->ref_hadron_pdgid->push_back(bitr->pdgId());
                 JRAEvt_->ref_hadron_ndecay->push_back(ndecay);
                 JRAEvt_->ref_hadron_sldecay->push_back(isLeptonicDecay);

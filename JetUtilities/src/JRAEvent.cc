@@ -91,6 +91,9 @@ void JRAEvent::MakeTree(TTree* tree)
       fChain->Branch("ref_hadron_pt", "vector<Float_t>", &ref_hadron_pt);
       fChain->Branch("ref_hadron_eta", "vector<Float_t>", &ref_hadron_eta);
       fChain->Branch("ref_hadron_phi", "vector<Float_t>", &ref_hadron_phi);
+      fChain->Branch("ref_hadron_vx", "vector<Float_t>", &ref_hadron_vx);
+      fChain->Branch("ref_hadron_vy", "vector<Float_t>", &ref_hadron_vy);
+      fChain->Branch("ref_hadron_vz", "vector<Float_t>", &ref_hadron_vz);
       fChain->Branch("ref_hadron_pdgid", "vector<Int_t>", &ref_hadron_pdgid);
       fChain->Branch("ref_hadron_ndecay", "vector<UChar_t>", &ref_hadron_ndecay);
       fChain->Branch("ref_hadron_sldecay", "vector<bool>", &ref_hadron_sldecay);
@@ -204,6 +207,9 @@ void JRAEvent::Init(TTree *tree)
       fChain->SetBranchAddress("ref_hadron_pt", &ref_hadron_pt, &b_ref_hadron_pt);
       fChain->SetBranchAddress("ref_hadron_eta", &ref_hadron_eta, &b_ref_hadron_eta);
       fChain->SetBranchAddress("ref_hadron_phi", &ref_hadron_phi, &b_ref_hadron_phi);
+      fChain->SetBranchAddress("ref_hadron_vx", &ref_hadron_vx, &b_ref_hadron_vx);
+      fChain->SetBranchAddress("ref_hadron_vy", &ref_hadron_vy, &b_ref_hadron_vy);
+      fChain->SetBranchAddress("ref_hadron_vz", &ref_hadron_vz, &b_ref_hadron_vz);
       fChain->SetBranchAddress("ref_hadron_pdgid", &ref_hadron_pdgid, &b_ref_hadron_pdgid);
       fChain->SetBranchAddress("ref_hadron_ndecay", &ref_hadron_ndecay, &b_ref_hadron_ndecay);
       fChain->SetBranchAddress("ref_hadron_sldecay", &ref_hadron_sldecay, &b_ref_hadron_sldecay);
@@ -307,6 +313,9 @@ void JRAEvent::MakeVectors()
       ref_hadron_pt             = new vector<float>;
       ref_hadron_eta            = new vector<float>;
       ref_hadron_phi            = new vector<float>;
+      ref_hadron_vx             = new vector<float>;
+      ref_hadron_vy             = new vector<float>;
+      ref_hadron_vz             = new vector<float>;
       ref_hadron_pdgid          = new vector<int>;
       ref_hadron_ndecay         = new vector<UChar_t>;
       ref_hadron_sldecay        = new vector<bool>;
@@ -382,6 +391,9 @@ void JRAEvent::clear()
       ref_hadron_pt->clear();
       ref_hadron_eta->clear();
       ref_hadron_phi->clear();
+      ref_hadron_vx->clear();
+      ref_hadron_vy->clear();
+      ref_hadron_vz->clear();
       ref_hadron_pdgid->clear();
       ref_hadron_ndecay->clear();
       ref_hadron_sldecay->clear();

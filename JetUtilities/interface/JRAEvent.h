@@ -84,6 +84,9 @@ public :
    vector<Float_t>* ref_hadron_pt;
    vector<Float_t>* ref_hadron_eta;
    vector<Float_t>* ref_hadron_phi;
+   vector<Float_t>* ref_hadron_vx;
+   vector<Float_t>* ref_hadron_vy;
+   vector<Float_t>* ref_hadron_vz;
    vector<Int_t>* ref_hadron_pdgid;
    vector<UChar_t>* ref_hadron_ndecay;
    vector<bool>* ref_hadron_sldecay; //semileptonic decay
@@ -161,6 +164,9 @@ public :
    TBranch        *b_ref_hadron_pt;   //!
    TBranch        *b_ref_hadron_eta;   //!
    TBranch        *b_ref_hadron_phi;   //!
+   TBranch        *b_ref_hadron_vx;   //!
+   TBranch        *b_ref_hadron_vy;   //!
+   TBranch        *b_ref_hadron_vz;   //!
    TBranch        *b_ref_hadron_pdgid;   //!
    TBranch        *b_ref_hadron_ndecay;   //!
    TBranch        *b_ref_hadron_sldecay;   //!
