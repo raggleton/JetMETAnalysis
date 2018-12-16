@@ -303,6 +303,7 @@ int main(int argc,char**argv)
                                      "jtchmult", "jtnmult",
                                      "refpdgid_parton_physics", "refpdgid_parton_algo", "refpdgid_hadron",
                                      "ref_hadron_pt", "ref_hadron_eta", "ref_hadron_phi", "ref_hadron_pdgid",
+                                     "ref_hadron_vx", "ref_hadron_vy", "ref_hadron_vz",
                                      "ref_hadron_ndecay", "ref_hadron_sldecay", "ref_nhadron",
                                      "ref_hadron_decay_pt", "ref_hadron_decay_eta", "ref_hadron_decay_phi", "ref_hadron_decay_pdgid",
                                      "refchf", "refnhf", "refnef", "refcef", "refmuf", "refchmult", "refnmult",
@@ -403,8 +404,13 @@ int main(int argc,char**argv)
       vector<TH2F*> RelRspVsRefPt_SingleHadron;
       vector<TH2F*> RelRspVsRefPt_SingleHadron_SLDecay;
       vector<TH2F*> RelRspVsRefPt_SingleHadron_HadDecay;
-      vector<TH2F*> BJetRefVsRefPt_SingleHadron;
+      vector<TH2F*> RelRspVsBJetRefInd_SingleHadron;
+      vector<TH2F*> BJetRefIndVsRefPt_SingleHadron;
       vector<TH2F*> RefHadronPtRatioVsRefPt_SingleHadron;
+      vector<TH2F*> RefHadronPtRatioVsDeltaRRef_SingleHadron;
+      vector<TH2F*> RelRspVsRefHadronPtRatio_SingleHadron;
+      vector<TH2F*> RelRspVsRefHadronDeltaRRef_SingleHadron;
+      vector<TH2F*> RelRspVsRefHadronPdgid_SingleHadron;
       vector<TH2F*> RefHadronPdgidVsRefPt_SingleHadron;
       vector<TH2F*> RefHadronNdecayVsRefPt_SingleHadron;
       vector<TH2F*> RefHadronSldecayVsRefPt_SingleHadron; //semileptonic decay
@@ -417,13 +423,22 @@ int main(int argc,char**argv)
       vector<TH2F*> RefHadronDecayPtRatioVsRefPt_SingleHadron_Neutrino;
       vector<TH2F*> RefHadronDecayPtRatioJetVsRefPt_SingleHadron_Neutrino;
       vector<TH2F*> RefHadronDecayPdgidVsRefPt_SingleHadron_Neutrino;
+      vector<TH2F*> RelRspVsRefHadronDecayPtRatioJet_SingleHadron_Lepton;
+      vector<TH2F*> RelRspVsRefHadronDecayPtRatioJet_SingleHadron_Neutrino;
+      vector<TH2F*> RelRspVsRefHadronNDecay_SingleHadron;
+      vector<TH2F*> RelRspVsRefHadronVx_SingleHadron;
+      vector<TH2F*> RelRspVsRefHadronVy_SingleHadron;
+      vector<TH2F*> RelRspVsRefHadronVz_SingleHadron;
 
       // if 2+ hadrons
       vector<TH2F*> RelRspVsRefPt_AtLeast2Hadron;
       vector<TH2F*> RelRspVsRefPt_AtLeast2Hadron_SLDecay;
       vector<TH2F*> RelRspVsRefPt_AtLeast2Hadron_HadDecay;
-      vector<TH2F*> BJetRefVsRefPt_AtLeast2Hadron;
+      vector<TH2F*> BJetRefIndVsRefPt_AtLeast2Hadron;
       vector<TH2F*> RefHadronPtRatioVsRefPt_FirstHadron;
+      vector<TH2F*> RefHadronPtRatioVsDeltaRRef_FirstHadron;
+      vector<TH2F*> RelRspVsRefHadronPtRatio_FirstHadron;
+      vector<TH2F*> RelRspVsRefHadronDeltaRRef_FirstHadron;
       vector<TH2F*> RefHadronPdgidVsRefPt_FirstHadron;
       vector<TH2F*> RefHadronNdecayVsRefPt_FirstHadron;
       vector<TH2F*> RefHadronSldecayVsRefPt_FirstHadron;
@@ -435,6 +450,9 @@ int main(int argc,char**argv)
       vector<TH2F*> RefHadronDecayPdgidVsRefPt_FirstHadron_Neutrino;
 
       vector<TH2F*> RefHadronPtRatioVsRefPt_SecondHadron;
+      vector<TH2F*> RefHadronPtRatioVsDeltaRRef_SecondHadron;
+      vector<TH2F*> RelRspVsRefHadronPtRatio_SecondHadron;
+      vector<TH2F*> RelRspVsRefHadronDeltaRRef_SecondHadron;
       vector<TH2F*> RefHadronPdgidVsRefPt_SecondHadron;
       vector<TH2F*> RefHadronNdecayVsRefPt_SecondHadron;
       vector<TH2F*> RefHadronSldecayVsRefPt_SecondHadron;
@@ -735,10 +753,14 @@ int main(int argc,char**argv)
          RelRspVsRefPt_SingleHadron_HadDecay.push_back(new TH2F(hname,hname,NPtBins,vpt,nbinsrelrsp,relrspmin,relrspmax));
          RelRspVsRefPt_SingleHadron_HadDecay.back()->Sumw2();
 
-         hname = Form("BJetRefVsRefPt_SingleHadron_JetEta%sto%s",eta_boundaries[ieta],eta_boundaries[ieta+1]);
          int nbinsRef = 10;
-         BJetRefVsRefPt_SingleHadron.push_back(new TH2F(hname,hname,NPtBins,vpt,nbinsRef, 0, nbinsRef));
-         BJetRefVsRefPt_SingleHadron.back()->Sumw2();
+         hname = Form("RelRspVsBJetRefInd_SingleHadron_JetEta%sto%s",eta_boundaries[ieta],eta_boundaries[ieta+1]);
+         RelRspVsBJetRefInd_SingleHadron.push_back(new TH2F(hname,hname,nbinsRef, 0, nbinsRef, nbinsrelrsp,relrspmin,relrspmax));
+         RelRspVsBJetRefInd_SingleHadron.back()->Sumw2();
+
+         hname = Form("BJetRefIndVsRefPt_SingleHadron_JetEta%sto%s",eta_boundaries[ieta],eta_boundaries[ieta+1]);
+         BJetRefIndVsRefPt_SingleHadron.push_back(new TH2F(hname,hname,NPtBins,vpt,nbinsRef, 0, nbinsRef));
+         BJetRefIndVsRefPt_SingleHadron.back()->Sumw2();
 
          int nbinsRatio = 150;
          float ratioMin(0), ratioMax(1.5);
@@ -746,8 +768,26 @@ int main(int argc,char**argv)
          RefHadronPtRatioVsRefPt_SingleHadron.push_back(new TH2F(hname, hname, NPtBins, vpt, nbinsRatio, ratioMin, ratioMax));
          RefHadronPtRatioVsRefPt_SingleHadron.back()->Sumw2();
 
+         int nbinsDeltaR = 100;
+         float drMin(0.), drMax(2.);
+         hname = Form("RefHadronPtRatioVsDeltaRRef_SingleHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefHadronPtRatioVsDeltaRRef_SingleHadron.push_back(new TH2F(hname, hname, nbinsDeltaR, drMin, drMax, nbinsRatio, ratioMin, ratioMax));
+         RefHadronPtRatioVsDeltaRRef_SingleHadron.back()->Sumw2();
+
+         hname = Form("RelRspVsRefHadronPtRatio_SingleHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefHadronPtRatio_SingleHadron.push_back(new TH2F(hname, hname, nbinsRatio, ratioMin, ratioMax, nbinsrelrsp,relrspmin,relrspmax));
+         RelRspVsRefHadronPtRatio_SingleHadron.back()->Sumw2();
+
+         hname = Form("RelRspVsRefHadronDeltaRRef_SingleHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefHadronDeltaRRef_SingleHadron.push_back(new TH2F(hname, hname, nbinsDeltaR, drMin, drMax, nbinsrelrsp,relrspmin,relrspmax));
+         RelRspVsRefHadronDeltaRRef_SingleHadron.back()->Sumw2();
+
          int nbinsPDGID = 6000;
          float pdgidMin(0), pdgidMax(6000);
+         hname = Form("RelRspVsRefHadronPdgid_SingleHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefHadronPdgid_SingleHadron.push_back(new TH2F(hname, hname, nbinsPDGID, pdgidMin, pdgidMax, nbinsrelrsp,relrspmin,relrspmax));
+         RelRspVsRefHadronPdgid_SingleHadron.back()->Sumw2();
+
          hname = Form("RefHadronPdgidVsRefPt_SingleHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
          RefHadronPdgidVsRefPt_SingleHadron.push_back(new TH2F(hname, hname, NPtBins, vpt, nbinsPDGID, pdgidMin, pdgidMax));
          RefHadronPdgidVsRefPt_SingleHadron.back()->Sumw2();
@@ -798,6 +838,31 @@ int main(int argc,char**argv)
          RefHadronDecayPdgidVsRefPt_SingleHadron_Neutrino.push_back(new TH2F(hname, hname, NPtBins, vpt, nbinsLeptonIDs, leptonIdMin, leptonIdMax));
          RefHadronDecayPdgidVsRefPt_SingleHadron_Neutrino.back()->Sumw2();
 
+         hname = Form("RelRspVsRefHadronDecayPtRatioJet_SingleHadron_Lepton_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefHadronDecayPtRatioJet_SingleHadron_Lepton.push_back(new TH2F(hname, hname, nbinsRatio, ratioMin, ratioMax, nbinsrelrsp,relrspmin,relrspmax));
+         RelRspVsRefHadronDecayPtRatioJet_SingleHadron_Lepton.back()->Sumw2();
+
+         hname = Form("RelRspVsRefHadronDecayPtRatioJet_SingleHadron_Neutrino_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefHadronDecayPtRatioJet_SingleHadron_Neutrino.push_back(new TH2F(hname, hname, nbinsRatio, ratioMin, ratioMax, nbinsrelrsp,relrspmin,relrspmax));
+         RelRspVsRefHadronDecayPtRatioJet_SingleHadron_Neutrino.back()->Sumw2();
+
+         hname = Form("RelRspVsRefHadronNDecay_SingleHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefHadronNDecay_SingleHadron.push_back(new TH2F(hname, hname, nhadrons, 0, nhadrons, nbinsrelrsp,relrspmin,relrspmax));
+         RelRspVsRefHadronNDecay_SingleHadron.back()->Sumw2();
+
+         int nbinsV = 200;
+         hname = Form("RelRspVsRefHadronVx_SingleHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefHadronVx_SingleHadron.push_back(new TH2F(hname, hname, nbinsV, 0.08, 0.12, nbinsrelrsp,relrspmin,relrspmax));
+         RelRspVsRefHadronVx_SingleHadron.back()->Sumw2();
+
+         hname = Form("RelRspVsRefHadronVy_SingleHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefHadronVy_SingleHadron.push_back(new TH2F(hname, hname, nbinsV, 0.15, 0.2, nbinsrelrsp,relrspmin,relrspmax));
+         RelRspVsRefHadronVy_SingleHadron.back()->Sumw2();
+
+         hname = Form("RelRspVsRefHadronVz_SingleHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefHadronVz_SingleHadron.push_back(new TH2F(hname, hname, nbinsV, -25, 25, nbinsrelrsp,relrspmin,relrspmax));
+         RelRspVsRefHadronVz_SingleHadron.back()->Sumw2();
+
          // if >1 b hadron
          // leading hadron
          hname = Form("RelRspVsRefPt_AtLeast2Hadron_JetEta%sto%s",eta_boundaries[ieta],eta_boundaries[ieta+1]);
@@ -811,14 +876,26 @@ int main(int argc,char**argv)
          hname = Form("RelRspVsRefPt_AtLeast2Hadron_HadDecay_JetEta%sto%s",eta_boundaries[ieta],eta_boundaries[ieta+1]);
          RelRspVsRefPt_AtLeast2Hadron_HadDecay.push_back(new TH2F(hname,hname,NPtBins,vpt,nbinsrelrsp,relrspmin,relrspmax));
          RelRspVsRefPt_AtLeast2Hadron_HadDecay.back()->Sumw2();
-         
-         hname = Form("BJetRefVsRefPt_AtLeast2Hadron_JetEta%sto%s",eta_boundaries[ieta],eta_boundaries[ieta+1]);
-         BJetRefVsRefPt_AtLeast2Hadron.push_back(new TH2F(hname,hname,NPtBins,vpt,nbinsRef, 0, nbinsRef));
-         BJetRefVsRefPt_AtLeast2Hadron.back()->Sumw2();
+
+         hname = Form("BJetRefIndVsRefPt_AtLeast2Hadron_JetEta%sto%s",eta_boundaries[ieta],eta_boundaries[ieta+1]);
+         BJetRefIndVsRefPt_AtLeast2Hadron.push_back(new TH2F(hname,hname,NPtBins,vpt,nbinsRef, 0, nbinsRef));
+         BJetRefIndVsRefPt_AtLeast2Hadron.back()->Sumw2();
 
          hname = Form("RefHadronPtRatioVsRefPt_FirstHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
          RefHadronPtRatioVsRefPt_FirstHadron.push_back(new TH2F(hname, hname, NPtBins, vpt, nbinsRatio, ratioMin, ratioMax));
          RefHadronPtRatioVsRefPt_FirstHadron.back()->Sumw2();
+
+         hname = Form("RefHadronPtRatioVsDeltaRRef_FirstHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefHadronPtRatioVsDeltaRRef_FirstHadron.push_back(new TH2F(hname, hname, nbinsDeltaR, drMin, drMax, nbinsRatio, ratioMin, ratioMax));
+         RefHadronPtRatioVsDeltaRRef_FirstHadron.back()->Sumw2();
+
+         hname = Form("RelRspVsRefHadronPtRatio_FirstHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefHadronPtRatio_FirstHadron.push_back(new TH2F(hname, hname, nbinsrelrsp,relrspmin,relrspmax, nbinsRatio, ratioMin, ratioMax));
+         RelRspVsRefHadronPtRatio_FirstHadron.back()->Sumw2();
+
+         hname = Form("RelRspVsRefHadronDeltaRRef_FirstHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefHadronDeltaRRef_FirstHadron.push_back(new TH2F(hname, hname, nbinsrelrsp,relrspmin,relrspmax, nbinsDeltaR, drMin, drMax));
+         RelRspVsRefHadronDeltaRRef_FirstHadron.back()->Sumw2();
 
          hname = Form("RefHadronPdgidVsRefPt_FirstHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
          RefHadronPdgidVsRefPt_FirstHadron.push_back(new TH2F(hname, hname, NPtBins, vpt, nbinsPDGID, pdgidMin, pdgidMax));
@@ -857,10 +934,22 @@ int main(int argc,char**argv)
          RefHadronDecayPdgidVsRefPt_FirstHadron_Neutrino.back()->Sumw2();
 
          // subleading hadron
-         
+
          hname = Form("RefHadronPtRatioVsRefPt_SecondHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
          RefHadronPtRatioVsRefPt_SecondHadron.push_back(new TH2F(hname, hname, NPtBins, vpt, nbinsRatio, ratioMin, ratioMax));
          RefHadronPtRatioVsRefPt_SecondHadron.back()->Sumw2();
+
+         hname = Form("RefHadronPtRatioVsDeltaRRef_SecondHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefHadronPtRatioVsDeltaRRef_SecondHadron.push_back(new TH2F(hname, hname, nbinsDeltaR, drMin, drMax, nbinsRatio, ratioMin, ratioMax));
+         RefHadronPtRatioVsDeltaRRef_SecondHadron.back()->Sumw2();
+
+         hname = Form("RelRspVsRefHadronPtRatio_SecondHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefHadronPtRatio_SecondHadron.push_back(new TH2F(hname, hname, nbinsrelrsp,relrspmin,relrspmax, nbinsRatio, ratioMin, ratioMax));
+         RelRspVsRefHadronPtRatio_SecondHadron.back()->Sumw2();
+
+         hname = Form("RelRspVsRefHadronDeltaRRef_SecondHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefHadronDeltaRRef_SecondHadron.push_back(new TH2F(hname, hname, nbinsrelrsp,relrspmin,relrspmax, nbinsDeltaR, drMin, drMax));
+         RelRspVsRefHadronDeltaRRef_SecondHadron.back()->Sumw2();
 
          hname = Form("RefHadronPdgidVsRefPt_SecondHadron_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
          RefHadronPdgidVsRefPt_SecondHadron.push_back(new TH2F(hname, hname, NPtBins, vpt, nbinsPDGID, pdgidMin, pdgidMax));
@@ -1148,17 +1237,30 @@ int main(int argc,char**argv)
                }
                if(nBHadrons == 1) {
                   RelRspVsRefPt_SingleHadron[etaBin]->Fill(ptgen, relrsp, weight);
-                  BJetRefVsRefPt_SingleHadron[etaBin]->Fill(ptgen, iref, weight);
+                  RelRspVsBJetRefInd_SingleHadron[etaBin]->Fill(iref, relrsp, weight);
+                  BJetRefIndVsRefPt_SingleHadron[etaBin]->Fill(ptgen, iref, weight);
 
                   float bHadronPt = JRAEvt->ref_hadron_pt->at(thisBhadronStartInd);
                   RefHadronPtRatioVsRefPt_SingleHadron[etaBin]->Fill(ptgen, bHadronPt/ptgen, weight);
-                  
+
+                  float hadronEta = JRAEvt->ref_hadron_eta->at(thisBhadronStartInd);
+                  float hadronPhi = JRAEvt->ref_hadron_phi->at(thisBhadronStartInd);
+                  float refEta = JRAEvt->refeta->at(iref);
+                  float refPhi = JRAEvt->refphi->at(iref);
+                  float dRHadronJet = reco::deltaR(hadronEta, hadronPhi, refEta, refPhi);
+                  RefHadronPtRatioVsDeltaRRef_SingleHadron[etaBin]->Fill(dRHadronJet, bHadronPt/ptgen, weight);
+
+                  RelRspVsRefHadronPtRatio_SingleHadron[etaBin]->Fill(bHadronPt/ptgen, relrsp, weight);
+                  RelRspVsRefHadronDeltaRRef_SingleHadron[etaBin]->Fill(dRHadronJet, relrsp, weight);
+
                   int bHadronPdgid = abs(JRAEvt->ref_hadron_pdgid->at(thisBhadronStartInd));
+                  RelRspVsRefHadronPdgid_SingleHadron[etaBin]->Fill(bHadronPdgid, relrsp, weight);
                   RefHadronPdgidVsRefPt_SingleHadron[etaBin]->Fill(ptgen, bHadronPdgid, weight);
-                  
+
                   int ndecay = JRAEvt->ref_hadron_ndecay->at(thisBhadronStartInd);
                   RefHadronNdecayVsRefPt_SingleHadron[etaBin]->Fill(ptgen, ndecay ,weight);
-                  
+                  RelRspVsRefHadronNDecay_SingleHadron[etaBin]->Fill(ndecay, relrsp, weight);
+
                   int sldecay = JRAEvt->ref_hadron_sldecay->at(thisBhadronStartInd);
                   RefHadronSldecayVsRefPt_SingleHadron[etaBin]->Fill(ptgen, sldecay, weight);
 
@@ -1167,13 +1269,17 @@ int main(int argc,char**argv)
                   } else {
                      RelRspVsRefPt_SingleHadron_HadDecay[etaBin]->Fill(ptgen, relrsp, weight);
                   }
-                  
+
+                  RelRspVsRefHadronVx_SingleHadron[etaBin]->Fill(JRAEvt->ref_hadron_vx->at(thisBhadronStartInd), relrsp, weight);
+                  RelRspVsRefHadronVy_SingleHadron[etaBin]->Fill(JRAEvt->ref_hadron_vy->at(thisBhadronStartInd), relrsp, weight);
+                  RelRspVsRefHadronVz_SingleHadron[etaBin]->Fill(JRAEvt->ref_hadron_vz->at(thisBhadronStartInd), relrsp, weight);
+
                   // iterate over all decay products
                   for (uint id=0; id<JRAEvt->ref_hadron_ndecay->at(thisBhadronStartInd); id++) {
                      float decayPt = JRAEvt->ref_hadron_decay_pt->at(thisBhadronDecayStartInd+id);
                      RefHadronDecayPtRatioVsRefPt_SingleHadron[etaBin]->Fill(ptgen,decayPt/bHadronPt,weight);
                      RefHadronDecayPtRatioJetVsRefPt_SingleHadron[etaBin]->Fill(ptgen,decayPt/ptgen,weight);
-                     
+
                      int decayPdgid = abs(JRAEvt->ref_hadron_decay_pdgid->at(thisBhadronDecayStartInd+id));
                      RefHadronDecayPdgidVsRefPt_SingleHadron[etaBin]->Fill(ptgen,decayPdgid,weight);
 
@@ -1181,27 +1287,39 @@ int main(int argc,char**argv)
                         RefHadronDecayPtRatioVsRefPt_SingleHadron_Lepton[etaBin]->Fill(ptgen,decayPt/bHadronPt,weight);
                         RefHadronDecayPtRatioJetVsRefPt_SingleHadron_Lepton[etaBin]->Fill(ptgen,decayPt/ptgen,weight);
                         RefHadronDecayPdgidVsRefPt_SingleHadron_Lepton[etaBin]->Fill(ptgen,decayPdgid,weight);
+                        RelRspVsRefHadronDecayPtRatioJet_SingleHadron_Lepton[etaBin]->Fill(decayPt/ptgen,relrsp,weight);
                      }
                      if (decayPdgid == 12 || decayPdgid == 14 || decayPdgid == 16) {
                         RefHadronDecayPtRatioVsRefPt_SingleHadron_Neutrino[etaBin]->Fill(ptgen,decayPt/bHadronPt,weight);
                         RefHadronDecayPtRatioJetVsRefPt_SingleHadron_Neutrino[etaBin]->Fill(ptgen,decayPt/ptgen,weight);
                         RefHadronDecayPdgidVsRefPt_SingleHadron_Neutrino[etaBin]->Fill(ptgen,decayPdgid,weight);
+                        RelRspVsRefHadronDecayPtRatioJet_SingleHadron_Neutrino[etaBin]->Fill(decayPt/ptgen,relrsp,weight);
                      }
                   }
                } else if (nBHadrons > 1) {
                   RelRspVsRefPt_AtLeast2Hadron[etaBin]->Fill(ptgen, relrsp, weight);
-                  BJetRefVsRefPt_AtLeast2Hadron[etaBin]->Fill(ptgen, iref, weight);
+                  BJetRefIndVsRefPt_AtLeast2Hadron[etaBin]->Fill(ptgen, iref, weight);
 
                   // leading hadron
                   float bHadronPt = JRAEvt->ref_hadron_pt->at(thisBhadronStartInd);
                   RefHadronPtRatioVsRefPt_FirstHadron[etaBin]->Fill(ptgen, bHadronPt/ptgen, weight);
-                  
+
+                  float hadronEta = JRAEvt->ref_hadron_eta->at(thisBhadronStartInd);
+                  float hadronPhi = JRAEvt->ref_hadron_phi->at(thisBhadronStartInd);
+                  float refEta = JRAEvt->refeta->at(iref);
+                  float refPhi = JRAEvt->refphi->at(iref);
+                  float dRHadronJet = reco::deltaR(hadronEta, hadronPhi, refEta, refPhi);
+                  RefHadronPtRatioVsDeltaRRef_FirstHadron[etaBin]->Fill(dRHadronJet, bHadronPt/ptgen, weight);
+
+                  RelRspVsRefHadronPtRatio_FirstHadron[etaBin]->Fill(bHadronPt/ptgen, relrsp, weight);
+                  RelRspVsRefHadronDeltaRRef_FirstHadron[etaBin]->Fill(dRHadronJet, relrsp, weight);
+
                   int bHadronPdgid = abs(JRAEvt->ref_hadron_pdgid->at(thisBhadronStartInd));
                   RefHadronPdgidVsRefPt_FirstHadron[etaBin]->Fill(ptgen, bHadronPdgid, weight);
-                  
+
                   int ndecay = JRAEvt->ref_hadron_ndecay->at(thisBhadronStartInd);
                   RefHadronNdecayVsRefPt_FirstHadron[etaBin]->Fill(ptgen, ndecay ,weight);
-                  
+
                   int sldecay = JRAEvt->ref_hadron_sldecay->at(thisBhadronStartInd);
                   RefHadronSldecayVsRefPt_FirstHadron[etaBin]->Fill(ptgen, sldecay, weight);
 
@@ -1233,23 +1351,31 @@ int main(int argc,char**argv)
                   //subleading
                   bHadronPt = JRAEvt->ref_hadron_pt->at(thisBhadronStartInd+1);
                   RefHadronPtRatioVsRefPt_SecondHadron[etaBin]->Fill(ptgen, bHadronPt/ptgen, weight);
-                  
+
+                  hadronEta = JRAEvt->ref_hadron_eta->at(thisBhadronStartInd+1);
+                  hadronPhi = JRAEvt->ref_hadron_phi->at(thisBhadronStartInd+1);
+                  dRHadronJet = reco::deltaR(hadronEta, hadronPhi, refEta, refPhi);
+                  RefHadronPtRatioVsDeltaRRef_SecondHadron[etaBin]->Fill(dRHadronJet, bHadronPt/ptgen, weight);
+
+                  RelRspVsRefHadronPtRatio_SecondHadron[etaBin]->Fill(bHadronPt/ptgen, relrsp, weight);
+                  RelRspVsRefHadronDeltaRRef_SecondHadron[etaBin]->Fill(dRHadronJet, relrsp, weight);
+
                   bHadronPdgid = abs(JRAEvt->ref_hadron_pdgid->at(thisBhadronStartInd+1));
                   RefHadronPdgidVsRefPt_SecondHadron[etaBin]->Fill(ptgen, bHadronPdgid, weight);
-                  
+
                   ndecay = JRAEvt->ref_hadron_ndecay->at(thisBhadronStartInd+1);
                   RefHadronNdecayVsRefPt_SecondHadron[etaBin]->Fill(ptgen, ndecay ,weight);
-                  
+
                   sldecay = JRAEvt->ref_hadron_sldecay->at(thisBhadronStartInd+1);
                   RefHadronSldecayVsRefPt_SecondHadron[etaBin]->Fill(ptgen, sldecay, weight);
-                  
+
                   // add # decay products from leading jet to offset
-                  thisBhadronDecayStartInd += JRAEvt->ref_hadron_ndecay->at(thisBhadronStartInd); 
-                  
+                  thisBhadronDecayStartInd += JRAEvt->ref_hadron_ndecay->at(thisBhadronStartInd);
+
                   for (uint id=0; id<JRAEvt->ref_hadron_ndecay->at(thisBhadronStartInd+1); id++) {
                      float decayPt = JRAEvt->ref_hadron_decay_pt->at(thisBhadronDecayStartInd+id);
                      RefHadronDecayPtRatioVsRefPt_SecondHadron[etaBin]->Fill(ptgen,decayPt/bHadronPt,weight);
-                     
+
                      int decayPdgid = abs(JRAEvt->ref_hadron_decay_pdgid->at(thisBhadronDecayStartInd+id));
                      RefHadronDecayPdgidVsRefPt_SecondHadron[etaBin]->Fill(ptgen,decayPdgid,weight);
 
