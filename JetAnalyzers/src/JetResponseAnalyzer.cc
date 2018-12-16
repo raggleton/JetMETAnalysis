@@ -480,8 +480,10 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
         case 130: //KL0
         case 310: //KS0
         case 3122: //Lambda0
+        case 14122: //LambdaC0
         case 3212: //Sigma0
         case 3322: //Xi0
+        case 3324: //Xi*0
         case 2112: //n0
           nhf += dau->energy();
           nmult++;
