@@ -202,9 +202,9 @@ int main(int argc,char**argv)
    //
    // Define our own binnings
    //
-   const int NPtBins = 3;
-   const char Pt[NPtBins+1][10] = {"57", "90", "750", "1000"};
-   const double vpt[NPtBins+1] = {57, 90, 750, 1000};
+   const int NPtBins = 4;
+   const char Pt[NPtBins+1][10] = {"57", "90", "600", "750", "1000"};
+   const double vpt[NPtBins+1] = {57, 90, 600, 750, 1000};
 
    const int NETA = 1;
    const char eta_boundaries[NETA+1][10] = {"0", "0.783"};
