@@ -305,6 +305,7 @@ int main(int argc,char**argv)
                                      "ref_hadron_pt", "ref_hadron_eta", "ref_hadron_phi", "ref_hadron_pdgid",
                                      "ref_hadron_ndecay", "ref_hadron_sldecay", "ref_nhadron",
                                      "ref_hadron_decay_pt", "ref_hadron_decay_eta", "ref_hadron_decay_phi", "ref_hadron_decay_pdgid",
+                                     "refchf", "refnhf", "refnef", "refcef", "refmuf", "refchmult", "refnmult",
                                      "npv","rho","rho_hlt","pthat","weight"};
       if (useCandidates_) {
          vector<string> pf_branch_names = {"pfcand_pt", "pfcand_eta", "pfcand_phi", "pfcand_id", "pfcand_e"};
@@ -344,14 +345,60 @@ int main(int argc,char**argv)
       vector<TH2F*> JtnefVsRefPt;
       vector<TH2F*> JtcefVsRefPt;
       vector<TH2F*> JtmufVsRefPt;
-      vector<TH2F*> JthfhfVsRefPt;
-      vector<TH2F*> JthfefVsRefPt;
       vector<TH2F*> JtchmultVsRefPt;
       vector<TH2F*> JtnmultVsRefPt;
 
+      vector<TH2F*> RefchfVsRefPt;
+      vector<TH2F*> RefnhfVsRefPt;
+      vector<TH2F*> RefnefVsRefPt;
+      vector<TH2F*> RefcefVsRefPt;
+      vector<TH2F*> RefmufVsRefPt;
+      vector<TH2F*> RefchmultVsRefPt;
+      vector<TH2F*> RefnmultVsRefPt;
+
+      vector<TH2F*> RelRspVsJtchf;
+      vector<TH2F*> RelRspVsJtnhf;
+      vector<TH2F*> RelRspVsJtnef;
+      vector<TH2F*> RelRspVsJtcef;
+      vector<TH2F*> RelRspVsJtmuf;
+      vector<TH2F*> RelRspVsJtchmult;
+      vector<TH2F*> RelRspVsJtnmult;
+
+      vector<TH2F*> RelRspVsRefchf;
+      vector<TH2F*> RelRspVsRefnhf;
+      vector<TH2F*> RelRspVsRefnef;
+      vector<TH2F*> RelRspVsRefcef;
+      vector<TH2F*> RelRspVsRefmuf;
+      vector<TH2F*> RelRspVsRefchmult;
+      vector<TH2F*> RelRspVsRefnmult;
+
+      vector<TH2F*> JtchfVsRefchf;
+      vector<TH2F*> JtnhfVsRefnhf;
+      vector<TH2F*> JtnefVsRefnef;
+      vector<TH2F*> JtcefVsRefcef;
+      vector<TH2F*> JtmufVsRefmuf;
+      vector<TH2F*> JtchmultVsRefchmult;
+      vector<TH2F*> JtnmultVsRefnmult;
+
+      vector<TH2F*> JtchfVsRefchf_LowRsp;
+      vector<TH2F*> JtnhfVsRefnhf_LowRsp;
+      vector<TH2F*> JtnefVsRefnef_LowRsp;
+      vector<TH2F*> JtcefVsRefcef_LowRsp;
+      vector<TH2F*> JtmufVsRefmuf_LowRsp;
+      vector<TH2F*> JtchmultVsRefchmult_LowRsp;
+      vector<TH2F*> JtnmultVsRefnmult_LowRsp;
+
+      vector<TH2F*> JtchfVsRefchf_HighRsp;
+      vector<TH2F*> JtnhfVsRefnhf_HighRsp;
+      vector<TH2F*> JtnefVsRefnef_HighRsp;
+      vector<TH2F*> JtcefVsRefcef_HighRsp;
+      vector<TH2F*> JtmufVsRefmuf_HighRsp;
+      vector<TH2F*> JtchmultVsRefchmult_HighRsp;
+      vector<TH2F*> JtnmultVsRefnmult_HighRsp;
+
       vector<TH2F*> NHadronsVsRefPt;
 
-      
+
       // if only 1 hadron
       vector<TH2F*> RelRspVsRefPt_SingleHadron;
       vector<TH2F*> RelRspVsRefPt_SingleHadron_SLDecay;
@@ -487,15 +534,7 @@ int main(int argc,char**argv)
          JtmufVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
          JtmufVsRefPt.back()->Sumw2();
 
-         hname = Form("JthfhfVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
-         JthfhfVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
-         JthfhfVsRefPt.back()->Sumw2();
-
-         hname = Form("JthfefVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
-         JthfefVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
-         JthfefVsRefPt.back()->Sumw2();
-
-         int NMultBins = 120;
+         int NMultBins = 100;
          hname = Form("JtchmultVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
          JtchmultVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NMultBins, 0, NMultBins));
          JtchmultVsRefPt.back()->Sumw2();
@@ -503,6 +542,180 @@ int main(int argc,char**argv)
          hname = Form("JtnmultVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
          JtnmultVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NMultBins, 0, NMultBins));
          JtnmultVsRefPt.back()->Sumw2();
+
+         hname = Form("RefchfVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefchfVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
+         RefchfVsRefPt.back()->Sumw2();
+
+         hname = Form("RefnhfVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefnhfVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
+         RefnhfVsRefPt.back()->Sumw2();
+
+         hname = Form("RefnefVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefnefVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
+         RefnefVsRefPt.back()->Sumw2();
+
+         hname = Form("RefcefVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefcefVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
+         RefcefVsRefPt.back()->Sumw2();
+
+         hname = Form("RefmufVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefmufVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
+         RefmufVsRefPt.back()->Sumw2();
+
+         hname = Form("RefchmultVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefchmultVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NMultBins, 0, NMultBins));
+         RefchmultVsRefPt.back()->Sumw2();
+
+         hname = Form("RefnmultVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefnmultVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NMultBins, 0, NMultBins));
+         RefnmultVsRefPt.back()->Sumw2();
+
+         // Rsp vs Reco EF, mult
+         hname = Form("RelRspVsJtchf_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsJtchf.push_back(new TH2F(hname, hname, NEfBins, 0, 1, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsJtchf.back()->Sumw2();
+
+         hname = Form("RelRspVsJtnhf_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsJtnhf.push_back(new TH2F(hname, hname, NEfBins, 0, 1, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsJtnhf.back()->Sumw2();
+
+         hname = Form("RelRspVsJtnef_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsJtnef.push_back(new TH2F(hname, hname, NEfBins, 0, 1, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsJtnef.back()->Sumw2();
+
+         hname = Form("RelRspVsJtcef_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsJtcef.push_back(new TH2F(hname, hname, NEfBins, 0, 1, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsJtcef.back()->Sumw2();
+
+         hname = Form("RelRspVsJtmuf_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsJtmuf.push_back(new TH2F(hname, hname, NEfBins, 0, 1, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsJtmuf.back()->Sumw2();
+
+         hname = Form("RelRspVsJtchmult_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsJtchmult.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsJtchmult.back()->Sumw2();
+
+         hname = Form("RelRspVsJtnmult_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsJtnmult.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsJtnmult.back()->Sumw2();
+
+         // rsp vs gen EF, mult
+         hname = Form("RelRspVsRefchf_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefchf.push_back(new TH2F(hname, hname, NEfBins, 0, 1, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsRefchf.back()->Sumw2();
+
+         hname = Form("RelRspVsRefnhf_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefnhf.push_back(new TH2F(hname, hname, NEfBins, 0, 1, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsRefnhf.back()->Sumw2();
+
+         hname = Form("RelRspVsRefnef_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefnef.push_back(new TH2F(hname, hname, NEfBins, 0, 1, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsRefnef.back()->Sumw2();
+
+         hname = Form("RelRspVsRefcef_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefcef.push_back(new TH2F(hname, hname, NEfBins, 0, 1, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsRefcef.back()->Sumw2();
+
+         hname = Form("RelRspVsRefmuf_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefmuf.push_back(new TH2F(hname, hname, NEfBins, 0, 1, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsRefmuf.back()->Sumw2();
+
+         hname = Form("RelRspVsRefchmult_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefchmult.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsRefchmult.back()->Sumw2();
+
+         hname = Form("RelRspVsRefnmult_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsRefnmult.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsRefnmult.back()->Sumw2();
+
+         // reco vs gen EF, mult
+         hname = Form("JtchfVsRefchf_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtchfVsRefchf.push_back(new TH2F(hname, hname, NEfBins, 0, 1, NEfBins, 0, 1));
+         JtchfVsRefchf.back()->Sumw2();
+
+         hname = Form("JtnhfVsRefnhf_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtnhfVsRefnhf.push_back(new TH2F(hname, hname, NEfBins, 0, 1, NEfBins, 0, 1));
+         JtnhfVsRefnhf.back()->Sumw2();
+
+         hname = Form("JtnefVsRefnef_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtnefVsRefnef.push_back(new TH2F(hname, hname, NEfBins, 0, 1, NEfBins, 0, 1));
+         JtnefVsRefnef.back()->Sumw2();
+
+         hname = Form("JtcefVsRefcef_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtcefVsRefcef.push_back(new TH2F(hname, hname, NEfBins, 0, 1, NEfBins, 0, 1));
+         JtcefVsRefcef.back()->Sumw2();
+
+         hname = Form("JtmufVsRefmuf_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtmufVsRefmuf.push_back(new TH2F(hname, hname, NEfBins, 0, 1, NEfBins, 0, 1));
+         JtmufVsRefmuf.back()->Sumw2();
+
+         hname = Form("JtchmultVsRefchmult_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtchmultVsRefchmult.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NEfBins, 0, 1));
+         JtchmultVsRefchmult.back()->Sumw2();
+
+         hname = Form("JtnmultVsRefnmult_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtnmultVsRefnmult.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NEfBins, 0, 1));
+         JtnmultVsRefnmult.back()->Sumw2();
+
+         // lower rsp only
+         hname = Form("JtchfVsRefchf_LowRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtchfVsRefchf_LowRsp.push_back(new TH2F(hname, hname, NEfBins, 0, 1, NEfBins, 0, 1));
+         JtchfVsRefchf_LowRsp.back()->Sumw2();
+
+         hname = Form("JtnhfVsRefnhf_LowRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtnhfVsRefnhf_LowRsp.push_back(new TH2F(hname, hname, NEfBins, 0, 1, NEfBins, 0, 1));
+         JtnhfVsRefnhf_LowRsp.back()->Sumw2();
+
+         hname = Form("JtnefVsRefnef_LowRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtnefVsRefnef_LowRsp.push_back(new TH2F(hname, hname, NEfBins, 0, 1, NEfBins, 0, 1));
+         JtnefVsRefnef_LowRsp.back()->Sumw2();
+
+         hname = Form("JtcefVsRefcef_LowRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtcefVsRefcef_LowRsp.push_back(new TH2F(hname, hname, NEfBins, 0, 1, NEfBins, 0, 1));
+         JtcefVsRefcef_LowRsp.back()->Sumw2();
+
+         hname = Form("JtmufVsRefmuf_LowRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtmufVsRefmuf_LowRsp.push_back(new TH2F(hname, hname, NEfBins, 0, 1, NEfBins, 0, 1));
+         JtmufVsRefmuf_LowRsp.back()->Sumw2();
+
+         hname = Form("JtchmultVsRefchmult_LowRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtchmultVsRefchmult_LowRsp.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NEfBins, 0, 1));
+         JtchmultVsRefchmult_LowRsp.back()->Sumw2();
+
+         hname = Form("JtnmultVsRefnmult_LowRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtnmultVsRefnmult_LowRsp.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NEfBins, 0, 1));
+         JtnmultVsRefnmult_LowRsp.back()->Sumw2();
+
+         // higher rsp only
+         hname = Form("JtchfVsRefchf_HighRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtchfVsRefchf_HighRsp.push_back(new TH2F(hname, hname, NEfBins, 0, 1, NEfBins, 0, 1));
+         JtchfVsRefchf_HighRsp.back()->Sumw2();
+
+         hname = Form("JtnhfVsRefnhf_HighRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtnhfVsRefnhf_HighRsp.push_back(new TH2F(hname, hname, NEfBins, 0, 1, NEfBins, 0, 1));
+         JtnhfVsRefnhf_HighRsp.back()->Sumw2();
+
+         hname = Form("JtnefVsRefnef_HighRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtnefVsRefnef_HighRsp.push_back(new TH2F(hname, hname, NEfBins, 0, 1, NEfBins, 0, 1));
+         JtnefVsRefnef_HighRsp.back()->Sumw2();
+
+         hname = Form("JtcefVsRefcef_HighRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtcefVsRefcef_HighRsp.push_back(new TH2F(hname, hname, NEfBins, 0, 1, NEfBins, 0, 1));
+         JtcefVsRefcef_HighRsp.back()->Sumw2();
+
+         hname = Form("JtmufVsRefmuf_HighRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtmufVsRefmuf_HighRsp.push_back(new TH2F(hname, hname, NEfBins, 0, 1, NEfBins, 0, 1));
+         JtmufVsRefmuf_HighRsp.back()->Sumw2();
+
+         hname = Form("JtchmultVsRefchmult_HighRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtchmultVsRefchmult_HighRsp.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NEfBins, 0, 1));
+         JtchmultVsRefchmult_HighRsp.back()->Sumw2();
+
+         hname = Form("JtnmultVsRefnmult_HighRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtnmultVsRefnmult_HighRsp.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NEfBins, 0, 1));
+         JtnmultVsRefnmult_HighRsp.back()->Sumw2();
+
 
          hname = Form("NHadronsVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
          int nhadrons = 6;
@@ -866,21 +1079,62 @@ int main(int argc,char**argv)
                }
                uint etaBin = getBin(plotEta,veta,NETA);
                RelRspVsRefPt[etaBin]->Fill(ptgen,relrsp,weight);
+
                JtchfVsRefPt[etaBin]->Fill(ptgen,JRAEvt->jtchf->at(iref),weight);
                JtnhfVsRefPt[etaBin]->Fill(ptgen,JRAEvt->jtnhf->at(iref),weight);
                JtnefVsRefPt[etaBin]->Fill(ptgen,JRAEvt->jtnef->at(iref),weight);
                JtcefVsRefPt[etaBin]->Fill(ptgen,JRAEvt->jtcef->at(iref),weight);
                JtmufVsRefPt[etaBin]->Fill(ptgen,JRAEvt->jtmuf->at(iref),weight);
-               JthfhfVsRefPt[etaBin]->Fill(ptgen,JRAEvt->jthfhf->at(iref),weight);
-               JthfefVsRefPt[etaBin]->Fill(ptgen,JRAEvt->jthfef->at(iref),weight);
                JtchmultVsRefPt[etaBin]->Fill(ptgen,JRAEvt->jtchmult->at(iref),weight);
                JtnmultVsRefPt[etaBin]->Fill(ptgen,JRAEvt->jtnmult->at(iref),weight);
+
+               RefchfVsRefPt[etaBin]->Fill(ptgen,JRAEvt->refchf->at(iref),weight);
+               RefnhfVsRefPt[etaBin]->Fill(ptgen,JRAEvt->refnhf->at(iref),weight);
+               RefnefVsRefPt[etaBin]->Fill(ptgen,JRAEvt->refnef->at(iref),weight);
+               RefcefVsRefPt[etaBin]->Fill(ptgen,JRAEvt->refcef->at(iref),weight);
+               RefmufVsRefPt[etaBin]->Fill(ptgen,JRAEvt->refmuf->at(iref),weight);
+               RefchmultVsRefPt[etaBin]->Fill(ptgen,JRAEvt->refchmult->at(iref),weight);
+               RefnmultVsRefPt[etaBin]->Fill(ptgen,JRAEvt->refnmult->at(iref),weight);
+
+               RelRspVsJtchf[etaBin]->Fill(JRAEvt->jtchf->at(iref),relrsp,weight);
+               RelRspVsJtnhf[etaBin]->Fill(JRAEvt->jtnhf->at(iref),relrsp,weight);
+               RelRspVsJtnef[etaBin]->Fill(JRAEvt->jtnef->at(iref),relrsp,weight);
+               RelRspVsJtcef[etaBin]->Fill(JRAEvt->jtcef->at(iref),relrsp,weight);
+               RelRspVsJtmuf[etaBin]->Fill(JRAEvt->jtmuf->at(iref),relrsp,weight);
+               RelRspVsJtchmult[etaBin]->Fill(JRAEvt->jtchmult->at(iref),relrsp,weight);
+               RelRspVsJtnmult[etaBin]->Fill(JRAEvt->jtnmult->at(iref),relrsp,weight);
+
+               JtchfVsRefchf[etaBin]->Fill(JRAEvt->refchf->at(iref),JRAEvt->jtchf->at(iref),weight);
+               JtnhfVsRefnhf[etaBin]->Fill(JRAEvt->refnhf->at(iref),JRAEvt->jtnhf->at(iref),weight);
+               JtnefVsRefnef[etaBin]->Fill(JRAEvt->refnef->at(iref),JRAEvt->jtnef->at(iref),weight);
+               JtcefVsRefcef[etaBin]->Fill(JRAEvt->refcef->at(iref),JRAEvt->jtcef->at(iref),weight);
+               JtmufVsRefmuf[etaBin]->Fill(JRAEvt->refmuf->at(iref),JRAEvt->jtmuf->at(iref),weight);
+               JtchmultVsRefchmult[etaBin]->Fill(JRAEvt->refchmult->at(iref),JRAEvt->jtchmult->at(iref),weight);
+               JtnmultVsRefnmult[etaBin]->Fill(JRAEvt->refnmult->at(iref),JRAEvt->jtnmult->at(iref),weight);
+
+               if (relrsp < 1.1) {
+                  JtchfVsRefchf_LowRsp[etaBin]->Fill(JRAEvt->refchf->at(iref),JRAEvt->jtchf->at(iref),weight);
+                  JtnhfVsRefnhf_LowRsp[etaBin]->Fill(JRAEvt->refnhf->at(iref),JRAEvt->jtnhf->at(iref),weight);
+                  JtnefVsRefnef_LowRsp[etaBin]->Fill(JRAEvt->refnef->at(iref),JRAEvt->jtnef->at(iref),weight);
+                  JtcefVsRefcef_LowRsp[etaBin]->Fill(JRAEvt->refcef->at(iref),JRAEvt->jtcef->at(iref),weight);
+                  JtmufVsRefmuf_LowRsp[etaBin]->Fill(JRAEvt->refmuf->at(iref),JRAEvt->jtmuf->at(iref),weight);
+                  JtchmultVsRefchmult_LowRsp[etaBin]->Fill(JRAEvt->refchmult->at(iref),JRAEvt->jtchmult->at(iref),weight);
+                  JtnmultVsRefnmult_LowRsp[etaBin]->Fill(JRAEvt->refnmult->at(iref),JRAEvt->jtnmult->at(iref),weight);
+               } else {
+                  JtchfVsRefchf_HighRsp[etaBin]->Fill(JRAEvt->refchf->at(iref),JRAEvt->jtchf->at(iref),weight);
+                  JtnhfVsRefnhf_HighRsp[etaBin]->Fill(JRAEvt->refnhf->at(iref),JRAEvt->jtnhf->at(iref),weight);
+                  JtnefVsRefnef_HighRsp[etaBin]->Fill(JRAEvt->refnef->at(iref),JRAEvt->jtnef->at(iref),weight);
+                  JtcefVsRefcef_HighRsp[etaBin]->Fill(JRAEvt->refcef->at(iref),JRAEvt->jtcef->at(iref),weight);
+                  JtmufVsRefmuf_HighRsp[etaBin]->Fill(JRAEvt->refmuf->at(iref),JRAEvt->jtmuf->at(iref),weight);
+                  JtchmultVsRefchmult_HighRsp[etaBin]->Fill(JRAEvt->refchmult->at(iref),JRAEvt->jtchmult->at(iref),weight);
+                  JtnmultVsRefnmult_HighRsp[etaBin]->Fill(JRAEvt->refnmult->at(iref),JRAEvt->jtnmult->at(iref),weight);
+               }
 
                // Bhadron hists
                uint nBHadrons = JRAEvt->ref_nhadron->at(iref);
                // uint nBHadrons = 0;
                NHadronsVsRefPt[etaBin]->Fill(ptgen, nBHadrons, weight);
-               // find the start for this jet's hadrons, 
+               // find the start for this jet's hadrons,
                // need to sum over number of hadrons in all previous jets
                uint thisBhadronStartInd = 0;
                uint thisBhadronDecayStartInd = 0;
@@ -961,14 +1215,14 @@ int main(int argc,char**argv)
                   for (uint id=0; id<JRAEvt->ref_hadron_ndecay->at(thisBhadronStartInd); id++) {
                      float decayPt = JRAEvt->ref_hadron_decay_pt->at(thisBhadronDecayStartInd+id);
                      RefHadronDecayPtRatioVsRefPt_FirstHadron[etaBin]->Fill(ptgen,decayPt/bHadronPt,weight);
-                     
+
                      int decayPdgid = abs(JRAEvt->ref_hadron_decay_pdgid->at(thisBhadronDecayStartInd+id));
                      RefHadronDecayPdgidVsRefPt_FirstHadron[etaBin]->Fill(ptgen,decayPdgid,weight);
 
                      if (decayPdgid == 11 || decayPdgid == 13 || decayPdgid == 15) {
                         RefHadronDecayPtRatioVsRefPt_FirstHadron_Lepton[etaBin]->Fill(ptgen,decayPt/bHadronPt,weight);
                         RefHadronDecayPdgidVsRefPt_FirstHadron_Lepton[etaBin]->Fill(ptgen,decayPdgid,weight);
-                     }                     
+                     }
                      if (decayPdgid == 12 || decayPdgid == 14 || decayPdgid == 16) {
                         RefHadronDecayPtRatioVsRefPt_FirstHadron_Neutrino[etaBin]->Fill(ptgen,decayPt/bHadronPt,weight);
                         RefHadronDecayPdgidVsRefPt_FirstHadron_Neutrino[etaBin]->Fill(ptgen,decayPdgid,weight);
