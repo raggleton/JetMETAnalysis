@@ -383,20 +383,20 @@ int main(int argc,char** argv)
     else if(doFlavor && (ivar==0||ivar==variables.size()-1))
       continue;
     else
-  	  leg->AddEntry(g,label.c_str(),"lp");
+      leg->AddEntry(g,label.c_str(),"lp");
 
-	  // print fit parameters
-	  TF1* fitfnc = (TF1*)g->GetFunction("fit");
-	  if (0!=fitfnc) {
-	    for (int ipar=0;ipar<fitfnc->GetNpar();ipar++)
-	      cout<<fitfnc->GetParameter(ipar)<<" +- "
-		  <<fitfnc->GetParError(ipar)<<endl;
-	    if (latexcndf) {
-	      cout<<"->Chi2/NDF: "
-		  <<fitfnc->GetChisquare()<<"/"
-		  <<fitfnc->GetNDF()<<endl;
-	    }
-	  }
+    // print fit parameters
+    TF1* fitfnc = (TF1*)g->GetFunction("fit");
+    if (0!=fitfnc) {
+      for (int ipar=0;ipar<fitfnc->GetNpar();ipar++)
+        cout<<fitfnc->GetParameter(ipar)<<" +- "
+            <<fitfnc->GetParError(ipar)<<endl;
+      if (latexcndf) {
+        cout<<"->Chi2/NDF: "
+            <<fitfnc->GetChisquare()<<"/"
+            <<fitfnc->GetNDF()<<endl;
+      }
+    }
 
 	  // end print fit parameters
 
