@@ -337,14 +337,14 @@ int main(int argc,char**argv)
          return 103;
       }
       if (0==chain) { cout<<"no tree/chain found."<<endl; continue; }
-      bool saveCandidates_ = true;
+      bool useCandidates_ = findGamma || findZ || (pfCandIds.size() > 0 && pfCandIds[0] < 999);
       bool isPFJet_ = true;
       bool isCaloJet_ = false;
       bool doComposition_ = true;
       bool doBalancing_ = false;
       bool doFlavor_ = true;
       bool doHLT_ = false;
-      int flag_int = (saveCandidates_*pow(2,7)) + (isPFJet_*pow(2,6)) +
+      int flag_int = (useCandidates_*pow(2,7)) + (isPFJet_*pow(2,6)) +
                    (isCaloJet_*pow(2,5)) + (doComposition_*pow(2,4)) +
                    (doBalancing_*pow(2,3)) + (doFlavor_*pow(2,2)) +
                    (doHLT_*pow(2,1)) + (1);
@@ -356,9 +356,12 @@ int main(int argc,char**argv)
                                      "bxns","npus","tnpus","sumpt_lowpt","refdrjt",
                                      "jtchf", "jtnhf", "jtnef", "jtcef", "jtmuf", "jthfhf", "jthfef",
                                      "jtchmult", "jtnmult",
-                                     "pfcand_pt", "pfcand_eta", "pfcand_phi", "pfcand_id", "pfcand_e",
                                      "refpdgid_parton_physics", "refpdgid_parton_algo", "refpdgid_hadron",
                                      "npv","rho","rho_hlt","pthat","weight"};
+      if (useCandidates_) {
+         vector<string> pf_branch_names = {"pfcand_pt", "pfcand_eta", "pfcand_phi", "pfcand_id", "pfcand_e"};
+         branch_names.insert(branch_names.end(), pf_branch_names.begin(), pf_branch_names.end());
+      }
       for(auto n : branch_names) {
          if(n=="rho_hlt" && 0==chain->GetBranch("rho_hlt")) continue;
          if(n=="weight") {
