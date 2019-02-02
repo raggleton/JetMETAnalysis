@@ -756,13 +756,13 @@ int main(int argc,char**argv)
             vector<TLorentzVector> electrons, muons;
             for (uint iPf=0; iPf<JRAEvt->pfcand_pt->size(); iPf++) {
                // ele
-               if (JRAEvt->pfcand_id->at(iPf) == 2 && JRAEvt->pfcand_pt->at(iPf) > 10) {
+               if (JRAEvt->pfcand_id->at(iPf) == 2 && JRAEvt->pfcand_pt->at(iPf) > 50) {
                   TLorentzVector v;
                   v.SetPtEtaPhiE(JRAEvt->pfcand_pt->at(iPf), JRAEvt->pfcand_eta->at(iPf), JRAEvt->pfcand_phi->at(iPf), JRAEvt->pfcand_e->at(iPf));
                   electrons.push_back(v);
                }
                //mu
-               else if (JRAEvt->pfcand_id->at(iPf) == 3 && JRAEvt->pfcand_pt->at(iPf) > 10) {
+               else if (JRAEvt->pfcand_id->at(iPf) == 3 && JRAEvt->pfcand_pt->at(iPf) > 50) {
                   TLorentzVector v;
                   v.SetPtEtaPhiE(JRAEvt->pfcand_pt->at(iPf), JRAEvt->pfcand_eta->at(iPf), JRAEvt->pfcand_phi->at(iPf), JRAEvt->pfcand_e->at(iPf));
                   muons.push_back(v);
@@ -788,7 +788,7 @@ int main(int argc,char**argv)
                zDecay2 = muons[1];
                z = zDecay1 + zDecay2;
             }
-            if (z.Pt() < 10) continue;
+            if (z.Pt() < 50) continue;
          }
 
          if (verbose && zDecay1.Pt() > 0) {
@@ -806,7 +806,7 @@ int main(int argc,char**argv)
                   gamma.SetPtEtaPhiE(JRAEvt->pfcand_pt->at(iPf), JRAEvt->pfcand_eta->at(iPf), JRAEvt->pfcand_phi->at(iPf), JRAEvt->pfcand_e->at(iPf));
                }
             }
-            if (gamma.Pt() < 10 || fabs(gamma.Eta()) > 2.4) continue;
+            if (gamma.Pt() < 50 || fabs(gamma.Eta()) > 2.4) continue;
          }
 
          // First go through and figure out which jet pairs are OK
