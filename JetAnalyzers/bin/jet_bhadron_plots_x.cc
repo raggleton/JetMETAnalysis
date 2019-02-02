@@ -55,6 +55,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <cstring>
+#include <limits.h>
 
 using namespace std;
 
@@ -73,6 +74,9 @@ string getPostfix(vector<string> postfix, string alg, int level);
 
 // for sorting TLorentzVectors by pt
 bool sort_by_pt(const TLorentzVector & a, const TLorentzVector & b);
+
+// for division when b could be 0, in which case return infinity
+float safe_divide(float a, float b);
 
 
 enum class FlavDef {
@@ -397,8 +401,17 @@ int main(int argc,char**argv)
       vector<TH2F*> JtchmultVsRefchmult_HighRsp;
       vector<TH2F*> JtnmultVsRefnmult_HighRsp;
 
+      vector<TH2F*> RelRspVsJtchfRefchfRatio;
+      vector<TH2F*> RelRspVsJtnhfRefnhfRatio;
+      vector<TH2F*> RelRspVsJtnefRefnefRatio;
+      vector<TH2F*> RelRspVsJtcefRefcefRatio;
+      vector<TH2F*> RelRspVsJtmufRefmufRatio;
+      vector<TH2F*> RelRspVsJtchmultRefchmultRatio;
+      vector<TH2F*> RelRspVsJtnmultRefnmultRatio;
+
       vector<TH2F*> NHadronsVsRefPt;
 
+      vector<TH2F*> RelRspVsJtArea;
 
       // if only 1 hadron
       vector<TH2F*> RelRspVsRefPt_SingleHadron;
@@ -669,11 +682,11 @@ int main(int argc,char**argv)
          JtmufVsRefmuf.back()->Sumw2();
 
          hname = Form("JtchmultVsRefchmult_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
-         JtchmultVsRefchmult.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NEfBins, 0, 1));
+         JtchmultVsRefchmult.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NMultBins, 0, NMultBins));
          JtchmultVsRefchmult.back()->Sumw2();
 
          hname = Form("JtnmultVsRefnmult_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
-         JtnmultVsRefnmult.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NEfBins, 0, 1));
+         JtnmultVsRefnmult.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NMultBins, 0, NMultBins));
          JtnmultVsRefnmult.back()->Sumw2();
 
          // lower rsp only
@@ -698,11 +711,11 @@ int main(int argc,char**argv)
          JtmufVsRefmuf_LowRsp.back()->Sumw2();
 
          hname = Form("JtchmultVsRefchmult_LowRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
-         JtchmultVsRefchmult_LowRsp.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NEfBins, 0, 1));
+         JtchmultVsRefchmult_LowRsp.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NMultBins, 0, NMultBins));
          JtchmultVsRefchmult_LowRsp.back()->Sumw2();
 
          hname = Form("JtnmultVsRefnmult_LowRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
-         JtnmultVsRefnmult_LowRsp.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NEfBins, 0, 1));
+         JtnmultVsRefnmult_LowRsp.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NMultBins, 0, NMultBins));
          JtnmultVsRefnmult_LowRsp.back()->Sumw2();
 
          // higher rsp only
@@ -727,18 +740,54 @@ int main(int argc,char**argv)
          JtmufVsRefmuf_HighRsp.back()->Sumw2();
 
          hname = Form("JtchmultVsRefchmult_HighRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
-         JtchmultVsRefchmult_HighRsp.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NEfBins, 0, 1));
+         JtchmultVsRefchmult_HighRsp.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NMultBins, 0, NMultBins));
          JtchmultVsRefchmult_HighRsp.back()->Sumw2();
 
          hname = Form("JtnmultVsRefnmult_HighRsp_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
-         JtnmultVsRefnmult_HighRsp.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NEfBins, 0, 1));
+         JtnmultVsRefnmult_HighRsp.push_back(new TH2F(hname, hname, NMultBins, 0, NMultBins, NMultBins, 0, NMultBins));
          JtnmultVsRefnmult_HighRsp.back()->Sumw2();
+
+         // rsp vs EF ratio
+         float efRatioMax = 5;
+         hname = Form("RelRspVsJtchfRefchfRatio_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsJtchfRefchfRatio.push_back(new TH2F(hname, hname, NEfBins, 0, efRatioMax, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsJtchfRefchfRatio.back()->Sumw2();
+
+         hname = Form("RelRspVsJtnhfRefnhfRatio_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsJtnhfRefnhfRatio.push_back(new TH2F(hname, hname, NEfBins, 0, efRatioMax, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsJtnhfRefnhfRatio.back()->Sumw2();
+
+         hname = Form("RelRspVsJtnefRefnefRatio_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsJtnefRefnefRatio.push_back(new TH2F(hname, hname, NEfBins, 0, efRatioMax, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsJtnefRefnefRatio.back()->Sumw2();
+
+         hname = Form("RelRspVsJtcefRefcefRatio_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsJtcefRefcefRatio.push_back(new TH2F(hname, hname, NEfBins, 0, efRatioMax, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsJtcefRefcefRatio.back()->Sumw2();
+
+         hname = Form("RelRspVsJtmufRefmufRatio_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsJtmufRefmufRatio.push_back(new TH2F(hname, hname, NEfBins, 0, efRatioMax, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsJtmufRefmufRatio.back()->Sumw2();
+
+         hname = Form("RelRspVsJtchmultRefchmultRatio_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsJtchmultRefchmultRatio.push_back(new TH2F(hname, hname, NMultBins, 0, efRatioMax, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsJtchmultRefchmultRatio.back()->Sumw2();
+
+         hname = Form("RelRspVsJtnmultRefnmultRatio_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RelRspVsJtnmultRefnmultRatio.push_back(new TH2F(hname, hname, NMultBins, 0, efRatioMax, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsJtnmultRefnmultRatio.back()->Sumw2();
 
 
          hname = Form("NHadronsVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
          int nhadrons = 6;
          NHadronsVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, nhadrons, 0, nhadrons));
          NHadronsVsRefPt.back()->Sumw2();
+
+         hname = Form("RelRspVsJtArea_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         int nbinsarea = 100;
+         float areamax = 1.;
+         RelRspVsJtArea.push_back(new TH2F(hname, hname, nbinsarea, 0, areamax, nbinsrelrsp, relrspmin, relrspmax));
+         RelRspVsJtArea.back()->Sumw2();
 
          // if 1 hadron
          hname = Form("RelRspVsRefPt_SingleHadron_JetEta%sto%s",eta_boundaries[ieta],eta_boundaries[ieta+1]);
@@ -1193,6 +1242,14 @@ int main(int argc,char**argv)
                RelRspVsJtchmult[etaBin]->Fill(JRAEvt->jtchmult->at(iref),relrsp,weight);
                RelRspVsJtnmult[etaBin]->Fill(JRAEvt->jtnmult->at(iref),relrsp,weight);
 
+               RelRspVsRefchf[etaBin]->Fill(JRAEvt->jtchf->at(iref),relrsp,weight);
+               RelRspVsRefnhf[etaBin]->Fill(JRAEvt->jtnhf->at(iref),relrsp,weight);
+               RelRspVsRefnef[etaBin]->Fill(JRAEvt->jtnef->at(iref),relrsp,weight);
+               RelRspVsRefcef[etaBin]->Fill(JRAEvt->jtcef->at(iref),relrsp,weight);
+               RelRspVsRefmuf[etaBin]->Fill(JRAEvt->jtmuf->at(iref),relrsp,weight);
+               RelRspVsRefchmult[etaBin]->Fill(JRAEvt->jtchmult->at(iref),relrsp,weight);
+               RelRspVsRefnmult[etaBin]->Fill(JRAEvt->jtnmult->at(iref),relrsp,weight);
+
                JtchfVsRefchf[etaBin]->Fill(JRAEvt->refchf->at(iref),JRAEvt->jtchf->at(iref),weight);
                JtnhfVsRefnhf[etaBin]->Fill(JRAEvt->refnhf->at(iref),JRAEvt->jtnhf->at(iref),weight);
                JtnefVsRefnef[etaBin]->Fill(JRAEvt->refnef->at(iref),JRAEvt->jtnef->at(iref),weight);
@@ -1200,6 +1257,14 @@ int main(int argc,char**argv)
                JtmufVsRefmuf[etaBin]->Fill(JRAEvt->refmuf->at(iref),JRAEvt->jtmuf->at(iref),weight);
                JtchmultVsRefchmult[etaBin]->Fill(JRAEvt->refchmult->at(iref),JRAEvt->jtchmult->at(iref),weight);
                JtnmultVsRefnmult[etaBin]->Fill(JRAEvt->refnmult->at(iref),JRAEvt->jtnmult->at(iref),weight);
+
+               RelRspVsJtchfRefchfRatio[etaBin]->Fill(safe_divide(JRAEvt->jtchf->at(iref), JRAEvt->refchf->at(iref)),relrsp,weight);
+               RelRspVsJtnhfRefnhfRatio[etaBin]->Fill(safe_divide(JRAEvt->jtnhf->at(iref), JRAEvt->refnhf->at(iref)),relrsp,weight);
+               RelRspVsJtnefRefnefRatio[etaBin]->Fill(safe_divide(JRAEvt->jtnef->at(iref), JRAEvt->refnef->at(iref)),relrsp,weight);
+               RelRspVsJtcefRefcefRatio[etaBin]->Fill(safe_divide(JRAEvt->jtcef->at(iref), JRAEvt->refcef->at(iref)),relrsp,weight);
+               RelRspVsJtmufRefmufRatio[etaBin]->Fill(safe_divide(JRAEvt->jtmuf->at(iref), JRAEvt->refmuf->at(iref)),relrsp,weight);
+               RelRspVsJtchmultRefchmultRatio[etaBin]->Fill(safe_divide(JRAEvt->jtchmult->at(iref), JRAEvt->refchmult->at(iref)),relrsp,weight);
+               RelRspVsJtnmultRefnmultRatio[etaBin]->Fill(safe_divide(JRAEvt->jtnmult->at(iref), JRAEvt->refnmult->at(iref)),relrsp,weight);
 
                if (relrsp < 1.1) {
                   JtchfVsRefchf_LowRsp[etaBin]->Fill(JRAEvt->refchf->at(iref),JRAEvt->jtchf->at(iref),weight);
@@ -1218,6 +1283,8 @@ int main(int argc,char**argv)
                   JtchmultVsRefchmult_HighRsp[etaBin]->Fill(JRAEvt->refchmult->at(iref),JRAEvt->jtchmult->at(iref),weight);
                   JtnmultVsRefnmult_HighRsp[etaBin]->Fill(JRAEvt->refnmult->at(iref),JRAEvt->jtnmult->at(iref),weight);
                }
+               
+               RelRspVsJtArea[etaBin]->Fill(JRAEvt->jtarea->at(iref), relrsp, weight);
 
                // Bhadron hists
                uint nBHadrons = JRAEvt->ref_nhadron->at(iref);
@@ -1487,4 +1554,12 @@ string getPostfix(vector<string> postfix, string alg, int level)
 bool sort_by_pt(const TLorentzVector & a, const TLorentzVector & b)
 {
    return a.Pt() > b.Pt();
+}
+
+float safe_divide(float a, float b){
+   if (b == 0) {
+      return std::numeric_limits<float>::infinity();
+   } else {
+      return a / b;
+   }
 }
