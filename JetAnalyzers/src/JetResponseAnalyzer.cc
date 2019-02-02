@@ -366,44 +366,26 @@ void JetResponseAnalyzer::analyze(const edm::Event& iEvent,
      uint nGenJetDau = genjet->numberOfDaughters();
      for (uint idau=0; idau<nGenJetDau; idau++) {
        const reco::Candidate * dau = genjet->daughter(idau);
-       switch(abs(dau->pdgId())){
-        case 11: //electron
-          cef += dau->energy();
-          chmult++;
-          break;
-        case 13: //muon
-          muf += dau->energy();
-          chmult++;
-          break;
-        case 22: //photon
-          nef += dau->energy();
-          nmult++;
-          break;
-        case 211: //pi+-
-        case 321: //K
-        case 2212: //p
-        case 3222: //Sigma+
-        case 3112: //Sigma-
-        case 3312: //Xi-
-        case 3334: //Omega-
-          chf += dau->energy();
-          chmult++;
-          break;
-        case 130: //KL0
-        case 310: //KS0
-        case 3122: //Lambda0
-        case 3212: //Sigma0
-        case 3322: //Xi0
-        case 2112: //n0
-          nhf += dau->energy();
-          nmult++;
-          break;
-        default:
-          cout << "bad getGenConstituent with pdgid " << dau->pdgId() << endl;
-          throw runtime_error("No idea what to do with this PDGID");
+       int absId = abs(dau->pdgId());
+       if (absId == 11) {
+         chmult++;
+         cef += dau->energy();
+       } else if (absId == 13) {
+         chmult++;
+         muf += dau->energy();
+       } else if (absId == 22) {
+         nmult++;
+         nef += dau->energy();
+       } else {
+         if (abs(dau->charge()) > 0.1) {
+           chmult++;
+           chf += dau->energy();
+         } else {
+           nmult++;
+           nhf += dau->energy();   
+         } 
        }
      }
-
      chf /= genjet->energy();
      cef /= genjet->energy();
      muf /= genjet->energy();
