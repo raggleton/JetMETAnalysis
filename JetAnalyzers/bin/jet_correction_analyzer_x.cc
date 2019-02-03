@@ -337,7 +337,19 @@ int main(int argc,char**argv)
          return 103;
       }
       if (0==chain) { cout<<"no tree/chain found."<<endl; continue; }
-      JRAEvent* JRAEvt = new JRAEvent(chain,0b01010101);
+      bool useCandidates_ = findGamma || findZ || (pfCandIds.size() > 0 && pfCandIds[0] < 999);
+      bool isPFJet_ = true;
+      bool isCaloJet_ = false;
+      bool doComposition_ = true;
+      bool doBalancing_ = false;
+      bool doFlavor_ = true;
+      bool doHLT_ = false;
+      int flag_int = (useCandidates_*pow(2,7)) + (isPFJet_*pow(2,6)) +
+                     (isCaloJet_*pow(2,5)) + (doComposition_*pow(2,4)) +
+                     (doBalancing_*pow(2,3)) + (doFlavor_*pow(2,2)) +
+                     (doHLT_*pow(2,1)) + (1);
+      bitset<8> flags(flag_int);
+      JRAEvent* JRAEvt = new JRAEvent(chain,flags);
       chain->SetBranchStatus("*",0);
       vector<string> branch_names = {"nref","refpt","refeta","refphi",
                                      "jtpt","jteta","jtphi","jtarea", "jte",
