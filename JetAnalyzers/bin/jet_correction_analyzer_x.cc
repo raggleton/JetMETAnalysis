@@ -356,6 +356,8 @@ int main(int argc,char**argv)
                                      "bxns","npus","tnpus","sumpt_lowpt","refdrjt",
                                      "jtchf", "jtnhf", "jtnef", "jtcef", "jtmuf", "jthfhf", "jthfef",
                                      "jtchmult", "jtnmult",
+                                     "refchf", "refnhf", "refnef", "refcef", "refmuf",
+                                     "refchmult", "refnmult",
                                      // "pfcand_pt", "pfcand_eta", "pfcand_phi", "pfcand_id", "pfcand_e",
                                      "refpdgid_parton_physics", "refpdgid_parton_algo", "refpdgid_hadron",
                                      "npv","rho","rho_hlt","pthat","weight"};
@@ -397,6 +399,13 @@ int main(int argc,char**argv)
       vector<TH2F*> JthfefVsRefPt;
       vector<TH2F*> JtchmultVsRefPt;
       vector<TH2F*> JtnmultVsRefPt;
+      vector<TH2F*> RefchfVsRefPt;
+      vector<TH2F*> RefnhfVsRefPt;
+      vector<TH2F*> RefnefVsRefPt;
+      vector<TH2F*> RefcefVsRefPt;
+      vector<TH2F*> RefmufVsRefPt;
+      vector<TH2F*> RefchmultVsRefPt;
+      vector<TH2F*> RefnmultVsRefPt;
       TH3F *RespVsEtaVsPt(nullptr);
       TH3F *ScaleVsEtaVsPt(nullptr);
       TProfile *RelRspVsSumPt(nullptr);
@@ -538,6 +547,34 @@ int main(int argc,char**argv)
          hname = Form("JtnmultVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
          JtnmultVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NMultBins, 0, NMultBins));
          JtnmultVsRefPt.back()->Sumw2();
+
+         hname = Form("RefchfVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefchfVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
+         RefchfVsRefPt.back()->Sumw2();
+
+         hname = Form("RefnhfVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefnhfVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
+         RefnhfVsRefPt.back()->Sumw2();
+
+         hname = Form("RefnefVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefnefVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
+         RefnefVsRefPt.back()->Sumw2();
+
+         hname = Form("RefcefVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefcefVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
+         RefcefVsRefPt.back()->Sumw2();
+
+         hname = Form("RefmufVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefmufVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NEfBins, 0, 1));
+         RefmufVsRefPt.back()->Sumw2();
+
+         hname = Form("RefchmultVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefchmultVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NMultBins, 0, NMultBins));
+         RefchmultVsRefPt.back()->Sumw2();
+
+         hname = Form("RefnmultVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefnmultVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NMultBins, 0, NMultBins));
+         RefnmultVsRefPt.back()->Sumw2();
 
       }
       RespVsEtaVsPt = new TH3F("RespVsEtaVsPt","RespVsEtaVsPt",NPtBins,vpt,NETA,veta,nbinsrelrsp,vresp);
@@ -1043,8 +1080,15 @@ int main(int argc,char**argv)
                JtmufVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtmuf->at(iref),weight);
                JthfhfVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jthfhf->at(iref),weight);
                JthfefVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jthfef->at(iref),weight);
-               // JtchmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtchmult->at(iref),weight);
-               // JtnmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtnmult->at(iref),weight);
+               JtchmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtchmult->at(iref),weight);
+               JtnmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtnmult->at(iref),weight);
+               RefchfVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->refchf->at(iref),weight);
+               RefnhfVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->refnhf->at(iref),weight);
+               RefnefVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->refnef->at(iref),weight);
+               RefcefVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->refcef->at(iref),weight);
+               RefmufVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->refmuf->at(iref),weight);
+               RefchmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->refchmult->at(iref),weight);
+               RefnmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->refnmult->at(iref),weight);
 
             }
 
