@@ -1015,9 +1015,12 @@ int main(int argc,char**argv)
                   flav = JRAEvt->refpdgid_parton_algo->at(iref);
                else if (flavorDef == FlavDef::Hadron)
                   flav = JRAEvt->refpdgid_hadron->at(iref);
-               else if (flavorDef == FlavDef::HadronParton)
-                  flav = abs(JRAEvt->refpdgid_hadron->at(iref)) > 0 ? abs(JRAEvt->refpdgid_hadron->at(iref)) : abs(JRAEvt->refpdgid_parton_physics->at(iref));
-
+               else if (flavorDef == FlavDef::HadronParton) {
+                  int partonFlav = abs(JRAEvt->refpdgid_parton_physics->at(iref));
+                  partonFlav = (partonFlav >= 4) ?  0 : partonFlav;
+                  // ignore if parton flav says b or c
+                  flav = abs(JRAEvt->refpdgid_hadron->at(iref)) > 0 ? abs(JRAEvt->refpdgid_hadron->at(iref)) : partonFlav;
+               }
                flav = abs(flav);
 
                // Only use jets if match our desired pdgid
