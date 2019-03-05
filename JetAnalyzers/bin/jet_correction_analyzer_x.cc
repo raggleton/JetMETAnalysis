@@ -486,18 +486,18 @@ int main(int argc,char**argv)
          continue;
       }
       string algName = algs[a];
-      if (!doflavor) {
-         auto loc = algName.find("l");
-         if (loc != string::npos) {
-            algName = algName.substr(0, loc);
-            cout << "algName: " << algName << endl;
-         } else {
-            cout << "Couldn't find l" << endl;
-         }
-         for(unsigned int ilevel=0; ilevel<levels.size(); ilevel++) {
-            cout << getPostfix(postfix,algName,levels[ilevel]) << endl;
-         }
-      }
+      // if (!doflavor) {
+      //    auto loc = algName.find("l");
+      //    if (loc != string::npos) {
+      //       algName = algName.substr(0, loc);
+      //       cout << "algName: " << algName << endl;
+      //    } else {
+      //       cout << "Couldn't find l" << endl;
+      //    }
+      //    for(unsigned int ilevel=0; ilevel<levels.size(); ilevel++) {
+      //       cout << getPostfix(postfix,algName,levels[ilevel]) << endl;
+      //    }
+      // }
 
       cout<<"jet algorithm: "<<algs[a]<<endl;
       cout<<"correction level: "<<JetInfo::get_correction_levels(levels,L1FastJet)<<endl;
@@ -967,7 +967,7 @@ int main(int argc,char**argv)
             if (etamax>0 && TMath::Abs(eta)>etamax) continue;
             float pt     = JRAEvt->jtpt->at(iref);
             if (pt > 14000) {
-               cout << "WARNING::pt>14000 GeV (pt = " << pt << " GeV, eta = "<< eta << ")." << endl << "Skipping this jet." << endl;
+               cout << "WARNING::pt>14000 GeV (pt = " << pt << " GeV, eta = "<< eta << ")." << endl << "Gen jet pt: " << ptgen << endl << "Skipping this jet." << endl;
                continue;
             }
             if (drmax.size()>0 && JRAEvt->refdrjt->at(iref) > drmax[a]) continue;
