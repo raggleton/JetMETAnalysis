@@ -570,7 +570,7 @@ for algo in all_algos:
                         # "levels": "" if "nopu" in sample_dict['name'].lower() else "-levels %s" % JEC_LEVELS,
                         "levels": "-levels %s" % JEC_LEVELS,
                         "mypath": sample_dict['era_dir'],
-                        "suffix": "_".join([sample_dict['name'], this_append, flav_name]),
+                        "suffix": "_".join([sample_dict['name'], this_append, flav_name, str(ind)]),
                         "nrefmax": sample_dict.get('nrefmax', 0),
                         "drmin": dr_min,
                         "alpha": sample_dict.get('alpha', 0),
