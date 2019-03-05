@@ -15,6 +15,7 @@
 #include "JetMETAnalysis/JetUtilities/interface/JRAEvent.h"
 #include "JetMETAnalysis/JetUtilities/interface/ProgressBar.hh"
 
+#include "DataFormats/Math/interface/deltaPhi.h"
 #include "DataFormats/Math/interface/deltaR.h"
 #include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
 #include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
@@ -110,6 +111,8 @@ string getPostfix(vector<string> postfix, string alg, int level);
 // for sorting TLorentzVectors by pt
 bool sort_by_pt(const TLorentzVector & a, const TLorentzVector & b);
 
+// for doing a / b safely to avoid NaNs
+float safe_ratio(float a, float b);
 
 enum class FlavDef {
    Physics,
@@ -389,6 +392,19 @@ int main(int argc,char**argv)
       char name[1024];
 
       TH1F *pThatDistribution(nullptr);
+      TH1F *refPtAllDistribution(nullptr);
+      TH1F *refPtLeadingDistribution(nullptr);
+      TH1F *jtPtAllDistribution(nullptr);
+      TH1F *jtPtLeadingDistribution(nullptr);
+      TH1F *refEtaAllDistribution(nullptr);
+      TH1F *refEtaLeadingDistribution(nullptr);
+      TH1F *jtEtaAllDistribution(nullptr);
+      TH1F *jtEtaLeadingDistribution(nullptr);
+      TH1F *nPUDistribution(nullptr);
+      TH1F *nTrueIntDistribution(nullptr);
+      TH1F *nPVDistribution(nullptr);
+      TH1F *rhoDistribution(nullptr);
+      TH1F *nRefDistribution(nullptr);
       vector<TH2F*> RelRspVsRefPt;
       TH2F *RelRspVsJetEta[NPtBins];
       vector<TH2F*> JtchfVsRefPt;
@@ -407,6 +423,17 @@ int main(int argc,char**argv)
       vector<TH2F*> RefmufVsRefPt;
       vector<TH2F*> RefchmultVsRefPt;
       vector<TH2F*> RefnmultVsRefPt;
+      vector<TH2F*> JtRefchfRatioVsRefPt;
+      vector<TH2F*> JtRefnhfRatioVsRefPt;
+      vector<TH2F*> JtRefnefRatioVsRefPt;
+      vector<TH2F*> JtRefcefRatioVsRefPt;
+      vector<TH2F*> JtRefmufRatioVsRefPt;
+      vector<TH2F*> JtRefchmultRatioVsRefPt;
+      vector<TH2F*> JtRefnmultRatioVsRefPt;
+      TH2F* RefPtRatioVsRefPtAve(nullptr);
+      TH2F* RefPtAsymVsRefPtAve(nullptr);
+      TH2F* RefDEtaVsRefPtAve(nullptr);
+      TH2F* RefDPhiVsRefPtAve(nullptr);
       TH3F *RespVsEtaVsPt(nullptr);
       TH3F *ScaleVsEtaVsPt(nullptr);
       TProfile *RelRspVsSumPt(nullptr);
@@ -506,6 +533,58 @@ int main(int argc,char**argv)
       //
       pThatDistribution = new TH1F("pThat","pThat",(int)vpt[NPtBins]/10.0,vpt[0],vpt[NPtBins]);
       pThatDistribution->Sumw2();
+
+      refPtAllDistribution = new TH1F("refPtAll", "refPtAll", (int)vpt[NPtBins]/10.0,vpt[0],vpt[NPtBins]);
+      refPtAllDistribution->Sumw2();
+
+      refPtLeadingDistribution = new TH1F("refPtLeading", "refPtLeading", (int)vpt[NPtBins]/10.0,vpt[0],vpt[NPtBins]);
+      refPtLeadingDistribution->Sumw2();
+
+      jtPtAllDistribution = new TH1F("jtPtAll", "jtPtAll", (int)vpt[NPtBins]/10.0,vpt[0],vpt[NPtBins]);
+      jtPtAllDistribution->Sumw2();
+
+      jtPtLeadingDistribution = new TH1F("jtPtLeading", "jtPtLeading", (int)vpt[NPtBins]/10.0,vpt[0],vpt[NPtBins]);
+      jtPtLeadingDistribution->Sumw2();
+
+      refEtaAllDistribution = new TH1F("refEtaAll", "refEtaAll", 50, -5, 5);
+      refEtaAllDistribution->Sumw2();
+
+      refEtaLeadingDistribution = new TH1F("refEtaLeading", "refEtaLeading", 50, -5, 5);
+      refEtaLeadingDistribution->Sumw2();
+
+      jtEtaAllDistribution = new TH1F("jtEtaAll", "jtEtaAll", 50, -5, 5);
+      jtEtaAllDistribution->Sumw2();
+
+      jtEtaLeadingDistribution = new TH1F("jtEtaLeading", "jtEtaLeading", 50, -5, 5);
+      jtEtaLeadingDistribution->Sumw2();
+
+      nPUDistribution = new TH1F("nPU", "nPU", 100, 0, 100);
+      nPUDistribution->Sumw2();
+
+      nTrueIntDistribution = new TH1F("nTrueInt", "nTrueInt", 100, 0, 100);
+      nTrueIntDistribution->Sumw2();
+
+      nPVDistribution = new TH1F("nPV", "nPV", 100, 0, 100);
+      nPVDistribution->Sumw2();
+
+      rhoDistribution = new TH1F("rho", "rho", 75, 0, 75);
+      rhoDistribution->Sumw2();
+
+      nRefDistribution = new TH1F("nRef", "nRef", 20, 0, 20);
+      nRefDistribution->Sumw2();
+
+      RefPtRatioVsRefPtAve = new TH2F("RefPtRatioVsRefPtAve", "RefPtRatioVsRefPtAve", NPtBins, vpt, 100, 0, 1);
+      RefPtRatioVsRefPtAve->Sumw2();
+
+      RefPtAsymVsRefPtAve = new TH2F("RefPtAsymVsRefPtAve", "RefPtAsymVsRefPtAve", NPtBins, vpt, 100, 0, 1);
+      RefPtAsymVsRefPtAve->Sumw2();
+
+      RefDEtaVsRefPtAve = new TH2F("RefDEtaVsRefPtAve", "RefDEtaVsRefPtAve", NPtBins, vpt, 100, 0, 5);
+      RefDEtaVsRefPtAve->Sumw2();
+
+      RefDPhiVsRefPtAve = new TH2F("RefDPhiVsRefPtAve", "RefDPhiVsRefPtAve", NPtBins, vpt, 160, 0, 3.2);
+      RefDPhiVsRefPtAve->Sumw2();
+
       for(int ieta=0; ieta<NETA; ieta++) {
          TString hname = Form("RelRspVsRefPt_JetEta%sto%s",eta_boundaries[ieta],eta_boundaries[ieta+1]);
          RelRspVsRefPt.push_back(new TH2F(hname,hname,NPtBins,vpt,nbinsrelrsp,relrspmin,relrspmax));
@@ -577,7 +656,38 @@ int main(int argc,char**argv)
          RefnmultVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NMultBins, 0, NMultBins));
          RefnmultVsRefPt.back()->Sumw2();
 
+         int NRatioBins = 100;
+         float ratioMax = 5;
+         hname = Form("JtRefchfRatioVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtRefchfRatioVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NRatioBins, 0, ratioMax));
+         JtRefchfRatioVsRefPt.back()->Sumw2();
+
+         hname = Form("JtRefnhfRatioVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtRefnhfRatioVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NRatioBins, 0, ratioMax));
+         JtRefnhfRatioVsRefPt.back()->Sumw2();
+
+         hname = Form("JtRefnefRatioVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtRefnefRatioVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NRatioBins, 0, ratioMax));
+         JtRefnefRatioVsRefPt.back()->Sumw2();
+
+         hname = Form("JtRefcefRatioVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtRefcefRatioVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NRatioBins, 0, ratioMax));
+         JtRefcefRatioVsRefPt.back()->Sumw2();
+
+         hname = Form("JtRefmufRatioVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtRefmufRatioVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NRatioBins, 0, ratioMax));
+         JtRefmufRatioVsRefPt.back()->Sumw2();
+
+         hname = Form("JtRefchmultRatioVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtRefchmultRatioVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NRatioBins, 0, ratioMax));
+         JtRefchmultRatioVsRefPt.back()->Sumw2();
+
+         hname = Form("JtRefnmultRatioVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtRefnmultRatioVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, NRatioBins, 0, ratioMax));
+         JtRefnmultRatioVsRefPt.back()->Sumw2();
+
       }
+
       RespVsEtaVsPt = new TH3F("RespVsEtaVsPt","RespVsEtaVsPt",NPtBins,vpt,NETA,veta,nbinsrelrsp,vresp);
       RespVsEtaVsPt->Sumw2();
       ScaleVsEtaVsPt = new TH3F("ScaleVsEtaVsPt","ScaleVsEtaVsPt",NPtBins,vpt,NETA,veta,nbinsrelrsp,vcorr);
@@ -962,6 +1072,9 @@ int main(int argc,char**argv)
 
          // Now go through and fill hists
          uint jetCounter = 0;
+         float refjet1Pt = 0;
+         float refjet1Phi = 0;
+         float refjet1Eta = 0;
          for (unsigned int iref : goodJetInds) {
             if (nrefmax>0 && jetCounter==nrefmax) break;
 
@@ -971,7 +1084,9 @@ int main(int argc,char**argv)
             float eta    = JRAEvt->jteta->at(iref);
             float abseta = fabs(eta);
             float pt     = JRAEvt->jtpt->at(iref);
-            float plotEta = abseta;
+            float plotEta = eta;
+            float refEta = JRAEvt->refeta->at(iref);
+            float refPhi = JRAEvt->refphi->at(iref);
 
             if(JetCorrector) {
                JetCorrector->setJetPt(pt);
@@ -1030,12 +1145,11 @@ int main(int argc,char**argv)
                } else {
                   if (flav>2 || flav==0) continue;
                }
+
             }
 
             // Check no genjet-genjet overlaps
             if (drmin>0) {
-               float refEta = JRAEvt->refeta->at(iref);
-               float refPhi = JRAEvt->refphi->at(iref);
                bool overlap = false;
                for (unsigned int jref : goodJetInds) {
                   if (jref == iref) {
@@ -1068,13 +1182,44 @@ int main(int argc,char**argv)
             if(pThatReweight!=-9999) weight*=pow(pthat/15.,pThatReweight);
 
 
-            if(evt_fill) {pThatDistribution->Fill(pthat,weight); evt_fill=false;}
+            // things to do once per event
+            if(evt_fill) {
+               pThatDistribution->Fill(pthat,weight);
+               nPUDistribution->Fill(JRAEvt->npus->at(iIT), weight);
+               nTrueIntDistribution->Fill(JRAEvt->tnpus->at(iIT), weight);
+               nPVDistribution->Fill(JRAEvt->npv, weight);
+               rhoDistribution->Fill(rho, weight);
+               nRefDistribution->Fill(JRAEvt->nref, weight);
+               evt_fill=false;
+            }
             //-4 to cut off the negative side of the detector
             if(eta<veta[NETA] && eta > veta[0]) {
                if(debug && ientry>5400000) {
                   cout << "fabs(eta)="<< fabs(eta) << endl;
                   cout << "veta[NETA]=" << veta[NETA] << endl;
                   cout << "getBin(fabs(eta),veta,NETA)-4=" << getBin(fabs(eta),veta,NETA)-(NETA/2) << endl;
+               }
+               refPtAllDistribution->Fill(ptgen,weight);
+               jtPtAllDistribution->Fill(scale*pt,weight);
+               refEtaAllDistribution->Fill(JRAEvt->refeta->at(iref),weight);
+               jtEtaAllDistribution->Fill(eta,weight);
+               if (jetCounter == 1) {
+                  refPtLeadingDistribution->Fill(ptgen,weight);
+                  jtPtLeadingDistribution->Fill(scale*pt,weight);
+                  refEtaLeadingDistribution->Fill(JRAEvt->refeta->at(iref),weight);
+                  jtEtaLeadingDistribution->Fill(eta,weight);
+                  refjet1Pt = ptgen;
+                  refjet1Phi = refPhi;
+                  refjet1Eta = refEta;
+                  // jet1Pt = scale*JRAEvt->jtpt->at(iref);
+               }
+               if (jetCounter == 2){
+                  float ptAve = 0.5*(refjet1Pt+ptgen);
+                  RefPtRatioVsRefPtAve->Fill(ptAve, ptgen / refjet1Pt, weight);
+                  RefPtAsymVsRefPtAve->Fill(ptAve, (refjet1Pt - ptgen) / (refjet1Pt+ptgen), weight);
+                  float dPhi = deltaPhi(refjet1Phi, refPhi);
+                  RefDPhiVsRefPtAve->Fill(ptAve, fabs(dPhi), weight);
+                  RefDEtaVsRefPtAve->Fill(ptAve, fabs(refjet1Eta-refEta), weight);
                }
                RelRspVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,relrsp,weight);
                JtchfVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtchf->at(iref),weight);
@@ -1093,6 +1238,14 @@ int main(int argc,char**argv)
                RefmufVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->refmuf->at(iref),weight);
                RefchmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->refchmult->at(iref),weight);
                RefnmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->refnmult->at(iref),weight);
+
+               JtRefchfRatioVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,safe_ratio(JRAEvt->jtchf->at(iref), JRAEvt->refchf->at(iref)),weight);
+               JtRefnhfRatioVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,safe_ratio(JRAEvt->jtnhf->at(iref), JRAEvt->refnhf->at(iref)),weight);
+               JtRefnefRatioVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,safe_ratio(JRAEvt->jtnef->at(iref), JRAEvt->refnef->at(iref)),weight);
+               JtRefcefRatioVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,safe_ratio(JRAEvt->jtcef->at(iref), JRAEvt->refcef->at(iref)),weight);
+               JtRefmufRatioVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,safe_ratio(JRAEvt->jtmuf->at(iref), JRAEvt->refmuf->at(iref)),weight);
+               JtRefchmultRatioVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,safe_ratio(JRAEvt->jtchmult->at(iref), JRAEvt->refchmult->at(iref)),weight);
+               JtRefnmultRatioVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,safe_ratio(JRAEvt->jtnmult->at(iref), JRAEvt->refnmult->at(iref)),weight);
 
             }
 
@@ -1555,4 +1708,13 @@ string getPostfix(vector<string> postfix, string alg, int level)
 bool sort_by_pt(const TLorentzVector & a, const TLorentzVector & b)
 {
    return a.Pt() > b.Pt();
+}
+
+float safe_ratio(float a, float b)
+{
+   if (b == 0) {
+      return 999999999.;
+   } else {
+      return a / b;
+   }
 }
