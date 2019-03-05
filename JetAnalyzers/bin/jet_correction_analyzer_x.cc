@@ -2,6 +2,7 @@
 //
 // jet_correction_analyzer_x
 // -------------------------
+// binning is controlled by Settings.h
 //
 //            12/08/2011 Alexx Perloff  <aperloff@physics.tamu.edu>
 ///////////////////////////////////////////////////////////////////
@@ -1017,7 +1018,7 @@ int main(int argc,char**argv)
                   flav = JRAEvt->refpdgid_hadron->at(iref);
                else if (flavorDef == FlavDef::HadronParton) {
                   int partonFlav = abs(JRAEvt->refpdgid_parton_physics->at(iref));
-                  partonFlav = (partonFlav >= 4) ?  0 : partonFlav;
+                  partonFlav = (partonFlav == 4 || partonFlav == 5) ?  0 : partonFlav;
                   // ignore if parton flav says b or c
                   flav = abs(JRAEvt->refpdgid_hadron->at(iref)) > 0 ? abs(JRAEvt->refpdgid_hadron->at(iref)) : partonFlav;
                }
