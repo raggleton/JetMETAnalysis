@@ -4,6 +4,8 @@ import os
 import subprocess
 from itertools import izip_longest
 from glob import glob
+from uuid import uuid1
+
 
 def create_condor_template_dict():
     template = {
@@ -36,7 +38,19 @@ def grouper(iterable, n, fillvalue=None):
     return izip_longest(fillvalue=fillvalue, *args)
 
 
+def construct_jec_name(jec_levels):
+    name = ""
+    if "1" in jec_levels:
+        name += "L1FastJet"
+    if "2" in jec_levels:
+        name += "L2"
+    if "3" in jec_levels:
+        name += "L3"
+    return name
+
+
 infos = [
+# name, outputdir, inputdir/path (with wildcards)
 
 # ("QCD_Pt_15to30_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_15to30_pythia_02_Mar_18_newGenJetFlav_noJEC/*/*/"),
 # ("QCD_Pt_30to50_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_30to50_pythia_28_Feb_18_newGenJetFlav_noJEC/*/*/"),
@@ -128,32 +142,50 @@ infos = [
 
 # ("QCD_Pt_15to7000_Herwig_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/crab_QCD_Pt-15to7000_herwig_16_Apr_18_newFlav_noJEC_storePFCand/180416_133226/0000/"),
 
-("QCD_Pt_15to7000_Herwig_NoJEC_newFlav_small", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/crab_QCD_Pt-15to7000_herwig_18_Jun_18_noJEC_storePFCand2_storePhysicsAlgoHadronFlav/*/*/"),
+# ("QCD_Pt_15to7000_Herwig_NoJEC_newFlav_small", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/crab_QCD_Pt-15to7000_herwig_18_Jun_18_noJEC_storePFCand2_storePhysicsAlgoHadronFlav/*/*/"),
 
-("QCD_Pt_15to7000_Herwig_NoJEC_newFlav_ext", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/crab_QCD_Pt-15to7000_ext1_herwig_22_Sep_18_noJEC_storePhysicsAlgoHadronFlav_v2/*/*/"),
+# ("QCD_Pt_15to7000_Herwig_NoJEC_newFlav_ext", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/crab_QCD_Pt-15to7000_ext1_herwig_22_Sep_18_noJEC_storePhysicsAlgoHadronFlav_v2/*/*/"),
 
-# ("GJets_Herwig_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/GJet_Pt-15To6000_TuneCUETHS1-Flat_13TeV_herwigpp/crab_GJet_Pt-15To6000_TuneCUETHS1-Flat_13TeV_herwigpp_herwig_16_Apr_18_newFlav_noJEC_storePFCand/180416_133255/0000/"),
+# ("QCD_Pt_15to7000_Herwig7_NoJEC_NoPU_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCH2_Flat_13TeV_herwig7/crab_QCD_Pt-15to7000_herwig7_noPU_02_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/190202_132418/0000/"),
+# ("QCD_Pt_15to7000_Herwigpp_NoJEC_NoPU_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/crab_QCD_Pt-15to7000_herwig_noPU_02_Feb_19_noJEC_storeAllFlav_genEF_miniaod/190202_134342/0000/"),
 
-# ("TT_Herwig_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/TT_TuneEE5C_13TeV-powheg-herwigpp/crab_TT_TuneEE5C_13TeV-powheg-herwigpp_ext_powheg-herwig_16_Apr_18_newFlav_noJEC_storePFCand/180416_133156/0000/"),
+# ("QCD_Pt_15to7000_Herwigpp_miniaod_ext", "QCD_Pt_15to7000_Herwigpp_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/crab_QCD_Pt-15to7000_ext1_herwig_HS1_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/*/"),
 
-# ("TT_Pythia_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/crab_TT_TuneCUETP8M2T4_13TeV-powheg-pythia8_16_Apr_18_newFlav_noJEC_storePFCand2/*/0000/"),
+# ("QCD_Pt_15to30_Pythia8_CUETP8M1_miniaod", "QCD_Pt_Pythia8_CUETP8M1_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_15to30_pythia_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/*/"),
+# ("QCD_Pt_30to50_Pythia8_CUETP8M1_miniaod", "QCD_Pt_Pythia8_CUETP8M1_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_30to50_pythia_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/*/"),
+# ("QCD_Pt_50to80_Pythia8_CUETP8M1_miniaod", "QCD_Pt_Pythia8_CUETP8M1_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_50to80_pythia_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/*/"),
+# ("QCD_Pt_80to120_Pythia8_CUETP8M1_miniaod", "QCD_Pt_Pythia8_CUETP8M1_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_80to120_pythia_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/*/"),
+# ("QCD_Pt_120to170_Pythia8_CUETP8M1_miniaod", "QCD_Pt_Pythia8_CUETP8M1_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_120to170_pythia_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/*/"),
+# ("QCD_Pt_170to300_Pythia8_CUETP8M1_miniaod", "QCD_Pt_Pythia8_CUETP8M1_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_170to300_pythia_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/*/"),
+# ("QCD_Pt_300to470_Pythia8_CUETP8M1_miniaod", "QCD_Pt_Pythia8_CUETP8M1_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_300to470_pythia_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/*/"),
+# ("QCD_Pt_470to600_Pythia8_CUETP8M1_miniaod", "QCD_Pt_Pythia8_CUETP8M1_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_470to600_pythia_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/*/"),
+# ("QCD_Pt_600to800_Pythia8_CUETP8M1_miniaod", "QCD_Pt_Pythia8_CUETP8M1_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_600to800_pythia_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/*/"),
+# ("QCD_Pt_800to1000_Pythia8_CUETP8M1_miniaod", "QCD_Pt_Pythia8_CUETP8M1_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_800to1000_pythia_3_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/*/"),
+# ("QCD_Pt_1000to1400_Pythia8_CUETP8M1_miniaod", "QCD_Pt_Pythia8_CUETP8M1_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_1000to1400_pythia_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/*/"),
+# ("QCD_Pt_1400to1800_Pythia8_CUETP8M1_miniaod", "QCD_Pt_Pythia8_CUETP8M1_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_1400to1800_pythia_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/*/"),
+# ("QCD_Pt_1800to2400_Pythia8_CUETP8M1_miniaod", "QCD_Pt_Pythia8_CUETP8M1_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_1800to2400_pythia_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/*/"),
+# ("QCD_Pt_2400to3200_Pythia8_CUETP8M1_miniaod", "QCD_Pt_Pythia8_CUETP8M1_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_2400to3200_pythia_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/*/"),
+# ("QCD_Pt_3200toInf_Pythia8_CUETP8M1_miniaod", "QCD_Pt_Pythia8_CUETP8M1_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8/crab_QCD_Pt_3200toInf_pythia_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/*/"),
 
-# ("Dijet_Powheg_Pythia_NoJEC_newFlav", "/pnfs/desy.de/cms/tier2/store/user/raggleto/Dijet_NNPDF30_powheg_pythia8_TuneCUETP8M1_13TeV_bornktmin150/crab_Dijet_NNPDF30_powheg_pythia_04_Apr_18_newGenJetFlav_noJEC_fixAK8matching/180404_151523/0000/"),
+("QCD_Pt_15to7000_Herwig7_miniaod", "QCD_Pt_15to7000_Herwig7_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCH2_Flat_13TeV_herwig7/crab_QCD_Pt-15to7000_herwig7_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/"),
 
-# ('GJets_HT-40To100_NoJEC_newFlav', '/pnfs/desy.de/cms/tier2/store/user/raggleto/GJets_HT-40To100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_GJets_HT-40To100_mg-pythia_28_Apr_18_newFlav_noJEC_storePFCand2/180428_143606/0000'),
-# ('GJets_HT-40To100_ext_NoJEC_newFlav', '/pnfs/desy.de/cms/tier2/store/user/raggleto/GJets_HT-40To100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_GJets_HT-40To100_ext1_mg-pythia_28_Apr_18_newFlav_noJEC_storePFCand2/180428_143623/0000'),
-# ('GJets_HT-100To200_NoJEC_newFlav', '/pnfs/desy.de/cms/tier2/store/user/raggleto/GJets_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_GJets_HT-100To200_mg-pythia_28_Apr_18_newFlav_noJEC_storePFCand2/180428_143253/0000'),
-# ('GJets_HT-100To200_ext_NoJEC_newFlav', '/pnfs/desy.de/cms/tier2/store/user/raggleto/GJets_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_GJets_HT-100To200_ext1_mg-pythia_28_Apr_18_newFlav_noJEC_storePFCand2/180428_143330/0000'),
-# ('GJets_HT-200To400_NoJEC_newFlav', '/pnfs/desy.de/cms/tier2/store/user/raggleto/GJets_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_GJets_HT-200To400_mg-pythia_28_Apr_18_newFlav_noJEC_storePFCand2/180428_143408/0000'),
-# ('GJets_HT-200To400_ext_NoJEC_newFlav', '/pnfs/desy.de/cms/tier2/store/user/raggleto/GJets_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_GJets_HT-200To400_ext1_mg-pythia_28_Apr_18_newFlav_noJEC_storePFCand2/180428_143441/0000'),
-# ('GJets_HT-400To600_NoJEC_newFlav', '/pnfs/desy.de/cms/tier2/store/user/raggleto/GJets_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_GJets_HT-400To600_mg-pythia_28_Apr_18_newFlav_noJEC_storePFCand2/180428_143515/0000'),
-# ('GJets_HT-400To600_ext_NoJEC_newFlav', '/pnfs/desy.de/cms/tier2/store/user/raggleto/GJets_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_GJets_HT-400To600_ext1_mg-pythia_28_Apr_18_newFlav_noJEC_storePFCand2/180428_143532/0000'),
-# ('GJets_HT-600ToInf_NoJEC_newFlav', '/pnfs/desy.de/cms/tier2/store/user/raggleto/GJets_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_GJets_HT-600ToInf_mg-pythia_28_Apr_18_newFlav_noJEC_storePFCand2/180428_143640/0000'),
-# ('GJets_HT-600ToInf_ext_NoJEC_newFlav', '/pnfs/desy.de/cms/tier2/store/user/raggleto/GJets_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/crab_GJets_HT-600ToInf_ext1_mg-pythia_28_Apr_18_newFlav_noJEC_storePFCand2/180428_143714/0000'),
+("QCD_Pt_15to30_Pythia8_CP5_miniaod", "QCD_Pt_Pythia8_CP5_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_15to30_TuneCP5_13TeV_pythia8/crab_QCD_Pt_15to30_ext1_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod//*/*/"),
+("QCD_Pt_30to50_Pythia8_CP5_miniaod", "QCD_Pt_Pythia8_CP5_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_30to50_TuneCP5_13TeV_pythia8/crab_QCD_Pt_30to50_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/"),
+("QCD_Pt_50to80_Pythia8_CP5_miniaod", "QCD_Pt_Pythia8_CP5_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/crab_QCD_Pt_50to80_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/"),
+("QCD_Pt_80to120_Pythia8_CP5_miniaod", "QCD_Pt_Pythia8_CP5_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/crab_QCD_Pt_80to120_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/"),
+("QCD_Pt_120to170_Pythia8_CP5_miniaod", "QCD_Pt_Pythia8_CP5_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_120to170_TuneCP5_13TeV_pythia8/crab_QCD_Pt_120to170_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/"),
+("QCD_Pt_170to300_Pythia8_CP5_miniaod", "QCD_Pt_Pythia8_CP5_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_170to300_TuneCP5_13TeV_pythia8/crab_QCD_Pt_170to300_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/"),
+("QCD_Pt_300to470_Pythia8_CP5_miniaod", "QCD_Pt_Pythia8_CP5_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_300to470_TuneCP5_13TeV_pythia8/crab_QCD_Pt_300to470_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/"),
+("QCD_Pt_470to600_Pythia8_CP5_miniaod", "QCD_Pt_Pythia8_CP5_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_470to600_TuneCP5_13TeV_pythia8/crab_QCD_Pt_470to600_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/"),
+("QCD_Pt_600to800_Pythia8_CP5_miniaod", "QCD_Pt_Pythia8_CP5_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_600to800_TuneCP5_13TeV_pythia8/crab_QCD_Pt_600to800_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/"),
+("QCD_Pt_800to1000_Pythia8_CP5_miniaod", "QCD_Pt_Pythia8_CP5_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_800to1000_TuneCP5_13TeV_pythia8/crab_QCD_Pt_800to1000_ext1_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/"),
+("QCD_Pt_1000to1400_Pythia8_CP5_miniaod", "QCD_Pt_Pythia8_CP5_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8/crab_QCD_Pt_1000to1400_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/"),
+("QCD_Pt_1400to1800_Pythia8_CP5_miniaod", "QCD_Pt_Pythia8_CP5_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/crab_QCD_Pt_1400to1800_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/"),
+("QCD_Pt_1800to2400_Pythia8_CP5_miniaod", "QCD_Pt_Pythia8_CP5_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8/crab_QCD_Pt_1800to2400_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/"),
+("QCD_Pt_2400to3200_Pythia8_CP5_miniaod", "QCD_Pt_Pythia8_CP5_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8/crab_QCD_Pt_2400to3200_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/"),
+("QCD_Pt_3200toInf_Pythia8_CP5_miniaod", "QCD_Pt_Pythia8_CP5_miniaod", "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/crab_QCD_Pt_3200toInf_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/"),
 
-# ('DYJetsToLL_MG_Herwig_NoJEC_newFlav', '/pnfs/desy.de/cms/tier2/store/user/raggleto/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-herwigpp_30M/crab_DYJetsToLL_M-50_mg-herwig-proper_28_Apr_18_newFlav_noJEC_storePFCand2/180428_143731/*')
 
-# ('DYJetsToLL_Herwig_NoJEC_newFlav', '/pnfs/desy.de/cms/tier2/store/user/raggleto/DYJetsToLL_M-50_TuneCUETHS1_13TeV-madgraphMLM-herwigpp/crab_DYJetsToLL_M-50_herwig_25_May_18_newFlav_noJEC_storePFCand2/180525_085501/*')
 ]
 
 
@@ -171,7 +203,11 @@ flav = "All"
 # output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
 # output_dir = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_applyL2"+flav
 # output_dir = "QCD_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
-output_dir = "QCD_Pt_Herwig_NoJEC_jtptmin4_PhysicsAlgoHadron"
+# output_dir = "QCD_Pt_Herwig_NoJEC_jtptmin4_PhysicsAlgoHadron"
+# output_dir = "QCD_Pt_15to7000_Herwig7_NoJEC_NoPU_miniaod_Autumn18_V1_MC"
+
+# output_dir = "QCD_Pt_15to7000_Herwigpp_NoPU_miniaod"
+
 # output_dir = "DYJets_HT_NoJEC_relPtHatCut5_jtptmin4"
 # output_dir = "DYJets_HT_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10"
 # output_dir = "GJet_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF"
@@ -188,16 +224,17 @@ output_dir = "QCD_Pt_Herwig_NoJEC_jtptmin4_PhysicsAlgoHadron"
 
 useAlgLevel = "true"
 if flav == "All":
-    jec_era = "Summer16_07Aug2017_V11_L1fix_MC"
-    jec_era = "Summer16_07Aug2017_V15_MC"
-    jec_path = "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JECDatabase/textFiles/"+jec_era
+    # jec_era = "Autumn18_V1_MC"  # Autumn18
+    jec_era = "Autumn18_V3_MC"  # Autumn18
+    # jec_era = "Summer16_07Aug2017_V20_MC"  # summer16
+    jec_path = "/nfs/dust/cms/user/aggleton/JEC/CMSSW_10_2_6/src/JetMETAnalysis/JECDatabase/textFiles/"+jec_era
     useAlgLevel = "false"
-    output_dir += "_L1FastJet_"+jec_era
 else:
     jec_path = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
     jec_era = "Summer16_07Aug2017_V10_standardMedianErr_meanWhenSmall_rspRangeLarge_fitMin15_useFitRange_"+flav
 
 jec_levels = "1"
+jec_name = construct_jec_name(jec_levels)
 
 # keep this small as cannot handle long lists of files (9993 char limit?)
 Nfiles = 25
@@ -218,7 +255,10 @@ job += "\nqueue\n"
 job_args = []
 job_names = []
 
-for name, input_dir in infos:
+for name, output_dir, input_dir in infos:
+    if flav == "All":
+        output_dir += "_"+jec_name+"_"+jec_era
+
     # Put all files from given sample in own directory to make future steps easier
     this_output_dir = os.path.join(output_dir, name)
     if not os.path.isdir(this_output_dir):
@@ -232,9 +272,9 @@ for name, input_dir in infos:
 
         for algo in all_algos:
             args_dict = {
-                "name": "JAJ_"+name+"_"+algo.split(":")[0]+"_"+str(ind),
+                "name": "JAJ_"+name+"_"+jec_name+"_"+algo.split(":")[0]+"_"+str(ind),
                 "inputf": " ".join(group).strip(),
-                "outputf": os.path.join(this_output_dir, "jaj_%s_%s_L1FastJet_%d.root" % (name, algo.split(":")[0], ind)),
+                "outputf": os.path.join(this_output_dir, "jaj_%s_%s_%s_%d.root" % (name, algo.split(":")[0], jec_name, ind)),
                 "algos": algo,
             }
             # job += "\n".join(["%s=%s" % (k, v) for k,v in args_dict.items()])
@@ -247,7 +287,7 @@ print job
 if len(job_names) == 0:
     raise RuntimeError("Didn't find any files to run over!")
 
-job_filename = "htc_do_jet_apply_jec_x_job_%s2.condor" % flav
+job_filename = "htc_do_jet_apply_jec_x_job_%s_%s.condor" % (flav, uuid1())
 with open(job_filename, 'w') as f:
     f.write(job)
 
