@@ -407,6 +407,7 @@ int main(int argc,char**argv)
       TH1F *nRefDistribution(nullptr);
       vector<TH2F*> RelRspVsRefPt;
       TH2F *RelRspVsJetEta[NPtBins];
+      vector<TH2F*> JECVsRefPt;
       vector<TH2F*> JtchfVsRefPt;
       vector<TH2F*> JtnhfVsRefPt;
       vector<TH2F*> JtnefVsRefPt;
@@ -589,6 +590,10 @@ int main(int argc,char**argv)
          TString hname = Form("RelRspVsRefPt_JetEta%sto%s",eta_boundaries[ieta],eta_boundaries[ieta+1]);
          RelRspVsRefPt.push_back(new TH2F(hname,hname,NPtBins,vpt,nbinsrelrsp,relrspmin,relrspmax));
          RelRspVsRefPt.back()->Sumw2();
+
+         hname = Form("JECVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JECVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, 100, 0, 5));
+         JECVsRefPt.back()->Sumw2();
 
          int NEfBins = 100;
          hname = Form("JtchfVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
@@ -1221,6 +1226,7 @@ int main(int argc,char**argv)
                   RefDPhiVsRefPtAve->Fill(ptAve, fabs(dPhi), weight);
                   RefDEtaVsRefPtAve->Fill(ptAve, fabs(refjet1Eta-refEta), weight);
                }
+               JECVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen, scale, weight);
                RelRspVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,relrsp,weight);
                JtchfVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtchf->at(iref),weight);
                JtnhfVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtnhf->at(iref),weight);
