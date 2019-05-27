@@ -1226,32 +1226,33 @@ int main(int argc,char**argv)
                   RefDPhiVsRefPtAve->Fill(ptAve, fabs(dPhi), weight);
                   RefDEtaVsRefPtAve->Fill(ptAve, fabs(refjet1Eta-refEta), weight);
                }
-               JECVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen, scale, weight);
-               RelRspVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,relrsp,weight);
-               JtchfVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtchf->at(iref),weight);
-               JtnhfVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtnhf->at(iref),weight);
-               JtnefVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtnef->at(iref),weight);
-               JtcefVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtcef->at(iref),weight);
-               JtmufVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtmuf->at(iref),weight);
-               JthfhfVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jthfhf->at(iref),weight);
-               JthfefVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jthfef->at(iref),weight);
-               JtchmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtchmult->at(iref),weight);
-               JtnmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->jtnmult->at(iref),weight);
-               RefchfVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->refchf->at(iref),weight);
-               RefnhfVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->refnhf->at(iref),weight);
-               RefnefVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->refnef->at(iref),weight);
-               RefcefVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->refcef->at(iref),weight);
-               RefmufVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->refmuf->at(iref),weight);
-               RefchmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->refchmult->at(iref),weight);
-               RefnmultVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,JRAEvt->refnmult->at(iref),weight);
+               int thisBin = getBin(plotEta,veta,NETA);
+               JECVsRefPt[thisBin]->Fill(ptgen, scale, weight);
+               RelRspVsRefPt[thisBin]->Fill(ptgen,relrsp,weight);
+               JtchfVsRefPt[thisBin]->Fill(ptgen,JRAEvt->jtchf->at(iref),weight);
+               JtnhfVsRefPt[thisBin]->Fill(ptgen,JRAEvt->jtnhf->at(iref),weight);
+               JtnefVsRefPt[thisBin]->Fill(ptgen,JRAEvt->jtnef->at(iref),weight);
+               JtcefVsRefPt[thisBin]->Fill(ptgen,JRAEvt->jtcef->at(iref),weight);
+               JtmufVsRefPt[thisBin]->Fill(ptgen,JRAEvt->jtmuf->at(iref),weight);
+               JthfhfVsRefPt[thisBin]->Fill(ptgen,JRAEvt->jthfhf->at(iref),weight);
+               JthfefVsRefPt[thisBin]->Fill(ptgen,JRAEvt->jthfef->at(iref),weight);
+               JtchmultVsRefPt[thisBin]->Fill(ptgen,JRAEvt->jtchmult->at(iref),weight);
+               JtnmultVsRefPt[thisBin]->Fill(ptgen,JRAEvt->jtnmult->at(iref),weight);
+               RefchfVsRefPt[thisBin]->Fill(ptgen,JRAEvt->refchf->at(iref),weight);
+               RefnhfVsRefPt[thisBin]->Fill(ptgen,JRAEvt->refnhf->at(iref),weight);
+               RefnefVsRefPt[thisBin]->Fill(ptgen,JRAEvt->refnef->at(iref),weight);
+               RefcefVsRefPt[thisBin]->Fill(ptgen,JRAEvt->refcef->at(iref),weight);
+               RefmufVsRefPt[thisBin]->Fill(ptgen,JRAEvt->refmuf->at(iref),weight);
+               RefchmultVsRefPt[thisBin]->Fill(ptgen,JRAEvt->refchmult->at(iref),weight);
+               RefnmultVsRefPt[thisBin]->Fill(ptgen,JRAEvt->refnmult->at(iref),weight);
 
-               JtRefchfRatioVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,safe_ratio(JRAEvt->jtchf->at(iref), JRAEvt->refchf->at(iref)),weight);
-               JtRefnhfRatioVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,safe_ratio(JRAEvt->jtnhf->at(iref), JRAEvt->refnhf->at(iref)),weight);
-               JtRefnefRatioVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,safe_ratio(JRAEvt->jtnef->at(iref), JRAEvt->refnef->at(iref)),weight);
-               JtRefcefRatioVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,safe_ratio(JRAEvt->jtcef->at(iref), JRAEvt->refcef->at(iref)),weight);
-               JtRefmufRatioVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,safe_ratio(JRAEvt->jtmuf->at(iref), JRAEvt->refmuf->at(iref)),weight);
-               JtRefchmultRatioVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,safe_ratio(JRAEvt->jtchmult->at(iref), JRAEvt->refchmult->at(iref)),weight);
-               JtRefnmultRatioVsRefPt[getBin(plotEta,veta,NETA)]->Fill(ptgen,safe_ratio(JRAEvt->jtnmult->at(iref), JRAEvt->refnmult->at(iref)),weight);
+               JtRefchfRatioVsRefPt[thisBin]->Fill(ptgen,safe_ratio(JRAEvt->jtchf->at(iref), JRAEvt->refchf->at(iref)),weight);
+               JtRefnhfRatioVsRefPt[thisBin]->Fill(ptgen,safe_ratio(JRAEvt->jtnhf->at(iref), JRAEvt->refnhf->at(iref)),weight);
+               JtRefnefRatioVsRefPt[thisBin]->Fill(ptgen,safe_ratio(JRAEvt->jtnef->at(iref), JRAEvt->refnef->at(iref)),weight);
+               JtRefcefRatioVsRefPt[thisBin]->Fill(ptgen,safe_ratio(JRAEvt->jtcef->at(iref), JRAEvt->refcef->at(iref)),weight);
+               JtRefmufRatioVsRefPt[thisBin]->Fill(ptgen,safe_ratio(JRAEvt->jtmuf->at(iref), JRAEvt->refmuf->at(iref)),weight);
+               JtRefchmultRatioVsRefPt[thisBin]->Fill(ptgen,safe_ratio(JRAEvt->jtchmult->at(iref), JRAEvt->refchmult->at(iref)),weight);
+               JtRefnmultRatioVsRefPt[thisBin]->Fill(ptgen,safe_ratio(JRAEvt->jtnmult->at(iref), JRAEvt->refnmult->at(iref)),weight);
 
             }
 
