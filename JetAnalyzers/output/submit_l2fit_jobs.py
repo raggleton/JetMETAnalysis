@@ -8,6 +8,7 @@ import os
 import subprocess
 from glob import glob
 from itertools import izip_longest
+from uuid import uuid1
 
 
 def float2str(num):
@@ -43,7 +44,7 @@ arguments = ('jet_l2_correction_x '
     '-input $(inputf) -algs $(algos) -useLastFitParams false '
     '-minRelCorErr $(minrelcorerr) -l2l3 true -histMet median -era $(era) '
     '-outputDir $(outputdir) -output $(outputfile) -batch true '
-    '-flavor $(pdgid) -fitMin $(fitmin) -l2pffit $(fitfunc) '
+    '$(flavstr) -fitMin $(fitmin) -l2pffit $(fitfunc) '
     '-setFitMinTurnover true -plateauBelowRangeMin true '
     '-chooseByMaxDiff true'
 )
@@ -64,7 +65,7 @@ infos = [
 # ("QCD_Pt_15toInf_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k/jra_QCD_Pt_15toInf_NoJEC_newFlav_ak4pfchs_L1FastJet_wideBinning_rspRangeLarge_absEta.root"),
 # ("QCD_Pt_15toInf_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_nbinsrelrsp_10k/jra_QCD_Pt_15toInf_NoJEC_newFlav_ak4pfchs_L1FastJet_wideBinning_rspRangeLarge_absEta_hadron.root"),
 # ("QCD_Pt_15toInf_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut2p5_jtptmin4_withPF_PhysicsAlgoHadron_L1FastJet_Summer16_07Aug2017_V15_HadronParton_nbinsrelrsp_10k/jra_QCD_Pt_15toInf_NoJEC_newFlav_ak4pfchs_L1FastJet_rspRangeLarge_absEta_hadronParton.root"),
-("QCD_Pt_15toInf_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut2p5_jtptmin4_withPF_PhysicsAlgoHadron_L1FastJet_Summer16_07Aug2017_V15_HadronParton_nbinsrelrsp_10k_fineBinning_etaPlusMinus/jra_QCD_Pt_15toInf_NoJEC_newFlav_ak4pfchs_L1FastJet_rspRangeLarge_hadronParton.root"),
+# ("QCD_Pt_15toInf_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut2p5_jtptmin4_withPF_PhysicsAlgoHadron_L1FastJet_Summer16_07Aug2017_V15_HadronParton_nbinsrelrsp_10k_fineBinning_etaPlusMinus/jra_QCD_Pt_15toInf_NoJEC_newFlav_ak4pfchs_L1FastJet_rspRangeLarge_hadronParton.root"),
 # ("QCD_Pt_15toInf_NoJEC_newFlav", "QCD_Pt_NoJEC_relPtHatCut2p5_jtptmin4_withPF_PhysicsAlgoHadron_L1FastJet_Summer16_07Aug2017_V15_parton_nbinsrelrsp_10k_fineBinning_etaPlusMinus/jra_QCD_Pt_15toInf_NoJEC_newFlav_ak4pfchs_L1FastJet_rspRangeLarge_physicsparton.root"),
 
 # ("QCD_Pt_15to7000_Herwig_NoJEC_newFlav", "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k/jra_QCD_Pt_15to7000_Herwig_NoJEC_newFlav_ak4pfchs_L1FastJet_fineBinning_rspRangeLarge_absEta.root"),
@@ -72,9 +73,19 @@ infos = [
 # ("QCD_Pt_15to7000_Herwig_NoJEC_newFlav", "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_PhysicsAlgoHadron_nbinsrelrsp_10k/jra_QCD_Pt_15to7000_Herwig_NoJEC_newFlav_ak4pfchs_L1FastJet_wideBinning_rspRangeLarge_absEta_hadron.root"),
 # ("QCD_Pt_15to7000_Herwig_NoJEC_newFlav", "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_PhysicsAlgoHadron_L1FastJet_Summer16_07Aug2017_V11_L1fix_HadronParton_nbinsrelrsp_10k/jra_QCD_Pt_15to7000_Herwig_NoJEC_newFlav_ak4pfchs_L1FastJet_rspRangeLarge_absEta_hadronParton.root"),
 # ("QCD_Pt_15to7000_Herwig_NoJEC_newFlav", "QCD_Pt_Herwig_NoJEC_relPtHatCut2p5_jtptmin4_PhysicsAlgoHadron_L1FastJet_Summer16_07Aug2017_V15_HadronParton_nbinsrelrsp_10k/jra_QCD_Pt_15to7000_Herwig_NoJEC_newFlav_ext_ak4pfchs_L1FastJet_rspRangeLarge_absEta_hadronParton.root"),
-("QCD_Pt_15to7000_Herwig_NoJEC_newFlav", "QCD_Pt_Herwig_NoJEC_relPtHatCut2p5_jtptmin4_PhysicsAlgoHadron_L1FastJet_Summer16_07Aug2017_V15_HadronParton_nbinsrelrsp_10k_fineBinning_etaPlusMinus/jra_QCD_Pt_15to7000_Herwig_NoJEC_newFlav_ak4pfchs_L1FastJet_rspRangeLarge_hadronParton.root"),
 # ("QCD_Pt_15to7000_Herwig_NoJEC_newFlav", "QCD_Pt_Herwig_NoJEC_relPtHatCut2p5_jtptmin4_PhysicsAlgoHadron_L1FastJet_Summer16_07Aug2017_V15_parton_nbinsrelrsp_10k_fineBinning_etaPlusMinus/jra_QCD_Pt_15to7000_Herwig_NoJEC_newFlav_ak4pfchs_L1FastJet_rspRangeLarge_physicsparton.root"),
 
+# ("QCD_Pt_15to7000_Herwigpp_NoJEC_newFlav", "QCD_Pt_Herwigpp_NoJEC_relPtHatCut2p5_jtptmin4_HadronParton_nbinsrelrsp_10k_L1FastJet_Summer16_07Aug2017_V20_MC/jra_QCD_Pt_15to7000_Herwigpp_NoJEC_newFlav_ak4pfchs_rspRangeLarge_absEta_hadronParton.root"),
+# ("QCD_Pt_15to7000_Herwig7_NoJEC_newFlav", "QCD_Pt_Herwig7_NoJEC_relPtHatCut2p5_jtptmin4_HadronParton_nbinsrelrsp_10k_L1FastJet_Autumn18_V3_MC/jra_QCD_Pt_15to7000_Herwig7_NoJEC_newFlav_ak4pfchs_rspRangeLarge_absEta_hadronParton.root"),
+# ("QCD_Pt_15to7000_Herwig7_NoJEC_newFlav", "QCD_Pt_Herwig7_NoJEC_relPtHatCut2p5_jtptmin4_HadronParton_nbinsrelrsp_10k_L1FastJet_Autumn18_V3_MC/jra_QCD_Pt_15to7000_NoJEC_newFlav_ak4pfchs_rspRangeLarge_absEta_hadronParton.root"),
+("QCD_Pt_15to7000_Herwig7_NoJEC_newFlav", "QCD_Pt_Herwig7_NoJEC_genRelPtHatCut2_recoRelPtHatCut3_jtptmin4_HadronParton_nbinsrelrsp_10k_L1FastJet_Autumn18_V3_MC/jra_QCD_Pt_15to7000_NoJEC_newFlav_ak4pfchs_rspRangeLarge_absEta_hadronParton.root"),
+
+# ("QCD_Pt_15toInf_NoJEC_newFlav", "QCD_Pt_Pythia8_CP5_NoJEC_relPtHatCut2p5_jtptmin4_HadronParton_nbinsrelrsp_10k_L1FastJet_Autumn18_V3_MC/jra_QCD_Pt_15toInf_NoJEC_newFlav_ak4pfchs_rspRangeLarge_absEta_hadronParton.root"),
+# ("QCD_Pt_15toInf_NoJEC_newFlav", "QCD_Pt_Pythia8_CP5_NoJEC_relPtHatCut2p5_jtptmin4_HadronParton_nbinsrelrsp_10k_L1FastJet_Autumn18_V3_MC/jra_QCD_Pt_15toInf_NoJEC_newFlav_ak4pfchs_rspRangeLarge_absEta_hadronParton.root"),
+("QCD_Pt_15toInf_NoJEC_newFlav", "QCD_Pt_Pythia8_CP5_NoJEC_genRelPtHatCut2_recoRelPtHatCut3_jtptmin4_HadronParton_nbinsrelrsp_10k_L1FastJet_Autumn18_V3_MC/jra_QCD_Pt_15toInf_NoJEC_newFlav_ak4pfchs_rspRangeLarge_absEta_hadronParton.root"),
+
+# ("QCD_Pt_15to7000_Pythia8_CUETP8M1_NoJEC_newFlav", "QCD_PtFlat_Pythia8_CUETP8M1_NoJEC_relPtHatCut2p5_jtptmin4_HadronParton_nbinsrelrsp_10k_L1FastJet_Fall17_17Nov2017_V32_MC/jra_QCD_Pt_15to7000_NoJEC_newFlav_ak4pfchs_rspRangeLarge_absEta_hadronParton.root"),
+# ("QCD_Pt_15to7000_Pythia8_CP5_NoJEC_newFlav", "QCD_PtFlat_Pythia8_CP5_NoJEC_relPtHatCut2p5_jtptmin4_HadronParton_nbinsrelrsp_10k_L1FastJet_Fall17_17Nov2017_V32_MC/jra_QCD_Pt_15to7000_NoJEC_newFlav_ak4pfchs_rspRangeLarge_absEta_hadronParton.root"),
 ]
 
 
@@ -91,7 +102,7 @@ flavours = [
     "c_",
     "b_",
     "g_",
-    # "",
+    "",
 ]
 
 fit_min = 10
@@ -99,7 +110,7 @@ fit_func = "standard"
 # fit_func = "powerlaw"
 min_rel_cor_err = 0.005
 
-append = "_standardMedianErr_allMedian_rspRangeLarge_fitMin%d_fitFunc%s_HadronParton_minRelCorErr%s_setFitMinTurnoverPlusOne_plateauBelowRangeMin_minRelCorErrMaxRelDiffCompete" % (fit_min, fit_func, float2str(min_rel_cor_err))
+append = "_standardMedianErr_allMedian_rspRangeLarge_fitMin%d_fitFunc%s_HadronParton_minRelCorErr%s_setFitMinTurnoverPlusOne_plateauBelowRangeMin_minRelCorErrMaxRelDiffCompete_fixedXSec" % (fit_min, fit_func, float2str(min_rel_cor_err))
 
 job_args = []
 job_names = []
@@ -123,8 +134,10 @@ for name, input_file in infos:
                 "outputdir": input_dir,
                 "outputfile": "l2%s_%s.root" % (append, flav_name),
                 "algos": algo,
-                "pdgid": flav if flav != "" else '\"\"',
-                "era": "Summer16_07Aug2017_V15_%s_%s" % (append, flav_name),
+                "flavstr": "-flavor %s" % (flav) if flav != "" else '',
+                # "pdgid": flav if flav != "" else '\"\"',
+                # "era": "Summer16_07Aug2017_V20_MC_%s_%s" % (append, flav_name),
+                "era": "Autumn18_V3_MC_%s_%s" % (append, flav_name),
                 "fitmin" : str(fit_min),
                 "fitfunc": fit_func,
                 "minrelcorerr": str(min_rel_cor_err),
@@ -133,6 +146,7 @@ for name, input_file in infos:
             these_job_names.append(args_dict['name'])
             component_files.append(os.path.join(args_dict['outputdir'], args_dict['outputfile']))
 
+        # hadd over all flavours
         job_names.extend(these_job_names)
         final_output_file = os.path.join(input_dir, "l2%s.root" % append)
         hadd_name = "HADD_%s_%s" % (name, algo)
@@ -144,7 +158,7 @@ for name, input_file in infos:
 if len(job_names) == 0:
     raise RuntimeError("Didn't find any files to run over!")
 
-htc_filename = "htc_do_jet_l2_correction_x_job.condor"
+htc_filename = "htc_do_jet_l2_correction_x_job_%s.condor" % (uuid1())
 with open(htc_filename, 'w') as f:
     f.write(job)
 
@@ -154,7 +168,7 @@ for ind, (job_name, job_args_entry) in enumerate(zip(job_names, job_args)):
     dag += "VARS {0} {1}\n".format(job_name, job_args_entry)
 
 # Add hadd jobs
-hadd_htc_filename = "hadd_%s" % htc_filename
+hadd_htc_filename = "HADD_%s" % htc_filename
 with open(hadd_htc_filename, 'w') as f:
     f.write(hadd_job)
 

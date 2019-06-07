@@ -7,7 +7,10 @@ from collections import OrderedDict
 from uuid import uuid1
 from itertools import chain
 
-ORIGINAL_ERA_DIR = "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JECDatabase/textFiles/Summer16_07Aug2017_V10_MC"
+from countNevents import get_cache, count_events_in_file, save_cache
+
+
+# ORIGINAL_ERA_DIR = "/nfs/dust/cms/user/aggleton/JEC/CMSSW_8_0_28/src/JetMETAnalysis/JECDatabase/textFiles/Summer16_07Aug2017_V10_MC"
 
 PYTHIA_ERA_DIR = "QCD_Pt_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
 HERWIG_ERA_DIR = "QCD_Pt_Herwig_NoJEC_relPtHatCut5_jtptmin4_withPF_Summer16_07Aug2017_V10_nbinsrelrsp_10k"
@@ -53,6 +56,7 @@ def construct_jec_name(jec_levels):
 
 
 JEC_LEVELS = "1 2 3"
+JEC_LEVELS = "1"
 JEC_NAME = construct_jec_name(JEC_LEVELS)
 
 
@@ -63,9 +67,10 @@ infos_herwig7_nopu = {
     "name": "QCD_Pt_15to7000_Herwig7_NoPU_NoJEC_newFlav",
     "infos": [{
         "name": "QCD_Pt_15to7000_Herwig7_NoJEC_NoPU_miniaod",
-        "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCH2_Flat_13TeV_herwig7/crab_QCD_Pt-15to7000_herwig7_noPU_02_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/190202_132418/0000/",
+        # "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCH2_Flat_13TeV_herwig7/crab_QCD_Pt-15to7000_herwig7_noPU_02_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/190202_132418/0000/",
+        "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCH2_Flat_13TeV_herwig7/crab_QCD_Pt-15to7000_herwig7_CH2_noPU_21_Mar_19_Autumn18_noJEC_constitInfo_miniaod_withPF/190321_100540/0000/",
         "xsec": -1.,
-        "output_dir": "QCD_Pt_Herwig7_NoJEC_NoPU_relPtHatCut2p5_jtptmin4_HadronParton_nbinsrelrsp_10k_%s_%s" % (ERA_18, JEC_NAME),
+        "output_dir": "QCD_Pt_Herwig7_NoJEC_NoPU_relPtHatCut2p5_jtptmin4_PhysicsParton_nbinsrelrsp_10k_%s_%s" % (ERA_18, JEC_NAME),
         "era_dir": os.path.join(ERA_DIR, ERA_18),
         "era": ERA_18,
         "nrefmax": QCD_NREFMAX,
@@ -78,7 +83,7 @@ infos_herwigpp_nopu = {
             "name": "QCD_Pt_15to7000_Herwigpp_NoJEC_NoPU_miniaod",
             "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/crab_QCD_Pt-15to7000_herwig_HS1_noPU_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/0000/",
             "xsec": -1.,
-            "output_dir": "QCD_Pt_Herwigpp_NoJEC_NoPU_relPtHatCut2p5_jtptmin4_HadronParton_nbinsrelrsp_10k_%s_%s" % (ERA_18, JEC_NAME),
+            "output_dir": "QCD_Pt_Herwigpp_NoJEC_NoPU_relPtHatCut2p5_jtptmin4_PhysicsParton_nbinsrelrsp_10k_%s_%s" % (ERA_18, JEC_NAME),
             "era_dir": os.path.join(ERA_DIR, ERA_16),
             "era": ERA_16,
             "nrefmax": QCD_NREFMAX,
@@ -91,6 +96,7 @@ infos_herwig7 = {
         {
                 "name": "QCD_Pt_15to7000_Herwig7_NoJEC_miniaod",
                 "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCH2_Flat_13TeV_herwig7/crab_QCD_Pt-15to7000_herwig7_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/190205_061202/0000/",
+                # "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCH2_Flat_13TeV_herwig7/crab_QCD_Pt-15to7000_herwig7_CH2_21_Mar_19_Autumn18_noJEC_constitInfo_miniaod_withPF/190321_100532/0000/",
                 "xsec": -1.,
                 "output_dir": "QCD_Pt_Herwig7_NoJEC_relPtHatCut2p5_jtptmin4_HadronParton_nbinsrelrsp_10k_%s_%s" % (ERA_18, JEC_NAME),
                 "era_dir": os.path.join(ERA_DIR, ERA_18),
@@ -107,7 +113,7 @@ infos_herwigpp = {
                 "name": "QCD_Pt_15to7000_Herwigpp_ext_NoJEC_miniaod",
                 "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/crab_QCD_Pt-15to7000_ext1_herwig_HS1_05_Feb_19_Summer16_noJEC_storeAllFlav_genEF_miniaod_v2/*/0000/",
                 "xsec": -1.,
-                "output_dir": "QCD_Pt_Herwigpp_NoJEC_relPtHatCut2p5_jtptmin4_HadronParton_nbinsrelrsp_10k_%s_%s" % (ERA_16, JEC_NAME),
+                "output_dir": "QCD_Pt_Herwigpp_NoJEC_relPtHatCut2p5_jtptmin4_PhysicsParton_nbinsrelrsp_10k_%s_%s" % (ERA_16, JEC_NAME),
                 "era_dir": os.path.join(ERA_DIR, ERA_16),
                 "era": ERA_16,
                 "nrefmax": QCD_NREFMAX,
@@ -116,8 +122,10 @@ infos_herwigpp = {
 }
 
 
-QCD_PT_16_OUTPUT_DIR = "QCD_Pt_16_NoJEC_relPtHatCut2p5_jtptmin4_HadronParton_nbinsrelrsp_10k_%s_%s" % (ERA_16, JEC_NAME)
+QCD_PT_16_OUTPUT_DIR = "QCD_Pt_16_NoJEC_relPtHatCut2p5_jtptmin4_PhysicsParton_nbinsrelrsp_10k_%s_%s" % (ERA_16, JEC_NAME)
+QCD_PT_18_OUTPUT_DIR = "QCD_Pt_18_NoJEC_relPtHatCut2p5_jtptmin4_PhysicsParton_nbinsrelrsp_10k_%s_%s" % (ERA_18, JEC_NAME)
 QCD_PT_18_OUTPUT_DIR = "QCD_Pt_18_NoJEC_relPtHatCut2p5_jtptmin4_HadronParton_nbinsrelrsp_10k_%s_%s" % (ERA_18, JEC_NAME)
+QCD_PT_NOPU_18_OUTPUT_DIR = "QCD_Pt_18_NoPU_NoJEC_relPtHatCut2p5_jtptmin4_PhysicsParton_nbinsrelrsp_10k_%s_%s" % (ERA_18, JEC_NAME)
 infos_qcdpy8_16 = {
     "name": "QCD_Pt_15toInf_Py8_P8M1_NoJEC_newFlav",
     "infos": [
@@ -401,8 +409,151 @@ infos_qcdpy8_18 = {
     ]
 }
 
+infos_qcdpy8_18_nopu = {
+    "name": "QCD_Pt_15toInf_Py8_CP5_NoPU_NoJEC_newFlav",
+    "infos": [
+    # {
+    #     "name": "QCD_Pt_15to30_NoJEC_newFlav",
+    #     "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_15to30_TuneCP5_13TeV_pythia8/crab_QCD_Pt_15to30_ext1_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/",
+    #     "xsec": 1246000000.0,
+    #     "output_dir": QCD_PT_NOPU_18_OUTPUT_DIR,
+    #     "era_dir": os.path.join(ERA_DIR, ERA_18),
+    #     "era": ERA_18,
+    #     "nrefmax": QCD_NREFMAX,
+    # },
+    # {
+    #     "name": "QCD_Pt_30to50_NoJEC_newFlav",
+    #     "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_30to50_TuneCP5_13TeV_pythia8/crab_QCD_Pt_30to50_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/",
+    #     "xsec": 106900000.0,
+    #     "output_dir": QCD_PT_NOPU_18_OUTPUT_DIR,
+    #     "era_dir": os.path.join(ERA_DIR, ERA_18),
+    #     "era": ERA_18,
+    #     "nrefmax": QCD_NREFMAX,
+    # },
+    # {
+    #     "name": "QCD_Pt_50to80_NoJEC_newFlav",
+    #     "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/crab_QCD_Pt_50to80_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/",
+    #     "xsec": 15710000.0,
+    #     "output_dir": QCD_PT_NOPU_18_OUTPUT_DIR,
+    #     "era_dir": os.path.join(ERA_DIR, ERA_18),
+    #     "era": ERA_18,
+    #     "nrefmax": QCD_NREFMAX,
+    # },
+    # {
+    #     "name": "QCD_Pt_80to120_NoJEC_newFlav",
+    #     "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/crab_QCD_Pt_80to120_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/",
+    #     "xsec": 2336000.0,
+    #     "output_dir": QCD_PT_NOPU_18_OUTPUT_DIR,
+    #     "era_dir": os.path.join(ERA_DIR, ERA_18),
+    #     "era": ERA_18,
+    #     "nrefmax": QCD_NREFMAX,
+    # },
+    # {
+    #     "name": "QCD_Pt_120to170_NoJEC_newFlav",
+    #     "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_120to170_TuneCP5_13TeV_pythia8/crab_QCD_Pt_120to170_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/",
+    #     "xsec": 407300.0,
+    #     "output_dir": QCD_PT_NOPU_18_OUTPUT_DIR,
+    #     "era_dir": os.path.join(ERA_DIR, ERA_18),
+    #     "era": ERA_18,
+    #     "nrefmax": QCD_NREFMAX,
+    # },
+    # {
+    #     "name": "QCD_Pt_170to300_NoJEC_newFlav",
+    #     "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_170to300_TuneCP5_13TeV_pythia8/crab_QCD_Pt_170to300_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/",
+    #     "xsec": 103500.0,
+    #     "output_dir": QCD_PT_NOPU_18_OUTPUT_DIR,
+    #     "era_dir": os.path.join(ERA_DIR, ERA_18),
+    #     "era": ERA_18,
+    #     "nrefmax": QCD_NREFMAX,
+    # },
+    # {
+    #     "name": "QCD_Pt_300to470_NoJEC_newFlav",
+    #     "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_300to470_TuneCP5_13TeV_pythia8/crab_QCD_Pt_300to470_pythia_CP5_05_Feb_19_Autumn18_noJEC_storeAllFlav_genEF_miniaod/*/*/",
+    #     "xsec": 6830.0,
+    #     "output_dir": QCD_PT_NOPU_18_OUTPUT_DIR,
+    #     "era_dir": os.path.join(ERA_DIR, ERA_18),
+    #     "era": ERA_18,
+    #     "nrefmax": QCD_NREFMAX,
+    # },
+    {
+        "name": "QCD_Pt_470to600_NoJEC_newFlav",
+        "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_470to600_TuneCP5_13TeV_pythia8/crab_QCD_Pt_470to600_ext1_pythia_CP5_noPU_15_Apr_19_Autumn18_noJEC_constitInfo_miniaod_withPF/*/*/",
+        "xsec": 552.1,
+        "output_dir": QCD_PT_NOPU_18_OUTPUT_DIR,
+        "era_dir": os.path.join(ERA_DIR, ERA_18),
+        "era": ERA_18,
+        "nrefmax": QCD_NREFMAX,
+    },
+    {
+        "name": "QCD_Pt_600to800_NoJEC_newFlav",
+        "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_600to800_TuneCP5_13TeV_pythia8/crab_QCD_Pt_600to800_pythia_CP5_noPU_15_Apr_19_Autumn18_noJEC_constitInfo_miniaod_withPF/*/*/",
+        "xsec": 156.5,
+        "output_dir": QCD_PT_NOPU_18_OUTPUT_DIR,
+        "era_dir": os.path.join(ERA_DIR, ERA_18),
+        "era": ERA_18,
+        "nrefmax": QCD_NREFMAX,
+    },
+    {
+        "name": "QCD_Pt_800to1000_NoJEC_newFlav",
+        "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_800to1000_TuneCP5_13TeV_pythia8/crab_QCD_Pt_800to1000_ext1_pythia_CP5_noPU_15_Apr_19_Autumn18_noJEC_constitInfo_miniaod_withPF/*/*/",
+        "xsec": 26.28,
+        "output_dir": QCD_PT_NOPU_18_OUTPUT_DIR,
+        "era_dir": os.path.join(ERA_DIR, ERA_18),
+        "era": ERA_18,
+        "nrefmax": QCD_NREFMAX,
+    },
+    {
+        "name": "QCD_Pt_1000to1400_NoJEC_newFlav",
+        "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8/crab_QCD_Pt_1000to1400_pythia_CP5_noPU_15_Apr_19_Autumn18_noJEC_constitInfo_miniaod_withPF/*/*/",
+        "xsec": 7.47,
+        "output_dir": QCD_PT_NOPU_18_OUTPUT_DIR,
+        "era_dir": os.path.join(ERA_DIR, ERA_18),
+        "era": ERA_18,
+        "nrefmax": QCD_NREFMAX,
+    },
+    {
+        "name": "QCD_Pt_1400to1800_NoJEC_newFlav",
+        "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/crab_QCD_Pt_1400to1800_*pythia_CP5_noPU_15_Apr_19_Autumn18_noJEC_constitInfo_miniaod_withPF/*/*/",
+        "xsec": 0.6484,
+        "output_dir": QCD_PT_NOPU_18_OUTPUT_DIR,
+        "era_dir": os.path.join(ERA_DIR, ERA_18),
+        "era": ERA_18,
+        "nrefmax": QCD_NREFMAX,
+    },
+    {
+        "name": "QCD_Pt_1800to2400_NoJEC_newFlav",
+        "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8/crab_QCD_Pt_1800to2400*pythia_CP5_noPU_15_Apr_19_Autumn18_noJEC_constitInfo_miniaod_withPF/*/*/",
+        "xsec": 0.08743,
+        "output_dir": QCD_PT_NOPU_18_OUTPUT_DIR,
+        "era_dir": os.path.join(ERA_DIR, ERA_18),
+        "era": ERA_18,
+        "nrefmax": QCD_NREFMAX,
+    },
+    {
+        "name": "QCD_Pt_2400to3200_NoJEC_newFlav",
+        "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8/crab_QCD_Pt_2400to3200*pythia_CP5_noPU_15_Apr_19_Autumn18_noJEC_constitInfo_miniaod_withPF/*/*/",
+        "xsec": 0.005236,
+        "output_dir": QCD_PT_NOPU_18_OUTPUT_DIR,
+        "era_dir": os.path.join(ERA_DIR, ERA_18),
+        "era": ERA_18,
+        "nrefmax": QCD_NREFMAX,
+    },
+    {
+        "name": "QCD_Pt_3200toInf_NoJEC_newFlav",
+        "input": "/pnfs/desy.de/cms/tier2/store/user/raggleto/QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/crab_QCD_Pt_3200toInf*pythia_CP5_noPU_15_Apr_19_Autumn18_noJEC_constitInfo_miniaod_withPF/*/*/",
+        "xsec": 0.0001357,
+        "output_dir": QCD_PT_NOPU_18_OUTPUT_DIR,
+        "era_dir": os.path.join(ERA_DIR, ERA_18),
+        "era": ERA_18,
+        "nrefmax": QCD_NREFMAX,
+    },
+
+    ]
+}
+
 all_algos = [
     "ak4pfchs:0.2",
+    # "ak4pf:0.2",
     # "ak4puppi:0.2",
     # "ak8pfchs:0.4",
     # "ak8puppi:0.4"
@@ -448,18 +599,22 @@ def float_to_str(num):
 job = dict_to_condor_contents(create_condor_template_dict())
 job += "\n"
 job += "JobBatchName=JCA\n"
-ptgen_min = 30
+ptgen_min = 750
+ptgen_max = 10000
+ptgen_min = 0
 arguments = ("jet_correction_analyzer_x $(inputf) "
     "-outputDir $(odir) -suffix $(suffix) -algs $(algos) "
     "-era $(era) -path $(mypath) $(levels) " # -levels 2"  # JEC set info
     "-doflavor $(doflav) -pdgid $(pdgid) -flavorDefinition HADRONPARTON "  # flav def/selection info
     "-xsection $(xsec) -luminosity 35900 -useweight $(weight) "  # reweighting info
-    "-nrefmax $(nrefmax) -ptgenmin {ptgen_min} -ptrawmin 4 -relpthatmax 2.5 -relrspmax 2 "  # cuts
+    # "-nrefmax $(nrefmax) -ptgenmin {ptgen_min} -ptgenmax {ptgen_max} -ptrawmin 4 -relpthatmax 2.5 -relrspmax 2 "  # cuts
+    "-nrefmax $(nrefmax) -ptgenmin {ptgen_min} -ptrawmin 4 -relpthatmax 2 -relrspmax 2 "  # cuts
     "-alphamax $(alpha) -pfCandIds $(pfpid) -pfCandPtMin $(pfpt) -pfCandDr $(pfdr) -efmax $(efmax) "  # more cuts
     "-findZ $(findz) -findGamma $(findgamma) "  # identify bosons and veto against them
-    "-drmin $(drmin) "  # matching param for genjet-genjet 
-    "-drmax $(drmax)"  # matching param for gen-reco
-).format(ptgen_min=ptgen_min)
+    "-drmin $(drmin) "  # matching param for genjet-genjet
+    "-drmax $(drmax) "  # matching param for gen-reco
+    "-reduceHistograms true "
+).format(ptgen_min=ptgen_min, ptgen_max=ptgen_max)
 
 job += '\narguments = "%s"\n\n' % arguments
 job += "\nqueue\n"
@@ -474,7 +629,7 @@ hadd_job += "\nqueue\n"
 
 era_append = ""
 
-append = "_relRspMax2_relPtHatMax2p5_ptGenMin%d" % (ptgen_min)
+append = "_relRspMax2_relPtHatMax2_ptGenMin%d_ptGenMax%d" % (ptgen_min, ptgen_max)
 
 
 job_args = []
@@ -484,16 +639,27 @@ hadd_job_names = []
 hadd_job_args = []
 hadd_job_depends = []
 
+CACHE_FILENAME = "cache_nevents.csv"
+NEVENTS_CACHE = get_cache(CACHE_FILENAME)
+
 for algo in all_algos:
     algo_name, dr_max = algo.split(":")
 
     for flav, flav_name in flav_dict.iteritems():
 
-        for info_dict in [infos_herwig7, infos_herwigpp, infos_qcdpy8_18, infos_qcdpy8_16]:
+        # for info_dict in [infos_herwig7, infos_herwigpp, infos_qcdpy8_18, infos_qcdpy8_16]:
+        # for info_dict in [infos_herwig7, infos_herwig7_nopu]:
+        # for info_dict in [infos_herwig7_nopu]:
+        # for info_dict in [infos_qcdpy8_18_nopu]:
+        # for info_dict in [infos_qcdpy8_18, infos_qcdpy8_16]:
+        # for info_dict in [infos_qcdpy8_18, infos_herwig7]:
+        for info_dict in [infos_qcdpy8_18]:
+        # for info_dict in [infos_herwig7]:
+        # for info_dict in [infos_herwig7, infos_herwigpp]:
         # for info_dict in [infos_qcdpy8_16]:
         # for info_dict in [infos_herwig7_nopu, infos_herwigpp_nopu]:
-            
-            # Do it in this nested order, so that we can hadd all the samples from 
+
+            # Do it in this nested order, so that we can hadd all the samples from
             # a given list of info dicts for a specific flavour and jet algo
             these_job_names = []
             component_files = []
@@ -502,12 +668,12 @@ for algo in all_algos:
 
                 if not os.path.isdir(sample_dict['output_dir']):
                     os.makedirs(sample_dict['output_dir'])
-            
-                # if (("herwig" in sample_dict['input'].lower() and "herwig" not in sample_dict['era_dir'].lower()) 
+
+                # if (("herwig" in sample_dict['input'].lower() and "herwig" not in sample_dict['era_dir'].lower())
                 #     or (("herwig" not in sample_dict['input'].lower() and "herwig" in sample_dict['era_dir'].lower()))):
                 #     raise RuntimeError("Mixing Herwig/Pythia dataset/jec!")
 
-                
+
                 # pf = {
                 #     "pf_PID": "2 3 4",  # 2 = e, 3 = mu, 4 = gamma
                 #     "pf_pt": 5,
@@ -518,20 +684,22 @@ for algo in all_algos:
                 n_inputs = len(glob(sample_dict['input']))
                 if (n_inputs == 0):
                     raise RuntimeError("0 inputs for %d in %s" % (sample_dict['name'], info_dict['name']))
-                
+
                 print sample_dict['name'], "queuing %d jobs" % (n_inputs)
 
+                # Need to split up by input directory as TChain doesn't do "proper" globbing
+                # so you have to run over each directory as a separate job
                 for ind, this_input in enumerate(glob(sample_dict['input'])):
-                    
+
                     this_append = append
                     if sample_dict.get('alpha', 0) > 0:
                         this_append += '_alpha' + float_to_str(sample_dict['alpha'])
-                    this_append += "_nrefmax%d" % sample_dict.get("nrefmax", 0) 
-                    
+                    this_append += "_nrefmax%d" % sample_dict.get("nrefmax", 0)
+
                     dr_min = 4*float(dr_max)
                     dr_min = -1
                     if dr_min > 0:
-                        this_append += "_drmin" + float_to_str(dr_min) 
+                        this_append += "_drmin" + float_to_str(dr_min)
                         this_append += "_ptGenOverlap10"
 
                     if sample_dict.get("findZ", False):
@@ -583,7 +751,7 @@ for algo in all_algos:
                         "findGamma": str(sample_dict.get('findGamma', False)).lower(),
                     }
                     args_dict = OrderedDict(args_dict)
-                    
+
                     if this_input.endswith(".root"):
                         # if one ROOT file, then leave inputfilepath blank and put full path for inputfilename
                         args_dict['inputf'] = "-inputFilename " + this_input
@@ -592,7 +760,7 @@ for algo in all_algos:
                         # args_dict["inputf"] = "-inputFilename jaj*%s" % algo_name  # program does *.root for us
                         args_dict["inputf"] = "-inputFilename JRA*"  # program does *.root for us
                         args_dict["inputf"] += ' -inputFilePath ' + this_input
-                    
+
                     job_args.append(" ".join(['%s="%s"' % (k, v) for k,v in args_dict.items()]))
                     these_job_names.append(args_dict['name'])
                     component_files.append(os.path.join(args_dict['odir'], "Closure_%s%s.root" % (args_dict['algos'], args_dict['suffix'])))
@@ -621,7 +789,7 @@ for ind, (job_name, job_args_entry) in enumerate(zip(job_names, job_args)):
     dag += "VARS {0} {1}\n".format(job_name, job_args_entry)
 
 # Add hadd jobs
-hadd_htc_filename = "hadd_%s" % htc_filename
+hadd_htc_filename = "HADD_%s" % htc_filename
 with open(hadd_htc_filename, 'w') as f:
     f.write(hadd_job)
 
