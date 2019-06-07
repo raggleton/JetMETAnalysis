@@ -563,7 +563,7 @@ for algo in all_algos:
                         # "algos": algo_name+"l1",
                         "algos": algo_name,
                         "drmax": dr_max,
-                        "weight": "true",  # ignored if xsec > 0
+                        "weight": "false" if sample_dict.get('xsec', -1) > 0 else "true",  # ignored if xsec > 0
                         "pdgid": flav,
                         "doflav": "true" if flav != "0" else "false",
                         "era": sample_dict['era'],
