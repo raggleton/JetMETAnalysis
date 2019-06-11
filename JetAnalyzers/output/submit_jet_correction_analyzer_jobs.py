@@ -629,7 +629,7 @@ hadd_job += "\nqueue\n"
 
 era_append = ""
 
-append = "_relRspMax2_relPtHatMax2_ptGenMin%d_ptGenMax%d" % (ptgen_min, ptgen_max)
+append = "_relRspMax2_relPtHatMax2_ptGenMin%d_ptGenMax%d_fixedXsec" % (ptgen_min, ptgen_max)
 
 
 job_args = []
@@ -689,7 +689,38 @@ for algo in all_algos:
 
                 # Need to split up by input directory as TChain doesn't do "proper" globbing
                 # so you have to run over each directory as a separate job
+                # To do this properly requires knowing the total # events first,
+                # then rescaling each job's cross section by its fraction of events
+                do_rescale_xsec = n_inputs > 1 and sample_dict.get('xsec', -1) > 0
+
+                if do_rescale_xsec:
+                    print "Need to rescale xsecs, so need to check # events in each file...this could be slow..."
+                    pattern = sample_dict['input']
+                    if not pattern.endswith(".root"):
+                        pattern += "/JRA*.root"
+                    all_input_files = glob(pattern)
+                    total_nevents = 0
+                    for ifile in all_input_files:
+                        abs_path = os.path.abspath(ifile)
+                        # update the global cache with the number of events in the files
+                        if abs_path not in NEVENTS_CACHE:
+                            use_weight = True if ("flat" in input_dir.lower()) else False
+                            this_nevents = count_events_in_file(input_file=abs_path,
+                                                                dir_name=algo_name + "l1",
+                                                                use_weight=use_weight)
+                            NEVENTS_CACHE[abs_path] = this_nevents
+                        total_nevents += NEVENTS_CACHE[abs_path]
+
+
                 for ind, this_input in enumerate(glob(sample_dict['input'])):
+                    this_xsec_scaling = 1
+                    if do_rescale_xsec:
+                        pattern = this_input
+                        if not pattern.endswith(".root"):
+                            pattern += "/JRA*.root"                 
+                        this_nevents = sum(NEVENTS_CACHE[os.path.abspath(fname)] for fname in glob(pattern))
+                        this_xsec_scaling = float(this_nevents) / float(total_nevents)
+                        print this_xsec_scaling
 
                     this_append = append
                     if sample_dict.get('alpha', 0) > 0:
@@ -727,7 +758,7 @@ for algo in all_algos:
                     args_dict = {
                         "name": "_".join(["JCA", info_dict['name'], sample_dict['name'], algo_name, flav_name, JEC_NAME, str(ind)]),
                         "odir": sample_dict['output_dir'],
-                        "xsec": "%.8f" % sample_dict.get('xsec', -1),
+                        "xsec": "%.8f" % (sample_dict.get('xsec', -1) * this_xsec_scaling),
                         # "algos": algo_name+"l1",
                         "algos": algo_name,
                         "drmax": dr_max,
