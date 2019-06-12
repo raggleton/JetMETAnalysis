@@ -35,11 +35,19 @@ inputDatasets = [
 
 # Herwig
 # '/GJet_Pt-15To6000_TuneCUETHS1-Flat_13TeV_herwigpp/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM',
-'/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/MINIAODSIM',  # the large stats one WARNING MINIAOD
+# '/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/MINIAODSIM',  # the large stats one WARNING MINIAOD
+ 
+'/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/RunIISummer16MiniAODv2-NoPU_80X_mcRun2_asymptotic_2016_TrancheIV_v4-v1/MINIAODSIM',
+
 # '/QCD_Pt-15to7000_TuneCUETHS1_Flat_13TeV_herwigpp/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM',
 # '/TT_TuneEE5C_13TeV-powheg-herwigpp/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext3-v1/AODSIM',  # the v1, v2 don't exist on disk
 # '/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-herwigpp_30M/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM',  # does actually have MG, uses HS1 tune
 # '/DYJetsToLL_M-50_TuneCUETHS1_13TeV-madgraphMLM-herwigpp/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/AODSIM',  # doesn't actually use MG
+# '/QCD_Pt-15to7000_TuneCH2_Flat_13TeV_herwig7/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM',
+# '/QCD_Pt-15to7000_TuneCH2_Flat_13TeV_herwig7/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15-v2/MINIAODSIM',
+
+# '/QCD_Pt-15to7000_TuneCH2_Flat_13TeV_herwig7/RunIIAutumn18DRPremix-102X_upgrade2018_realistic_v15-v2/AODSIM',
+# '/QCD_Pt-15to7000_TuneCH2_Flat_13TeV_herwig7/RunIIAutumn18DR-NoPU_102X_upgrade2018_realistic_v15-v2/AODSIM',
 
 # Pythia only
 # '/QCD_Pt-15to7000_TuneCUETP8M1_FlatP6_13TeV_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM',
@@ -59,6 +67,48 @@ inputDatasets = [
 # '/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v*/AODSIM',
 # '/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v*/AODSIM',
 
+# '/QCD_Pt_15to30_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM',
+# '/QCD_Pt_30to50_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v*/MINIAODSIM',
+# '/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v*/MINIAODSIM',
+# '/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v*/MINIAODSIM',
+# '/QCD_Pt_120to170_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v*/MINIAODSIM',
+# '/QCD_Pt_170to300_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v*/MINIAODSIM',
+# '/QCD_Pt_300to470_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v*/MINIAODSIM',
+# '/QCD_Pt_470to600_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v*/MINIAODSIM',
+# '/QCD_Pt_600to800_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v*/MINIAODSIM',
+# '/QCD_Pt_800to1000_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM',
+# '/QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v*/MINIAODSIM',
+# '/QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v*/MINIAODSIM',
+# '/QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v*/MINIAODSIM',
+# '/QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v*/MINIAODSIM',
+# '/QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v*/MINIAODSIM',
+
+# '/QCD_Pt_15to30_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM',
+# '/QCD_Pt_30to50_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+# '/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+# '/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM',
+# '/QCD_Pt_80to120_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+# '/QCD_Pt_120to170_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+# '/QCD_Pt_170to300_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+# '/QCD_Pt_300to470_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+# '/QCD_Pt_470to600_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+# '/QCD_Pt_470to600_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM',
+# '/QCD_Pt_600to800_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+# '/QCD_Pt_800to1000_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM',
+# '/QCD_Pt_1000to1400_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+# '/QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+# '/QCD_Pt_1400to1800_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM',
+# '/QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+# '/QCD_Pt_1800to2400_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM',
+# '/QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+# '/QCD_Pt_2400to3200_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM',
+# '/QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15-v1/MINIAODSIM',
+# '/QCD_Pt_3200toInf_TuneCP5_13TeV_pythia8/RunIIAutumn18MiniAOD-NoPU_102X_upgrade2018_realistic_v15_ext2-v2/MINIAODSIM',
+
+# 2017 samples for P8M1 vs CP5 tests
+# '/QCD_Pt-15to7000_TuneCP5_Flat2017_13TeV_pythia8/RunIIFall17MiniAOD-PU2017_94X_mc2017_realistic_v11-v1/MINIAODSIM',
+# '/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/RunIIFall17MiniAOD-PU2017_94X_mc2017_realistic_v11-v1/MINIAODSIM',
+
 # POWHEG+Pythia
 # '/Dijet_NNPDF30_powheg_pythia8_TuneCUETP8M1_13TeV_bornktmin150/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/AODSIM',
 # '/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16DR80Premix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/AODSIM',
@@ -69,7 +119,8 @@ filter_keywords = [
 'BGenFilter',
 ]
 
-requestNameCustom = "_noJEC_storePhysicsAlgoHadronFlav"
+# requestNameCustom = "_Autumn18_noJEC_constitInfo_miniaod_withPF"
+requestNameCustom = "_Summer16_noJEC_constitInfo_miniaod_withPF"
 
 
 def filter_datasets(input_datasets):
@@ -85,7 +136,12 @@ def create_request_name(input_dataset):
                          .replace('_TuneCUETP8M1_13TeV_pythia8', '')
                          .replace('_TuneCUETHS1_Flat_13TeV_herwigpp', '')
                          .replace('_pythia8_TuneCUETP8M1_13TeV_bornktmin150', '')
-                         .replace('_TuneEE5C_13TeV-powheg-herwigpp', ''))
+                         .replace("_TuneCH2_Flat_13TeV_herwig7", "")
+                         .replace('_TuneEE5C_13TeV-powheg-herwigpp', '')
+                         .replace('_TuneCP5_13TeV_pythia8', '')
+                         .replace('_TuneCP5_Flat2017_13TeV_pythia8', '')
+                         .replace('_TuneCUETP8M1_Flat_13TeV_pythia8', '')
+                    )
     if 'ext1' in input_dataset:
         modified_name += '_ext1'
     elif 'ext2' in input_dataset:
@@ -112,6 +168,18 @@ def create_request_name(input_dataset):
         modified_name += '_pythia'
     elif '_herwigpp' in input_dataset:
         modified_name += '_herwig'
+    elif '_herwig7' in input_dataset:
+        modified_name += '_herwig7'
+
+    if "cp5" in input_dataset.lower():
+        modified_name += "_CP5"
+    elif "ch2" in input_dataset.lower():
+        modified_name += "_CH2"
+    elif "p8m1" in input_dataset.lower():
+        modified_name += "_P8M1"
+
+    if 'nopu' in input_dataset.lower():
+        modified_name += "_noPU"
 
     modified_name += "_" + strftime('%d_%b_%y') + requestNameCustom
     return modified_name
@@ -133,7 +201,7 @@ def create_crab_config(request_name, input_dataset):
     conf.Data.inputDataset = input_dataset
     conf.Data.inputDBS = 'global'
     conf.Data.splitting = 'EventAwareLumiBased'
-    conf.Data.unitsPerJob = 20000
+    conf.Data.unitsPerJob = 50000
     # conf.Data.totalUnits = 
     conf.Data.publication = False
     # conf.JobType.sendExternalFolder = True
