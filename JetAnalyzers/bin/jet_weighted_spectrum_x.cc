@@ -15,6 +15,7 @@
 #include <TFile.h>
 #include <TDirectory.h>
 #include <TTree.h>
+#include <TChain.h>
 #include <TCanvas.h>
 #include <TLegend.h>
 #include <TColor.h>
@@ -55,6 +56,9 @@ int main(int argc,char**argv)
   bool           logy      = cl.getValue <bool>  ("logy",                 true);
   bool           batch     = cl.getValue <bool>  ("batch",               false);
   vector<string> formats   = cl.getVector<string>("formats",                "");
+  string         oname      = cl.getValue <string>("outputname",             variable);
+  string         odir      = cl.getValue <string>("outputDir",             ".");
+  string         outputfile= cl.getValue <string>("outputFile", "weighted_spectrum.root");
   
   if(!cl.check()) return 0;
   cl.print();
@@ -77,80 +81,94 @@ int main(int argc,char**argv)
   THStack* st  = new THStack("st", "");
   THStack* stW = new THStack("stW","");
   
+  TFile * outTFile = new TFile((odir + "/" + outputfile).c_str(), "UPDATE");
+
   for (unsigned i=0;i<inputs.size();i++) {
     size_t pos      = inputs[i].find(":");
     string sample   = inputs[i].substr(0,pos);
     string filename = sample + ".root";
     float  weight   = 1.0;
     if (pos!=string::npos){stringstream ss;ss<<inputs[i].substr(pos+1);ss>>weight;}
+
+    TChain* tree = new TChain((algorithm + "/t").c_str());
+    tree->Add((datapath+"/"+filename).c_str());
+    if (0==tree) { cout<<"no tree found."<<endl; continue; }
     
-    TFile* file = new TFile((datapath+"/"+filename).c_str(),"READ");
-    if (!file->IsOpen()) { cout<<"Can't open file "<<filename<<endl; continue; }
-    
-    TDirectory* dir = (TDirectory*)file->Get(algorithm.c_str());
-    if (0==dir) { cout<<"No dir "<<algorithm<<"found in "<<filename<<endl;continue;}
-    
-    TTree* tree = (TTree*)dir->Get("t");
-    if (0==tree) {cout<<"No tree 't' in dir "<<algorithm<<endl; continue; }
-    
-    cout<<"filename="<<filename<<", "<<tree->GetEntries()<<" events, xsec="<<weight
-	<<endl;
+    cout<<"filename="<<filename<<", "<<tree->GetEntries() <<" events, xsec="<< weight <<endl;
     
     string htitle = ";"+xtitle;
-    TH1F* h  = new TH1F("h", htitle.c_str(),nbinsx,xmin,xmax);
-    TH1F* hW = new TH1F("hW",htitle.c_str(),nbinsx,xmin,xmax);
+    TString hName = TString::Format("h_%s_%d", oname.c_str(), i);
+    TString hWName = TString::Format("hW_%s_%d", oname.c_str(), i);
+    TH1F* h  = new TH1F(hName, htitle.c_str(),nbinsx,xmin,xmax);
+    TH1F* hW = new TH1F(hWName,htitle.c_str(),nbinsx,xmin,xmax);
     
     weight /= tree->GetEntries();
     stringstream wsel; wsel<<weight<<"*("<<selection<<")";
 
-    tree->Project("h", variable.c_str());
-    tree->Project("hW",variable.c_str(),wsel.str().c_str());
+    tree->Project(hName, variable.c_str());
+    tree->Project(hWName,variable.c_str(),wsel.str().c_str());
     
     Color_t color = TColor::GetColorPalette(i);
 
-    h->SetLineWidth(1);
+    h->SetLineWidth(2);
     h->SetLineColor(color);
     h->SetFillColor(color);
-    h->SetFillStyle(1001);
+    // h->SetFillStyle(1001);
+    h->SetFillStyle(0);
 
-    hW->SetLineWidth(1);
+    hW->SetLineWidth(2);
     hW->SetLineColor(color);
     hW->SetFillColor(color);
-    hW->SetFillStyle(1001);
+    // hW->SetFillStyle(1001);
+    hW->SetFillStyle(0);
     
-    leg->AddEntry(h,sample.c_str(),"f");
+    leg->AddEntry(h,sample.c_str(),"L");
     
+    outTFile->WriteTObject(h);
+    outTFile->WriteTObject(hW);
+
     st ->Add(h);
     stW->Add(hW);
   }
-
-  TCanvas* c = new TCanvas(variable.c_str(),variable.c_str(),0,0,790,600);
+  TCanvas* c = new TCanvas(oname.c_str(),oname.c_str(),0,0,790,600);
   c->cd();
   gPad->SetLeftMargin(0.1);
   gPad->SetRightMargin(0.17);
   st->Draw();
   st->GetXaxis()->SetTitle(xtitle.c_str());
-  st->SetMinimum(9.E-01);
   if (logx) gPad->SetLogx();
   if (logy) gPad->SetLogy();
   leg->Clone()->Draw();
   c->Update();
-  
-  TCanvas* cW = new TCanvas((variable+"W").c_str(),
-			    (variable+"W").c_str(),800,0,790,600);
+  for (auto & fmt : formats) {
+    TString output_file = TString::Format("%s/%s.%s", odir.c_str(), oname.c_str(), fmt.c_str());
+    c->SaveAs(output_file);
+  }
+
+  TCanvas* cW = new TCanvas((oname+"W").c_str(), (oname+"W").c_str(),800,0,790,600);
   cW->cd();
   gPad->SetLeftMargin(0.1);
   gPad->SetRightMargin(0.17);
-  stW->Draw();
+  stW->Draw("HISTE");
   stW->GetXaxis()->SetTitle(xtitle.c_str());
-  stW->SetMinimum(9E-11);
-  stW->SetMaximum(5.E09);
   if (logx) gPad->SetLogx();
-  if (logy) gPad->SetLogy();
+  if (logy) {
+    gPad->SetLogy();
+    stW->SetMinimum(stW->GetMinimum()/5);
+    stW->SetMaximum(stW->GetMaximum()*5);
+  }
   leg->Clone()->Draw();
   cW->Update();
-
+  for (auto & fmt : formats) {
+    TString output_file = TString::Format("%s/%s_weighted.%s", odir.c_str(), oname.c_str(), fmt.c_str());
+    cW->SaveAs(output_file);
+  }
   if (!batch) app->Run();
+
+  outTFile->WriteTObject(st);
+  outTFile->WriteTObject(stW);
+
+  outTFile->Close();
   
   return 0;
 }
