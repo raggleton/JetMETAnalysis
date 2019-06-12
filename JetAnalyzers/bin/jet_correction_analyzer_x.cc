@@ -409,6 +409,10 @@ int main(int argc,char**argv)
       TH1F *nRefDistribution(nullptr);
       vector<TH2F*> RelRspVsRefPt;
       TH2F *RelRspVsJetEta[NPtBins];
+      vector<TH2F*> JtPtVsRefPt;
+      vector<TH2F*> JtPtRawVsRefPt;
+      vector<TH2F*> RefPtVsRefPt;
+      vector<TH2F*> JtAreaVsRefPt;
       vector<TH2F*> JECVsRefPt;
       vector<TH2F*> JtchfVsRefPt;
       vector<TH2F*> JtnhfVsRefPt;
@@ -593,8 +597,24 @@ int main(int argc,char**argv)
          RelRspVsRefPt.push_back(new TH2F(hname,hname,NPtBins,vpt,nbinsrelrsp,relrspmin,relrspmax));
          RelRspVsRefPt.back()->Sumw2();
 
+         hname = Form("RefPtVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         RefPtVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, 5000, 0, 5000));
+         RefPtVsRefPt.back()->Sumw2();
+
+         hname = Form("JtPtVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtPtVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, 5000, 0, 5000));
+         JtPtVsRefPt.back()->Sumw2();
+
+         hname = Form("JtPtRawVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtPtRawVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, 5000, 0, 5000));
+         JtPtRawVsRefPt.back()->Sumw2();
+
+         hname = Form("JtAreaVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
+         JtAreaVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, 500, 0, 1));
+         JtAreaVsRefPt.back()->Sumw2();
+
          hname = Form("JECVsRefPt_JetEta%sto%s", eta_boundaries[ieta], eta_boundaries[ieta+1]);
-         JECVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, 100, 0, 5));
+         JECVsRefPt.push_back(new TH2F(hname, hname, NPtBins, vpt, 500, 0, 2));
          JECVsRefPt.back()->Sumw2();
 
          int NEfBins = 100;
@@ -1234,6 +1254,10 @@ int main(int argc,char**argv)
                }
                int thisBin = getBin(plotEta,veta,NETA);
                JECVsRefPt[thisBin]->Fill(ptgen, scale, weight);
+               JtPtVsRefPt[thisBin]->Fill(ptgen, scale*pt, weight);
+               JtPtRawVsRefPt[thisBin]->Fill(ptgen, pt, weight);
+               RefPtVsRefPt[thisBin]->Fill(ptgen, ptgen, weight);
+               JtAreaVsRefPt[thisBin]->Fill(ptgen, JRAEvt->jtarea->at(iref), weight);
                RelRspVsRefPt[thisBin]->Fill(ptgen,relrsp,weight);
                JtchfVsRefPt[thisBin]->Fill(ptgen,JRAEvt->jtchf->at(iref),weight);
                JtnhfVsRefPt[thisBin]->Fill(ptgen,JRAEvt->jtnhf->at(iref),weight);
