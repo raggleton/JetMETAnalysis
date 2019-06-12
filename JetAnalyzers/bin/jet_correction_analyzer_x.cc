@@ -1094,8 +1094,8 @@ int main(int argc,char**argv)
             float ptgen  = JRAEvt->refpt->at(iref);
             float eta    = JRAEvt->jteta->at(iref);
             float abseta = fabs(eta);
+            float plotEta = (veta[0] < 0) ? eta : abseta;
             float pt     = JRAEvt->jtpt->at(iref);
-            float plotEta = eta;
             float refEta = JRAEvt->refeta->at(iref);
             float refPhi = JRAEvt->refphi->at(iref);
 
