@@ -158,7 +158,9 @@ int main(int argc,char**argv)
    bool            reduceHistograms  = cl.getValue<bool>         ("reduceHistograms",   true);
    bool            useweight         = cl.getValue<bool>         ("useweight",         false);
    float           pThatReweight     = cl.getValue<float>        ("pThatReweight",     -9999);
-   float           relpthatmax       = cl.getValue<float>        ("relpthatmax",                10);
+   float           genrelpthatmax    = cl.getValue<float>        ("genrelpthatmax",       10);
+   float           recorelpthatmax   = cl.getValue<float>        ("recorelpthatmax",      10);
+
    float           xsection          = cl.getValue<float>        ("xsection",            0.0);
    float           luminosity        = cl.getValue<float>        ("luminosity",          1.0);
    vector<string>  presel            = cl.getVector<string>      ("presel",                     "");
@@ -964,7 +966,7 @@ int main(int argc,char**argv)
          for (unsigned int iref=0;iref<JRAEvt->nref;iref++) {
             float ptgen  = JRAEvt->refpt->at(iref);
             if (ptgen<ptgenmin) continue;
-            if ((relpthatmax!= -1.0) && (pthat != 0) && ((ptgen/pthat)>relpthatmax)) {
+            if ((genrelpthatmax!= -1.0) && (pthat != 0) && ((ptgen/pthat)>genrelpthatmax)) {
                if(verbose) cout << "WARNING::The ptref/pthat of this event is greater than the maximum relative pthat!" << endl;
                continue;
             }
@@ -973,6 +975,10 @@ int main(int argc,char**argv)
             float pt     = JRAEvt->jtpt->at(iref);
             if (pt > 14000) {
                cout << "WARNING::pt>14000 GeV (pt = " << pt << " GeV, eta = "<< eta << ")." << endl << "Gen jet pt: " << ptgen << endl << "Skipping this jet." << endl;
+               continue;
+            }
+            if ((recorelpthatmax!= -1.0) && (pthat != 0) && ((pt/pthat)>recorelpthatmax)) {
+               if(verbose) cout << "WARNING::The pt/pthat of this event is greater than the maximum relative pthat!" << endl;
                continue;
             }
             if (drmax.size()>0 && JRAEvt->refdrjt->at(iref) > drmax[a]) continue;
