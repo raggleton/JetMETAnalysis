@@ -179,6 +179,7 @@ int main(int argc,char**argv)
   float          pthatmin          = cl.getValue<float>  ("pthatmin",                  0.0);
   float          pthatmax          = cl.getValue<float>  ("pthatmax",                 -1.0);
   float          genrelpthatmax       = cl.getValue<float>  ("genrelpthatmax",                10);
+  float          recorelpthatmax       = cl.getValue<float>  ("recorelpthatmax",                10);
   vector<string> algs              = cl.getVector<string>("algs",                       "");
   vector<string> presel            = cl.getVector<string>("presel",                     "");
   int            itlow             = cl.getValue<int>    ("itlow",                       0);
@@ -1507,6 +1508,10 @@ int main(int argc,char**argv)
             continue;
           }
 
+          if (recorelpthatmax!= -1.0 && ((JRAEvt->jtpt->at(iref)/pthat)>recorelpthatmax)) {
+            if(verbose) cout << "WARNING::The jtpt/pthat of this event is greater than the maximum relative pthat!" << endl;
+            continue;
+          }
 
           if (!pileup_cut(itlow,ithigh,earlyootlow,earlyoothigh,lateootlow,lateoothigh,
                           totalootlow,totaloothigh,JRAEvt->npus,JRAEvt->bxns)) {
