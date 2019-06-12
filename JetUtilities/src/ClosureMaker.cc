@@ -436,7 +436,8 @@ pair<double,double> ClosureMaker::determineCanvasRange(double xmin, double xmax)
   bool above105 = false, below95 = false;
   bool above115 = false, below85 = false;
   bool above125 = false, below75 = false;
-  return make_pair(0.75,1.25);
+  // return make_pair(0.75,1.25);
+  return make_pair(0.85,1.15);
   for(unsigned int ih=0; ih<hClosure.size(); ih++) {
     for(int ibin=hClosure[ih]->FindBin(xmin); ibin<hClosure[ih]->FindBin(xmax)+1; ibin++) {
       // std::cout << "Bin content " << hClosure[ih]->GetBinContent(ibin) << std::endl;
@@ -502,8 +503,8 @@ void ClosureMaker::makeCanvases() {
         }
         frame->GetXaxis()->SetMoreLogLabels();
         frame->GetXaxis()->SetNoExponent();
-        frame->GetYaxis()->SetRangeUser(0.75,1.25);
-        // frame->GetYaxis()->SetRangeUser(0.85,1.15);
+        // frame->GetYaxis()->SetRangeUser(0.75,1.25);
+        frame->GetYaxis()->SetRangeUser(0.85,1.15);
         //frame->GetYaxis()->SetRangeUser(0.35,1.35);
         //frame->GetYaxis()->SetRangeUser(0.00,1.3);
         frame->GetXaxis()->SetTitle(getVariableAxisTitleString(var).c_str());
